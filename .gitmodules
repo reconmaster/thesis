@@ -1,0 +1,3 @@
+[submodule "robstewart57-phd-thesis"]
+	path = examples/robstewart57
+	url = https://github.com/robstewart57/phd-thesis.git
