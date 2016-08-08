@@ -1,300 +1,287 @@
-#+TITLE: Enabling Novel IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms
-#+DATE:
-#+AUTHOR: Andrew Davis
-#+EMAIL: amdavis@uchicago.edu
 #+LATEX_CLASS:thesis
 #+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
-#+OPTIONS: author:t c:nil creator:comment d:(not "LOGBOOK") date:t
+#+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:t
 #+OPTIONS: e:t email:t f:t inline:t num:t p:nil pri:nil stat:t
-#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:t todo:t |:t
-#+CREATOR: Emacs 24.5.1 (Org mode 8.2.10)
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:nil todo:t |:t
 #+DESCRIPTION:
 #+EXCLUDE_TAGS: noexport
 #+KEYWORDS:
 #+LANGUAGE: en
 #+SELECT_TAGS: export
 
-# +LATEX_HEADER: \usepackage[12pt,letterpaper,top=1in,bottom=1in,left=1in,right=1in]{geometry}
-# +LATEX_HEADER: \usepackage{mathrsfs}
-# draft mode
-# +LATEX_HEADER: \usepackage{setspace}
-# +LATEX_HEADER: \doublespacing
-# bibliography
-
 #+BEGIN_LaTeX
-  %% Use these commands to set biographic information for the title page:
-  \title{Enabling Novel IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
-  \author{Andrew Davis}
-  \department{Committee on Medical Physics}
-  \division{Biological Sciences Division}
-  \degree{Ph. D.}
-  \date{June, 2016}
+%% Use these commands to set biographic information for the title page:
+\title{Enabling Novel IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
+\author{Andrew Davis}
+\department{Committee on Medical Physics}
+\division{Biological Sciences Division}
+\degree{Ph. D.}
+\date{June, 2016}
 
-  %% Use these commands to set a dedication and epigraph text
-  \dedication{Dedication Text}
-  \epigraph{Epigraph Text}
+%% Use these commands to set a dedication and epigraph text
+\dedication{Dedication Text}
+\epigraph{Epigraph Text}
 
-  % If you don't want a title page comment out the next line and uncomment the line after it:
-  \maketitle
-  %\omittitle
+% If you don't want a title page comment out the next line and uncomment the line after it:
+\maketitle
+%\omittitle
 
-  % These lines can be commented out to disable the copyright/dedication/epigraph pages
-  \makecopyright
-  \makededication
-  \makeepigraph
+% These lines can be commented out to disable the copyright/dedication/epigraph pages
+\makecopyright
+\makededication
+\makeepigraph
 
+%% Make the various tables of contents
+\tableofcontents
+\listoffigures
+\listoftables
 
-  %% Make the various tables of contents
-  \tableofcontents
-  \listoffigures
-  \listoftables
+\acknowledgments
+% Enter Acknowledgements here
 
-  \acknowledgments
-  % Enter Acknowledgements here
+\abstract
+% Enter Abstract here
 
-  \abstract
-  % Enter Abstract here
-
-  \mainmatter
-  % Main body of text follows
-
+\mainmatter
+% Main body of text follows
 #+END_LaTeX
 
-* TODO notes                                                       :noexport:
-- [ ] Set the tex class and layout as it is in the preorg
-  version. Define a thesis export org-class in the emacs dotfiles to
-  assist in exporting this document.
-- [ ] Need to determine list of chapters
-- [ ] [[http://orgmode.org/manual/Publishing.html][Publishing]] is supported in orgmode with the project layout
-  defined as described in that tutorial. It may be possible to use
-  this for a multiple file approach, however I am not sure of this
-  right now.
-- [X] It may be better to write the thesis with auctex/reftex since
-  reftex provides such an extensive coherence in interface? This needs
-  to be resolved.
-
-** orgmode
-- [[http://bastibe.de/2014-11-19-writing-a-thesis-in-org-mode.html][master thesis]] in orgmode
-- [[http://www.macs.hw.ac.uk/~rs46/phd-thesis.html][phd thesis]] in orgmode
-- another [[http://valodim.stratum0.net/madoc.org][master's thesis]] in orgmode
-
+* notes                                      :noexport:
+  :PROPERTIES:
+  :ID:       7f3d97de-795e-402a-82ac-591717f86bfd
+  :END:
 ** requirements
+   :PROPERTIES:
+   :ID:       931c9c50-bfaf-4c8e-b2cc-bcfdf62e327d
+   :END:
+
 - [[http://www.lib.uchicago.edu/e/phd/][uchicago]] dissertation guide
 - [[https://github.com/zuwiki/ucetd-latex][uoc thesis]] template
 
-* Proposal excerpts
-** Old Previous Work
-These are excerpts from an initial draft of the proposal. I saved them
-mainly to avoid retyping some of the equations.
+* Introduction
+  :PROPERTIES:
+  :ID:       852796c3-9a3b-49da-bc08-1299e93e0768
+  :END:
+** Background: Computed Tomography
+   :PROPERTIES:
+   :ID:       898c8a79-a3b0-4cb2-b1be-2838c8b86426
+   :END:
 
-Trace the original analytic work to the trajectory algorithms that
-exist for which I am testing iterative reconstruction.
+*** Analytic-Based Reconstruction
+    :PROPERTIES:
+    :ID:       20c14d08-7649-4644-b616-e86e0b7cc515
+    :END:
 
-The inverse problem in computed tomography (CT) was first solved by
-inverting the Radon Transform. Later x-ray transform was used to model
-the projection of rays. Led to approximate analytic inversion like
-FDK.
 
-**** Analytic algorithms
-During the 1980s, a lot of work was done to directly solve the inverse
-problem for the cone-beam geometry. By modeling the projection
-formation as a Radon transform *EQUATION* or a x-ray transform
-#+BEGIN_LaTeX
-  \begin{equation}
-  \label{eq:xray}
-  g(\vec{r},\hat{\theta})=\int_0^{\infty}f(\vec{r}_0+t\hat{\theta})dt,
-  \end{equation}
-#+END_LaTeX
-the reconstruction algorithm was formulated by finding an analytic
-inverse to the transform. *DESCRIBE VARIABLES* However, only a handful
-of source trajectories actually satisfied the hypothesized
-requirements of complete support necessary for exact reconstruction
-cite:tuy_inversion_1983. Other algorithms only approximately solved
-the inverse problem, the most popular of which is the
-filtered-backprojection (FBP) algorithm proposed by Feldkamp, Davis,
-and Kress cite:feldkamp_practical_1984.
+*** Optimization-Based Reconstruction
+    :PROPERTIES:
+    :ID:       07e91084-61be-43d3-a905-65ef0ab997a4
+    :END:
 
-The FDK algorithm reconstructs cone-beam projection data acquired with
-a circular source trajectory. This trajectory fails to meet Tuy's
-support condition that every plane through the object must intersect
-the source trajectory. For this reason, FDK is only an exact
-inversion to the Radon transform on the along the midplane containing
-the circular source trajectory. The approximate nature of the
-algorithm was acknowledged by the authors, and it was found that using
-FDK results in artifacts that become more severe at larger cone
-angles.
+** Background: Scanning Trajectories
+   :PROPERTIES:
+   :ID:       c90cd638-44e6-49f3-9283-29f75d163005
+   :END:
 
-As the circular source trajectory was known to acquire incomplete
-data, work was done to develop algorithms to reconstruct cone beam
-scans from theoretically complete trajectories
-cite:zeng_cone-beam_1992,finch_cone_1985,kudo_derivation_1994. Some of
-these exact source trajectories include a circle plus line and the
-helical scan *[CITE]* now used in diagnostic CT. It was also found
-that there are even exact reconstructions for source trajectories that
-do not satisfy Tuy's condition such as an infinite line
-cite:sidky_volume_2005.
+*** Standard Trajectories
+    :PROPERTIES:
+    :ID:       6293da29-e448-4614-84b6-065af1cc6be9
+    :END:
 
-Due to the technology available during this time, all of the
-algorithms were tested via computer simulation. It became apparent
-in the reconstruction results that implementing these direct
-reconstruction algorithms did not produce the anticipated results
-cite:kudo_derivation_1994. Severe artifacts and numerical errors were
-found in the reconstructions due to factors such as truncation
-introducing high-frequency components that are amplified in the
-filtration process. There was also inconsistencies introduced by the
-discretization of the continuous inversion algorithm which these new
-trajectory reconstruction algorithms were particularly susceptible to
-cite:noo_stable_1996.
+* Non-circular trajectories
+  :PROPERTIES:
+  :ID:       eaae199f-f899-4862-af50-720895a31c36
+  :END:
+** notes                                     :noexport:
+   :PROPERTIES:
+   :ID:       7c250434-fff6-41a3-aea3-e7bc9ff88dc6
+   :END:
+- General approach seems to be to make the chapters presentations of
+  different studies (papers/proceedings) and the subsequent results
+  and conclusions that can be made.
+*** publications
+    :PROPERTIES:
+    :ID:       48459222-20e7-43e5-9863-5022a5803a1b
+    :END:
+**** cite:davis_extended_2013
+     :PROPERTIES:
+     :ID:       5b4c7bca-d59b-4f33-8151-a6b359071249
+     :END:
+- simulation study of axial FOV extension
+**** cite:davis_verifying_2013
+     :PROPERTIES:
+     :ID:       d4c20a7d-4982-4318-b591-9ff84ee809f5
+     :END:
+- Trilogy scans of RANDO and Defrise phantom for axial FOV extension
+**** cite:pearson_investigation_2013
+     :PROPERTIES:
+     :ID:       6ae09b4c-d1d3-4705-b110-8a4a0e1f33dd
+     :END:
+- Similar results to [[id:d4c20a7d-4982-4318-b591-9ff84ee809f5][cite:davis_verifying_2013]] using RANDO and Defrise
+  Trilogy scans
+**** cite:davis_we-g-brf-07:_2014
+     :PROPERTIES:
+     :ID:       3f9687ce-f913-43a0-8e96-0ace96d7f67c
+     :END:
+- AAPM talk using CLLC scan from TrueBeam
+**** cite:davis_su-e-i-02:_2015
+     :PROPERTIES:
+     :ID:       15f62bff-3fae-4083-b4b1-ad0594d25121
+     :END:
+- AAPM poster for disk phantom metrics
+**** cite:davis_non-circular_2015
+     :PROPERTIES:
+     :ID:       cee07d24-100a-4c78-a42d-59cd707cda3b
+     :END:
+- Varian meeting showing non-circular scans
+** Introduction
+   :PROPERTIES:
+   :ID:       b815fcd4-92c6-4f72-9905-10acc22b580e
+   :END:
 
-*Develop KATSEVICH and BPF* Get to BPF and how to deal with
-truncation. Then move to iterative for artifact reduction and
-implicitly solving the inverse problem. Need to discuss breakdown of
-the continuous model for the imaging system?
+** Background
+   :PROPERTIES:
+   :ID:       f9e1fab3-973f-4ec3-b810-ba0f26e6f309
+   :END:
 
-*OBI Reverse Helical* Limitations of OBI restrict rotation, some
-analytic work by cite:pearson_non-circular_2010 using the reverse
-helical.
+** Methods
+   :PROPERTIES:
+   :ID:       b42e5e65-dfda-4692-8ea6-f6d96bc1dd5b
+   :END:
 
-**** Iterative algorithms
+** Results
+   :PROPERTIES:
+   :ID:       b2a353e8-8531-4a0e-8337-9f702ecf02f8
+   :END:
 
-***** Weighting Factor
-For clinically useful imaging of anything wider than a patient's head,
-the iterative reconstruction algorithms must be modified to
-reconstruct projection data acquired with an offset detector to avoid
-truncation in the transverse plane cite:cho_cone-beam_1996. For the
-OBI detector, this is necessary if measuring any part of the patient
-that is wider than 26 cm. Let $u$ represent the detector axis
-perpendicular to the axis of rotation, and $v$ be the detector axis
-parallel to it. If $u_m$ is half the detector width in the $u$
-dimension, we define $u_{m1}=u_m-L$ as the amount of the detector
-overlapping the perpendicular ray *central line* from the source to
-the detector for an offset length $L$.
-- [ ] Draw a figure to show this for the transverse slice?
+** Conclusion
+   :PROPERTIES:
+   :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
+   :END:
 
-To avoid artifacts introduced by the sharp truncation in the object at
-the detector edge, we use a normalized weighting factor similar to
-that proposed by Cho et al. for FDK of the form
-#+BEGIN_LaTeX
-  \begin{equation}
-    \label{eq:weight}
-    W(u,v,\lambda) =
-    \text{cos}^{2}\frac{\pi}{4}\left(\frac{\tau}{\tau_{m1}}-1\right) \text{ for
-    } -u_{m1}\le u \le u_{m1}.
-  \end{equation}
-#+END_LaTeX
-Here $\tau=\text{atan}\left( \frac{u}{S} \right)$,
-$\tau_{m1}=\text{atan}\left( \frac{u_{m1}}{S} \right)$, and $S$ is the
-source-to-detector distance. This weighting factor can then be
-incorporated into Equation \ref{eq:mlem} as
-#+BEGIN_LaTeX
-  \begin{equation}
-    f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}}
-    \label{eq:wmlem}
-  \end{equation}
-#+END_LaTeX
-where $\mathcal{W}_{ii}$ is the $i$-th diagonal element of the of the
-normalized weighting factor calculated in Equation
-\ref{eq:weight}. This has been demonstrated to reconstruct images from
-sparse-view offset detector data that are comparable to full-view FDK
-circular scans cite:bian_optimization-based_2013.
+* Geometric calibration
+  :PROPERTIES:
+  :ID:       652970b8-4916-4190-b83b-2d6ae117c8b3
+  :END:
+** notes                                                          :noexport:
+   :PROPERTIES:
+   :ID:       5c9cdd8b-721f-49b3-b136-c3282bf3659c
+   :END:
 
-- [ ] Show cllc with and without the weighting factor for the ED phantom.
-- [ ] Describe the view downsampling in regard to computational
-  resources as well as the voxel size selection.
-- [ ] Could only use the MLEM with the weighting factor equation and
-  explain say using the identity matrix as the weighting factor would
-  be the same as not using the weighting factor.
-- [ ] I need to put some thought into how the volumetric extension
-  necessarily leads to reduced redundancy as more voxels need to be
-  incorporate if using isotropic voxels. Not necessarily clinical
-  practice, but it does help with the reconstruction.
-- [ ] It is probably not necessary to include all of these
-  reconstruction details in this proposal, but these sections can
-  probably be extracted for the trajectory paper. The TV ASD-POCS
-  described for the planned work may also not need as many details.
+- General approach seems to be to make the chapters presentations of
+  different studies (papers/proceedings) and the subsequent results
+  and conclusions that can be made.
 
-** Background and Significance
-*** notes                                                        :noexport:
-- These are sections from the proposal from an advanced stage of
-  editing. This is from the [[file:~/Seafile/medical_physics/proposal/amdavis_proposal.org::*Background and Significance][Background and Significance]] section. Pan
-  said this section should be no longer than ~2 pages which meant I
-  needed to move additional details that the committee would not care
-  about so much.
-*** Background
-**** Analytic-based algorithms
-The artifacts arising from truncation the axial direction was known as
-the long-object problem. Katsevich made significant progress in
-understanding the CBCT inverse problem with his one-dimensional (1D),
-shift-invariant filtered backprojection (FBP) type algorithm
-cite:katsevich_theoretically_2002 that provided an exact
-reconstruction algorithm for a helical trajectory. The reconstruction
-problem for this scanning trajectory was reformulated by Zou and Pan
-as a 1D filtered backprojection type algorithm onto PI-lines in the
-image space cite:zou_exact_2004-1. Their work eventually led to a more
-general analytic-based reconstruction algorithm that applied this
-chord-based concept to generalized source trajectories.
+** Introduction
+   :PROPERTIES:
+   :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
+   :END:
 
-The helical scan provides a complete trajectory for which an exact
-reconstruction algorithm exists. The high quality of the resulting
-images is the reason this is now the standard acquisition method in
-diagnostic CT. Unfortunately, linac-mounted CBCT imaging systems like
-the OBI have mechanical limitations that prevent use of the helical
-scan. This led to work developing a reconstruction algorithm from the
-reverse helical scan which can be implemented with the OBI
-cite:cho_exact_2008. However, this trajectory has regions which cannot
-be filled by chords resulting in regions where the image cannot be
-reconstructed.
+** Background
+   :PROPERTIES:
+   :ID:       3fe1a782-94b5-4811-8b5f-d5089a578a6c
+   :END:
 
-The reverse helical scan was experimentally implemented with the OBI
-cite:pearson_non-circular_2010 using chord-based backprojection
-filtration (BPF), and a hybrid BPF-FBP algorithm was developed. The
-analytic-based reconstruction from this trajectory was able to improve
-some of the cone angle artifacts that afflict FDK. However, the axial
-coverage for which the image could be reconstructed was still limited
-so there was no real practical benefit.
+** Methods
+   :PROPERTIES:
+   :ID:       0b636fe5-fe45-4f10-a5fc-2de8a82bfbe4
+   :END:
 
-**** Iterative algorithms
-- I kept all of this in the proposal draft since it is one of the most
-  important parts of my research.
+** Results
+   :PROPERTIES:
+   :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
+   :END:
 
-**** Current clinical practice
-While arbitrary extension of the axial FOV was enabled in diagnostic
-CT with a helical scanning trajectory, implementing this trajectory
-with the OBI is not a viable solution. The hardware limitations of the
-linac restrict the gantry to a single rotation such that the helical
-trajectory is not possible. However, by using Varian's Developer Mode,
-it is possible to implement other non-circular trajectories that
-increase the axial coverage and are closer to satisfying Tuy's
-condition.
+** Conclusion
+   :PROPERTIES:
+   :ID:       80e42b2c-5d4b-4646-91df-753802591344
+   :END:
 
-Previous work with non-circular trajectories mainly focused on finding
-an exact inverse for trajectories that satisfied Tuy's condition in
-order to reduce the cone-angle artifacts at the edges of the axial
-FOV. With the freedom from strict data conditions allowed by iterative
-reconstruction techniques, I propose to study these non-circular
-trajectories as a method of extending the imaging volume in addition
-to reducing the artifacts introduced by analytic-based reconstruction
-algorithms. The ability to study these trajectories with real data
-will help determine how robust these methods are with real data
-inconsistencies.
+* Optimization-based algorithms
+  :PROPERTIES:
+  :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
+  :END:
+** notes                                                          :noexport:
+   :PROPERTIES:
+   :ID:       8ae68db5-8b7d-4458-ab2f-0e46b3b5beb4
+   :END:
 
-*** Significance
-**** Geometric calibration
-**** Optimization-based, iterative reconstruction algorithms
-**** Patient-specific trajectories
-** Innovation
-Though CBCT in IGRT is now an integral part of the clinical workflow,
-the use of analytic-based reconstruction algorithms constrains the
-potential utility of the modality. By combining iterative
-reconstruction methods with non-circular scanning trajectories, it
-should be possible to improve the clinical utility of CBCT in
-IGRT. Though the utility of any imaging system cannot be fully
-evaluated without addressing image quality in the context of the
-imaging task, the potential of non-circular trajectories with
-iterative reconstruction to address the current clinical limitations
-of restricted axial FOV and patient collisions suggests a potential
-increase in the clinical utility of CBCT in IGRT.
+- General approach seems to be to make the chapters presentations of
+  different studies (papers/proceedings) and the subsequent results
+  and conclusions that can be made.
 
-** Approach
-*** notes                                                        :noexport:
-- These are sections from the initial proposal [[file:~/Seafile/medical_physics/proposal/amdavis_proposal.org::*Approach][Approach]] section
+** Introduction
+   :PROPERTIES:
+   :ID:       8736adf3-2606-43c1-ba5d-d3f92a74f9f8
+   :END:
+
+** Background
+   :PROPERTIES:
+   :ID:       9bf44c0b-f3a4-4f5a-a73f-942944af351b
+   :END:
+
+** Methods
+   :PROPERTIES:
+   :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
+   :END:
+
+** Results
+   :PROPERTIES:
+   :ID:       04615b7c-c67c-499c-b2f9-d236ff743ea4
+   :END:
+
+** Conclusion
+   :PROPERTIES:
+   :ID:       0b2ab8ae-fd94-4d01-a7e0-8bef4db30078
+   :END:
+
+* Patient-specific trajectories
+  :PROPERTIES:
+  :ID:       99055e18-4b61-404e-9408-ebd5fd0a5d8d
+  :END:
+** notes                                                          :noexport:
+   :PROPERTIES:
+   :ID:       53a46fd0-a854-4b6a-a253-dde04d4f7a87
+   :END:
+- General approach seems to be to make the chapters presentations of
+  different studies (papers/proceedings) and the subsequent results
+  and conclusions that can be made.
+*** publications
+    :PROPERTIES:
+    :ID:       32703eae-6f65-4a6a-9f23-813e60747126
+    :END:
+- 2015 MIC virtual isocenter
+- 2016 CT meeting dyanmic magnification
+- 2016 MIC mixed magnification
+** Introduction
+   :PROPERTIES:
+   :ID:       d5a22c7a-f72e-4a1c-b90f-69f7084d42e1
+   :END:
+
+** Background
+   :PROPERTIES:
+   :ID:       8e2b1082-311a-4c11-b3b2-22504451fbf0
+   :END:
+
+** Methods
+   :PROPERTIES:
+   :ID:       9d2ba9ad-7739-46ab-9983-754fa6adac28
+   :END:
+
+** Results
+   :PROPERTIES:
+   :ID:       a59ef4e0-4966-4c76-b283-5aea6b92360e
+   :END:
+
+** Conclusion
+   :PROPERTIES:
+   :ID:       8784656f-c169-410a-9a76-0454c6ab5dde
+   :END:
+
+* Summary and Conclusions
+  :PROPERTIES:
+  :ID:       1bade25b-80d6-4650-b8a3-baf370fa657c
+  :END:
+
+
+\{References}
