@@ -1,20 +1,22 @@
-#+LATEX_CLASS:thesis
 #+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
-#+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:t
-#+OPTIONS: e:t email:t f:t inline:t num:t p:nil pri:nil stat:t
-#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:nil todo:t |:t
-#+DESCRIPTION:
-#+EXCLUDE_TAGS: noexport
-#+KEYWORDS:
+#+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:nil e:t
+#+OPTIONS: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
+#+TITLE:
+#+DATE:
+#+AUTHOR:
+#+EMAIL:
 #+LANGUAGE: en
 #+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+LATEX_CLASS:thesis
 
 #+BEGIN_LaTeX
 %% Use these commands to set biographic information for the title page:
 \title{Enabling Novel IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
 \author{Andrew Davis}
 \department{Committee on Medical Physics}
-\division{Biological Sciences Division}
+\division{Biological Sciences}
 \degree{Ph. D.}
 \date{June, 2016}
 
@@ -71,7 +73,7 @@
     :PROPERTIES:
     :ID:       20c14d08-7649-4644-b616-e86e0b7cc515
     :END:
-
+Test paragraph and citation cite:davis_non-circular_2014.
 
 *** Optimization-Based Reconstruction
     :PROPERTIES:
@@ -283,5 +285,4 @@
   :ID:       1bade25b-80d6-4650-b8a3-baf370fa657c
   :END:
 
-
-\{References}
+\makebibliography
