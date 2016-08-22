@@ -6,3 +6,6 @@ auto
 *tex
 *blg
 *xml
+/org_thesis_example/*
+*.lof
+*.lot
