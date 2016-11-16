@@ -1,11 +1,11 @@
-#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
-#+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:nil e:t
-#+OPTIONS: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t
-#+OPTIONS: tags:t tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
 #+TITLE:
 #+DATE:
 #+AUTHOR:
 #+EMAIL:
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:nil e:t
+#+OPTIONS: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
 #+LANGUAGE: en
 #+SELECT_TAGS: export
 #+EXCLUDE_TAGS: noexport
@@ -68,27 +68,153 @@
    :PROPERTIES:
    :ID:       898c8a79-a3b0-4cb2-b1be-2838c8b86426
    :END:
-
 *** Analytic-Based Reconstruction
     :PROPERTIES:
     :ID:       20c14d08-7649-4644-b616-e86e0b7cc515
     :END:
-Test paragraph and citation cite:davis_non-circular_2014.
+In the 1980s, a lot of work was done to directly solve the inverse
+problem for the cone-beam geometry. By modeling the projection
+formation process as a Radon transform or an X-ray transform,
+reconstruction algorithms were formulated by finding an analytic-based
+inverse to the transform. However, for the inverse to be exact, it
+needed to meet strict requirements such as Tuy's condition which
+states that every plane through the object must intersect the source
+trajectory cite:tuy_inversion_1983. While some exceptions to this
+requirement were found, it demonstrates the strict requirements on the
+types of scanning trajectories for which an exact inverse could be
+found.
+
+The circular scanning trajectory that is ubiquitous in the clinic for
+CBCT is one trajectory that fails to meet Tuy's condition. The most
+popular reconstruction algorithm for the circular CBCT trajectory is
+the filtered-backprojection (FBP) algorithm proposed by Feldkamp,
+Davis, and Kress (FDK) cite:feldkamp_practical_1984 which is still the
+industry standard. FDK is only an exact inversion to the Radon
+transform on the midplane containing the circular source
+trajectory. For transaxial planes other than the midplane, a
+quasi-redundancy in the scanning data is assumed. It is the violation
+of this assumption which leads to cone-angle artifacts. These
+artifacts become more severe at larger cone angles where this
+assumption is less applicable.
+
+The presence of cone-angle artifacts in FDK reconstructions from the
+incomplete data acquired with circular scanning trajectories led to
+research into inverse algorithms for cone-beam scans from
+theoretically complete trajectories such as a circle plus a line
+cite:zeng_cone-beam_1992. It became apparent in the reconstruction
+results that implementing these direct reconstruction algorithms did
+not produce the anticipated results cite:kudo_derivation_1994. Severe
+artifacts and numerical errors were found in the reconstructions due
+to factors such as truncation introducing high-frequency components
+that are amplified in the filtration process.
 
 *** Optimization-Based Reconstruction
     :PROPERTIES:
     :ID:       07e91084-61be-43d3-a905-65ef0ab997a4
     :END:
+Analytic-based reconstruction algorithms are formulated by explicitly
+finding an inverse to the X-ray transform
+#+BEGIN_LaTeX
+  \begin{equation}
+    \label{eq:xray}
+    g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
+  \end{equation}
+#+END_LaTeX
+where the data function $g$ is acquired by integrating along the ray
+from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
+the object function $f$. A fundamental problem with these
+reconstruction algorithms when practically reconstructing $f$ is the
+assumption of a continuous-to-continuous (CC) model. These
+analytic-based reconstruction algorithms impose dense sampling
+requirements for both the detector and number of views to approximate
+a continuous data function. Given that the data function from the
+digital detector and the numerical array for storing the reconstructed
+image are both discrete, a more natural approach to the inverse
+problem would be a discrete-to-discrete (DD) imaging model
+cite:barrett_foundations_2003.
+
+Iterative reconstruction algorithms are more robust because they do
+implement a more accurate DD model of the imaging system. The X-ray
+transform of the object function can be represented as the linear
+system
+#+BEGIN_LaTeX
+  \begin{equation}
+    \label{eq:ddsys}
+    \mathbf{g}=\mathcal{H}\mathbf{f},
+  \end{equation}
+#+END_LaTeX
+where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
+detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
+transform, and $\mathbf{f}$ is the object function represented on a N
+voxel basis. As direct inversion of $\mathcal{H}$ is impractical due
+to both its size and inconsistencies from factors such as noise,
+optimization techniques are used to solve this system for an estimate
+of the object $\widetilde{\mathbf{f}}$.
+
+The optimization problem for these iterative reconstruction algorithms
+is formulated as an objective function based on the actual data
+$\mathbf{g}$ and the image model $\mathcal{H}\mathbf{f}$. An
+optimization algorithm is then used to iteratively update the estimate
+of $\widetilde{\mathbf{f}}$ until a suitable convergence criterion has
+been met. The parameters of the optimization problem, the optimization
+algorithm, and the convergence criteria are all important factors in
+determining the properties of the reconstructed image and subsequently
+its utility.
+
+Two optimization-based reconstruction methods we will use with these
+non-circular trajectories are maximum-likelihood expectation
+maximization (MLEM) cite:shepp_maximum_1982,dempster_maximum_1977 and
+constrained, total-variation (TV) minimization by adaptive steepest
+descent-projection onto convex sets (ASD-POCS)
+cite:sidky_image_2008. Previous work has shown that these iterative
+algorithms are able to reconstruct clinically useful images under
+scanning conditions for which analytic-based FDK fails
+cite:han_optimization-based_2012,sidky_image_2007,sidky_accurate_2006. The
+reconstruction work from sparse-view data cite:bian_evaluation_2010
+alone suggests that views could be distributed at different axial
+positions to acquire additional scan information without imparting
+more dose than the dense set of angular views used in current clinical
+circular scans with analytic-based reconstruction.
 
 ** Background: Scanning Trajectories
    :PROPERTIES:
    :ID:       c90cd638-44e6-49f3-9283-29f75d163005
    :END:
-
 *** Standard Trajectories
     :PROPERTIES:
     :ID:       6293da29-e448-4614-84b6-065af1cc6be9
     :END:
+
+In IGRT, linac-mounted CBCT imaging systems such as Varian's OBI now
+routinely provide patient image information. These images are used to
+check the patient alignment before delivering the radiation
+treatment. The circular rotation of the linac gantry defines the
+acquisition trajectory for the CBCT scan. While such a scanning
+trajectory provides sufficient information for an analytic-based
+reconstruction of the scan volume, there are a variety of limitations
+that arise from this work flow.
+
+Due to engineering and cost restrictions, the OBI detector has a
+limited size. This restricts the FOV that can be imaged in a
+traditional circular scan. While the offset detector technique
+cite:bian_optimization-based_2013,cho_cone-beam_1995 is commonly used
+to increase the transaxial FOV, the axial coverage is still very
+limited cite:pearson_non-circular_2010. The reason why the limited FOV
+has not been addressed by increasing the detector size is partially
+due to the industry reliance on the approximate FDK algorithm
+cite:pan_why_2009. For increasingly large cone angles at the ends of
+the axial FOV, the approximation in the algorithm becomes increasingly
+worse resulting in cone-angle artifacts cite:feldkamp_practical_1984.
+
+Another problem with the current circular imaging trajectory is
+potential linac collisions with the patient
+cite:hua_practical_2004,nioutsikou_patient-specific_2003. Cases arise
+when the patient is positioned in the treatment position, a CBCT image
+cannot be acquired due to part of the patient being in the path of the
+linac's trajectory. As the current FDK algorithm requires a trajectory
+with sufficient angular coverage, the patient must be moved to a
+position where the gantry can make an uninterrupted rotation around
+the patient.
 
 * Non-circular trajectories
   :PROPERTIES:
