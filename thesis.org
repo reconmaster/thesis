@@ -216,7 +216,7 @@ with sufficient angular coverage, the patient must be moved to a
 position where the gantry can make an uninterrupted rotation around
 the patient.
 
-* Non-circular trajectories
+* Axial field-of-view extension
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
   :END:
@@ -376,7 +376,7 @@ the patient.
   :PROPERTIES:
   :ID:       652970b8-4916-4190-b83b-2d6ae117c8b3
   :END:
-** notes                                                          :noexport:
+** notes                                     :noexport:
    :PROPERTIES:
    :ID:       5c9cdd8b-721f-49b3-b136-c3282bf3659c
    :END:
@@ -452,7 +452,7 @@ the patient.
   :PROPERTIES:
   :ID:       99055e18-4b61-404e-9408-ebd5fd0a5d8d
   :END:
-** notes                                                          :noexport:
+** notes                                     :noexport:
    :PROPERTIES:
    :ID:       53a46fd0-a854-4b6a-a253-dde04d4f7a87
    :END:
