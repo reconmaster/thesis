@@ -1,0 +1,11 @@
+* Thesis
+
+** About
+
+Repository for my thesis.
+
+** Design
+
+Given the success I have had with org-mode up to this point, I will
+continue to use this moving forward. The org code blocks greatly
+improve the provenance of the work.
