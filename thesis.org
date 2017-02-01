@@ -18,7 +18,7 @@
 \department{Committee on Medical Physics}
 \division{Biological Sciences}
 \degree{Ph. D.}
-\date{June, 2016}
+\date{June, 2017}
 
 %% Use these commands to set a dedication and epigraph text
 \dedication{Dedication Text}
@@ -184,7 +184,6 @@ circular scans with analytic-based reconstruction.
     :PROPERTIES:
     :ID:       6293da29-e448-4614-84b6-065af1cc6be9
     :END:
-
 In IGRT, linac-mounted CBCT imaging systems such as Varian's OBI now
 routinely provide patient image information. These images are used to
 check the patient alignment before delivering the radiation
@@ -215,8 +214,39 @@ linac's trajectory. As the current FDK algorithm requires a trajectory
 with sufficient angular coverage, the patient must be moved to a
 position where the gantry can make an uninterrupted rotation around
 the patient.
+* Optimization-based algorithms
+  :PROPERTIES:
+  :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
+  :END:
+** notes                                     :noexport:
+   :PROPERTIES:
+   :ID:       8ae68db5-8b7d-4458-ab2f-0e46b3b5beb4
+   :END:
+- General approach seems to be to make the chapters presentations of
+  different studies (papers/proceedings) and the subsequent results
+  and conclusions that can be made.
+- Chuck said to use this as this is enabling the trajectory work
+** Introduction
+   :PROPERTIES:
+   :ID:       8736adf3-2606-43c1-ba5d-d3f92a74f9f8
+   :END:
 
-* Non-circular trajectories
+** Methods
+   :PROPERTIES:
+   :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
+   :END:
+
+** Results
+   :PROPERTIES:
+   :ID:       04615b7c-c67c-499c-b2f9-d236ff743ea4
+   :END:
+
+** Conclusion
+   :PROPERTIES:
+   :ID:       0b2ab8ae-fd94-4d01-a7e0-8bef4db30078
+   :END:
+
+* Axial field-of-view extension
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
   :END:
@@ -265,11 +295,6 @@ the patient.
 ** Introduction
    :PROPERTIES:
    :ID:       b815fcd4-92c6-4f72-9905-10acc22b580e
-   :END:
-
-** Background
-   :PROPERTIES:
-   :ID:       f9e1fab3-973f-4ec3-b810-ba0f26e6f309
    :END:
 
 ** Methods
@@ -376,23 +401,16 @@ the patient.
   :PROPERTIES:
   :ID:       652970b8-4916-4190-b83b-2d6ae117c8b3
   :END:
-** notes                                                          :noexport:
+** notes                                     :noexport:
    :PROPERTIES:
    :ID:       5c9cdd8b-721f-49b3-b136-c3282bf3659c
    :END:
-
 - General approach seems to be to make the chapters presentations of
   different studies (papers/proceedings) and the subsequent results
   and conclusions that can be made.
-
 ** Introduction
    :PROPERTIES:
    :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
-   :END:
-
-** Background
-   :PROPERTIES:
-   :ID:       3fe1a782-94b5-4811-8b5f-d5089a578a6c
    :END:
 
 ** Methods
@@ -410,49 +428,11 @@ the patient.
    :ID:       80e42b2c-5d4b-4646-91df-753802591344
    :END:
 
-* Optimization-based algorithms
-  :PROPERTIES:
-  :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
-  :END:
-** notes                                                          :noexport:
-   :PROPERTIES:
-   :ID:       8ae68db5-8b7d-4458-ab2f-0e46b3b5beb4
-   :END:
-
-- General approach seems to be to make the chapters presentations of
-  different studies (papers/proceedings) and the subsequent results
-  and conclusions that can be made.
-
-** Introduction
-   :PROPERTIES:
-   :ID:       8736adf3-2606-43c1-ba5d-d3f92a74f9f8
-   :END:
-
-** Background
-   :PROPERTIES:
-   :ID:       9bf44c0b-f3a4-4f5a-a73f-942944af351b
-   :END:
-
-** Methods
-   :PROPERTIES:
-   :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
-   :END:
-
-** Results
-   :PROPERTIES:
-   :ID:       04615b7c-c67c-499c-b2f9-d236ff743ea4
-   :END:
-
-** Conclusion
-   :PROPERTIES:
-   :ID:       0b2ab8ae-fd94-4d01-a7e0-8bef4db30078
-   :END:
-
 * Patient-specific trajectories
   :PROPERTIES:
   :ID:       99055e18-4b61-404e-9408-ebd5fd0a5d8d
   :END:
-** notes                                                          :noexport:
+** notes                                     :noexport:
    :PROPERTIES:
    :ID:       53a46fd0-a854-4b6a-a253-dde04d4f7a87
    :END:
@@ -466,25 +446,170 @@ the patient.
 - 2015 MIC virtual isocenter
 - 2016 CT meeting dyanmic magnification
 - 2016 MIC mixed magnification
+- 2017 Varian dynamic magnification
 ** Introduction
    :PROPERTIES:
    :ID:       d5a22c7a-f72e-4a1c-b90f-69f7084d42e1
    :END:
+The addition of a linac-mounted, kV-imaging, cone-beam computed
+tomography (CBCT) system to the gantry-mounted clinical linear
+accelerator (linac) helped this modality become the most popular form
+of image-guided radiation therapy (IGRT)
+cite:rahman_linac:_2015,jaffray_flat-panel_2002-1,letourneau_cone-beam-ct_2005.
+The tomographic information provided in the kV energy range improves
+soft-tissue contrast resolution over that provided by the MV
+electronic portal imaging device (EPID) alone
+cite:jaffray_radiographic_1999. The linac-mounted, kV-imaging, CBCT
+system not only helps with patient setup and target verification, but
+it also allows the monitoring of the tumor response during treatment
+cite:dawson_advances_2007.
 
-** Background
-   :PROPERTIES:
-   :ID:       8e2b1082-311a-4c11-b3b2-22504451fbf0
-   :END:
+There is therefore a loss in clinical utility when it is not possible
+to obtain tomographic information from the kV-imaging CBCT system. One
+situation in which this can occur is when a collision between the
+patient and the gantry arises cite:padilla_collision_2015. These may
+be of particular concern in breast and lung cancer patients where the
+arm positions leads to a possible collision as shown in Figure ([[ref:fig:barbie_collision][barbie
+collision]]). Collisions also present a problem in treatment of
+posterior and lateral lesions in stereotactic body radiosurgery
+(SBRT). Similarly in prone breast treatments, where the target is near
+the couch top and a lateral couch translation is needed to bring the
+target to isocenter, collision with the contralateral side of the
+patient may occur. When collisions do occur, the angular range
+available for scanning is restricted and it is not possible to acquire
+complete projection data.
+
+#+CAPTION: Example of a typical patient-gantry collision. The patient's arms for this treatment position can often collide with the MV-treatment head.
+#+ATTR_LaTeX: :width \columnwidth :placement [t]
+#+LABEL: fig:barbie_collision
+[[./figures/collisions/barbie.jpg]]
+
+The analytic-based FDK reconstruction algorithm, still the clinical
+workhorse for CT reconstruction, imposes certain requirements on the
+acquisition trajectory cite:feldkamp_practical_1984,pan_why_2009.
+Specifically, the inverse problem is derived from a circular scanning
+trajectory, and such a trajectory must be acquired to meet the data
+sufficiency conditions. A potential patient-gantry collision
+restricting the angular coverage could prevent sufficient projection
+data from being acquired.
+
+Though there has been previous work in developing analytic methods for
+addressing the inverse problem from some novel trajectories
+cite:katsevich_image_2004,katsevich_theoretically_2002,katsevich_image_2005,katsevich_formulation_2006,
+it could be clinically useful to enable reconstruction from an
+arbitrary, collision-avoiding trajectory. As the collision region (if
+one arises) is contingent on the patient's treatment position, the
+imaging trajectory would then vary on a per patient basis. As such,
+deriving the analytic inverse for each patient's scanning trajectory
+would be impractical in a clinical work flow.
+
+Advances in optimization-based reconstruction algorithms provide a
+potential means of enabling reconstruction from patient-specific
+collision avoiding trajectories
+cite:bian_optimization-based_2013,han_optimization-based_2012. The
+imaging model is formulated as the linear transform
+#+BEGIN_LaTeX
+\begin{equation}
+  \label{eq:linmodel}
+  \mathbf{g}=\mathcal{H}\mathbf{f},
+\end{equation}
+#+END_LaTeX
+where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
+detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
+transform, and $\mathbf{f}$ is the object function represented on a N
+voxel basis. As the direct inversion of Equation ([[ref:eq:linmodel][linear model]]) is
+impractical due to both its size and inconsistencies from factors such
+as noise, optimization techniques are used to solve this system for an
+estimate of the object $\widetilde{\mathbf{f}}$.
+
+These optimization-based methods impose no restrictions on the
+trajectory of the acquired views. Provided the geometry of each view
+is correctly incorporated into the system matrix $\mathcal{H}$, these
+robust algorithms can provide clinically useful reconstructions from
+acquisitions that fail to meet the stipulated data conditions assumed
+in the formulation of an analytic inverse.
+
+In this study, we investigate examples of potential scanning
+trajectories that would allow the acquisition of sufficient projection
+information for a clinically useful image while avoiding a potential
+patient collision with the gantry. As the gantry rotates, there are
+two components of the linac that are potential sources of patient
+collisions. These are the MV-treatment head, shown in Figure ([[ref:fig:barbie_collision][barbie
+collision]]), and the kV-CBCT detector.
+
+One trajectory that would avoid a patient collision with the
+MV-treatment head is a virtual isocenter trajectory. This trajectory
+resolves such a collision by increasing the effective source-to-axis
+distance (SAD). By using this increased SAD for an imaging trajectory,
+the clearance between the patient and the MV-treatment head as the
+gantry rotates is increased and the collision is avoided.
+
+The virtual isocenter trajectory utilizes synchronized gantry rotation
+and couch translation to maintain a fixed distance (``virtual SAD'')
+between the MV source and a chosen center of rotation (``virtual
+isocenter'') in the patient. At the beginning of the scan, the patient
+is moved away from the linac head along the MV beam direction. As the
+gantry rotates, the couch continuously moves away from the linac head
+to maintain the specified separation as shown in Figure
+([[ref:fig:virtual_iso]]). The virtual SAD can be chosen large enough so
+that collisions as shown in Figure ([[ref:fig:barbie_collision]]) are
+avoided; at this point in the trajectory, the couch would have moved
+far enough to the left to avoid the collision.
+
+#+BEGIN_LaTeX
+\begin{figure*}[htb]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/collisions/gantry_6angles_a.jpg}
+\caption{
+Patient, kV and MV beams and kV detector at several angles during a virtual isocenter rotation.  Room coordinate system (dotted axes) has its origin at mechanical isocenter, also the intersection of the MV (red) and kV (green) beam axes.  As the gantry rotates, the patient (filled contour) is continually shifted to maintain a specified distance along the MV beam direction between the mechanical isocenter and the chosen virtual isocenter (circle symbol within the patient).  The path of the virtual isocenter is a circle about the mechanical isocenter, with radius equal to the chosen shift (12 cm from the isocenter in this example).  Detector may or may not be shifted as shown, depending on virtual isocenter position and patient geometry.
+\label{fig:virtual_iso}}
+\end{figure*}
+#+END_LaTeX
+
+Another trajectory that could avoid a patient collision with the kV
+detector would be one during which either the patient of the detector
+is moved during the scan in the angular range of a collision. Either
+solution leads to dynamic magnification scan where the kV-CBCT imaging
+magnification changes during the acquisition. Again,
+optimization-based reconstruction methods can easily handle such a
+change in magnification provided the projection information is
+correctly incorporated into the system matrix.
+
+Finally, we study a trajectory that combines both the virtual
+isocenter and the dynamic magnification trajectories to create a
+hybrid scanning acquisition that would alleviate collisions with both
+the MV-treatment head and the kV-CBCT detector (note that it is only
+the distance to the linac head that is increased in the plain virtual
+SAD technique; the distance from the kV source and detector to the
+patient and to each other are unchanged). We use such a trajectory as
+an example of a patient-specific scanning trajectory designed to avoid
+a particular collision that arises with a particular treatment
+position.
 
 ** Methods
    :PROPERTIES:
    :ID:       9d2ba9ad-7739-46ab-9983-754fa6adac28
    :END:
+*** Virtual isocenter trajectory
+The virtual isocenter trajectory utilizes synchronized gantry rotation
+and couch translation to maintain a fixed distance (``virtual SAD'')
+between the MV source and a chosen center of rotation (``virtual
+isocenter'') in the patient. At the beginning of the scan, the patient
+is moved away from the linac head along the MV beam direction. As the
+gantry rotates, the couch continuously moves away from the linac head
+to maintain the specified separation as shown in Figure
+([[ref:fig:virtual_iso]]).
 
+*** Dynamic magnification trajectory
+
+*** Moving toward generalized trajecotries
 ** Results
    :PROPERTIES:
    :ID:       a59ef4e0-4966-4c76-b283-5aea6b92360e
    :END:
+*** Virtual isocenter trajectory
+*** Dynamic magnification trajectory
+*** Moving toward generalized trajecotries
 
 ** Conclusion
    :PROPERTIES:
