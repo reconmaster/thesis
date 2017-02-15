@@ -215,8 +215,18 @@ with sufficient angular coverage, the patient must be moved to a
 position where the gantry can make an uninterrupted rotation around
 the patient.
 * Optimization-based algorithms
+  - State "CANCELLED"  from ""           [2017-02-06 Mon 10:30] \\
+    As I do not think there is sufficient time to do the typical parameter
+    sweep approach we now use to address this framework, I am going to
+    distribute this into the other chapters as way to illustrate some of
+    the different optimization methods being used within the context of
+    solving the problem I am setting out to address.
   :PROPERTIES:
   :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
+  :ARCHIVE_TIME: 2017-02-06 Mon 10:34
+  :ARCHIVE_FILE: ~/Seafile/medical_physics/thesis/thesis/thesis.org
+  :ARCHIVE_CATEGORY: thesis
+  :ARCHIVE_TODO: CANCELLED
   :END:
 ** notes                                     :noexport:
    :PROPERTIES:
@@ -226,6 +236,7 @@ the patient.
   different studies (papers/proceedings) and the subsequent results
   and conclusions that can be made.
 - Chuck said to use this as this is enabling the trajectory work
+*** distribute into the other chapters
 ** Introduction
    :PROPERTIES:
    :ID:       8736adf3-2606-43c1-ba5d-d3f92a74f9f8
@@ -245,7 +256,239 @@ the patient.
    :PROPERTIES:
    :ID:       0b2ab8ae-fd94-4d01-a7e0-8bef4db30078
    :END:
+* Geometric calibration
+  :PROPERTIES:
+  :ID:       652970b8-4916-4190-b83b-2d6ae117c8b3
+  :END:
+** notes                                     :noexport:
+   :PROPERTIES:
+   :ID:       5c9cdd8b-721f-49b3-b136-c3282bf3659c
+   :END:
+- General approach seems to be to make the chapters presentations of
+  different studies (papers/proceedings) and the subsequent results
+  and conclusions that can be made.
+** Introduction
+   :PROPERTIES:
+   :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
+   :END:
+When performing tomographic image reconstruction it is critical that
+the geometry of the scanning configuration is properly understood.
+This is true regardless of whether the reconstruction is done with
+analytic-based or optimization-based methods. If there is uncertainty
+in where the projections come from, this will introduce
+inconsistencies that will manifest as artifacts in the reconstruction.
 
+With the additional complexity introduced with more exotic scanning
+configurations, geometric calibration is of paramount importance in
+obtaining a useful reconstruction. This is especially true when
+working with trajectories where the object is moving in addition to
+the source and detector during the scan.
+
+The importance of accurate geometric has been extensively studied with
+a variety of methods proposed for accurate geometric calibration
+cite:rougee_geometrical_1993,mitschke_optimal_2000,silver_determination_2000,noo_analytic_2000,smekal_geometric_2004,cho_accurate_2005,yang_geometric_2006,panetta_optimization-based_2008,daly_geometric_2008,li_generic_2010,grimmer_empirical_2011,wicklein_image_2012.
+Using the concepts discussed by
+cite:rougee_geometrical_1993-1,silver_determination_2000, we developed
+a calibration method that utilizes a phantom with known placement of
+highly attenuating fiducials. By scanning this phantom and comparing
+the the projections to the modeled forward-projection of a
+mathematical model of the phantom, we can more accurately determine
+the system matrix $(\mathcal{H})$ in Equation ([[ref:eq:ddsys]]) for
+reconstructing from a non-circular scanning trajectory with
+optimization-based methods.
+
+** Methods
+   :PROPERTIES:
+   :ID:       0b636fe5-fe45-4f10-a5fc-2de8a82bfbe4
+   :END:
+Where analytic-based methods, such as FDK, require a certain
+acquisition trajectory such a as a fixed scanning radius of the source
+and detector and the angular position of each projection, the
+optimization-based system matrix makes no assumptions of the geometry
+in other views. As such, we created a framework that incorporates the
+best geometric estimate of the projection geometry of each view. The
+flexibility to incorporate geometric corrections in this way is
+another useful aspect in using optimization-based methods for image
+reconstruction.
+
+Before attempting to determine any geometric errors in our scanning
+acquisition, we first modified the calculation of our system matrix to
+incorporate the geometry information provided by the TrueBeam system.
+In doing this, we took advantage of all the existing calibration
+information that is provided with the current clinical system. Any
+additional calibration information we could extract in addition to
+this would then be the result of imaging with scanning configurations
+that are not currently in clinical use.
+
+*** Phantoms
+    :PROPERTIES:
+    :ID:       F5BECB45-8652-47A3-915C-1E96DA6110E7
+    :END:
+Our first calibration phantom for determining geometric offsets is
+shown in Figure (\ref{fig:geocal}). The phantom is a 15.2 cm outer
+diameter acrylic tube with a spiral pattern of CT-spot fiducials
+placed 2.5 cm apart every $45^{\circ}$. When scanned, the CT spots are
+clearly visible in the projection images which is ideal for automating
+the fiducial detection in the data domain.
+
+However, we realized that using such a spiral calibration phantom
+creates a degree of ambiguity in the geometry of the projected
+fiducials. With both this phantom and additional calibration phantoms
+we created, too much symmetry in the phantom design leads to a rather
+challenging objective function. To avoid such complexity, a
+calibration phantom with intentional asymmetry is desirable.
+
+In addition to the necessary complexity created by this phantom,
+another concern for a calibration phantom is the uncertainty in the
+geometry of the phantom itself. Though the guide lines on the cylinder
+were inscribed with the lathe and its rotational stage, we placed the
+fiducials by hand. As we were trying to determine millimeter offsets
+with our calibration, this fiducial placement was suboptimal.
+
+#+CAPTION: Initial geometric calibration phantom with a spiral fiducial pattern.
+#+ATTR_LaTeX: scale=0.75
+#+LABEL: fig:geocal
+[[../../research/trajectories/geometry/geocal/20140901_extended_cllc.jpg]]
+
+The phantom we then decided to use for calibration was the Isocal
+phantom created by Varian shown in Figure ([[ref:fig:isocal]]). The Isocal
+phantom directly addresses the two problems encountered with our first
+phantom. First, the phantom is designed with intentional asymmetry.
+Additionally, the phantom is manufactured by Varian to help align the
+MV-treatment isocenter with the kV-imaging isocenter. As such, the
+position of the beads on this phantom have a much higher tolerance
+than that of our original phantom.
+
+#+CAPTION: Varian's Isocal phantom positioned at the isocenter.
+#+ATTR_LaTeX: scale=0.75
+#+LABEL: fig:isocal
+[[../../research/phantoms/isocal/imgs/161012_isocal.jpg]]
+
+*** Calibration Method
+    :PROPERTIES:
+    :ID:       F53F4B5A-83EB-4B16-9B6D-F557D3E441C2
+    :END:
+To utilize the calibration method, the trajectory of interest is first
+used to scan the phantom with the CBCT imaging system. Both the
+projection data as well as the nominal acquisition geometry from the
+projection headers are then used as input to the calibration.
+
+this allows for easy spot
+detection using a circular Hough transform cite:peng_detect_2007. By
+comparing the distance of the centroids of the detected spots to those
+of a model of the spiral pattern projected onto the detector from the
+assumed trajectory geometry, a Nelder-Mead minimization can be used to
+find the view parameters that minimize this cost.
+
+For a new trajectory, this phantom can be scanned first to identify
+any geometric offsets that are incorrectly reported in the TrueBeam
+data headers. Though the self-reported position accuracy has been
+found to be very good, we still need a way to verify the data header
+information that we use to create the system matrix for new
+scanning trajectories. This phantom provides a means of verifying this
+for any of the scans implemented on the OBI.
+
+The fiducials are subsequently forward projected using the same system
+geometry with each projection view being determined from the nominal
+geometry.
+
+The projected spots in the data are found and compared to the
+simulated forward projection of the modeled geometry.
+
+Optimization is then used to minimize the L2-norm between the centroid
+of the detected spot and that of the modeled projection by allowing
+parameters of the system geometry to vary. Once the cost has been
+minimized, the geometric offsets are used as the calibration
+information for calculating the system matrix $(\mathcal{H})$ for the
+image reconstruction.
+
+*** Image entropy                            :noexport:
+To further verify the effectiveness of the calibration procedure, we
+will also need to use additional metrics to quantitatively
+characterize the impact of using the calibration on image quality. The
+work of Wicklein et al. has suggested that the best metric for
+measuring the impact of geometric error on image quality is entropy
+$(E)$ of the image's gray-level histogram $(H)$. This is defined as
+#+BEGIN_LaTeX
+  \begin{equation}
+  \label{eq:entropy}
+  E=-\sum_{q=0}^Q h(q)\cdot\text{log}(h(q))
+  \end{equation}
+#+END_LaTeX
+where $Q$ is the maximum intensity value and
+#+BEGIN_LaTeX
+  \begin{equation}
+  \label{eq:norm_hist}
+  h(q)=\frac{H(q)}{N}
+  \end{equation}
+#+END_LaTeX
+is the normalized histogram cite:wicklein_image_2012. For this metric,
+minimum entropy is obtained for an image with a single intensity value
+while an image with uniform distribution over all intensity values
+would have maximum entropy.
+
+Geometric errors introduce blurring at sharp boundaries in the image
+which increases the entropy. By reducing geometric errors with
+calibration, this blurring effect and subsequently entropy should
+reduced. For our non-circular trajectories, Wicklein's conclusion can
+be verified readily with the images in our catalog of geometric
+errors. The image entropy of the correct-geometry reconstruction will
+be against the reconstructions with intentional geometric errors to
+determine if improved geometric modeling reduces the image entropy in
+Equation (\ref{eq:entropy}).
+
+If the entropy calculations based on simulation agree with Wicklein's
+findings, entropy would be reasonable metric to characterize the
+benefits and limitations of using the geometric offsets from the
+calibration phantom on different non-circular trajectory
+reconstructions. We would then use entropy as the metric to compare
+reconstructions with and without calibration. From this, we can not
+only verify the effectiveness of our calibration method with different
+non-circular trajectories, but also then characterize the impact
+additional geometric corrections have on image quality.
+
+*** Geometric-offset artifact catalog        :noexport:
+Though the type of artifacts that are introduced by geometric offsets
+for circular scanning trajectories are relatively well known, this
+same sort of understanding is lacking for these new trajectories. To
+study how geometric offsets affect images reconstructed from these new
+trajectories, we will create a simulation catalog of artifacts
+produced by different geometric errors. By introducing intentional
+geometric inconsistencies in the reconstruction system matrix, we can
+characterize the artifacts that appear in the reconstruction compared
+to a numerically-exact inverse crime reconstruction.
+
+As one of our primary objectives in using these novel trajectories is
+to create an extended axial FOV image, we need to study how these
+geometric errors degrade the image quality along the axial
+direction. To ensure our simulation can adequately identify these
+artifacts, we will create a simulated phantom such as an axially
+extended version of the Catphan high resolution module. This will
+provide resolution metrics not only in the axial dimension, but also
+in the transverse planes as a function of axial position.
+
+The simulation catalog of different artifacts that arise from
+geometric offsets will provide a guide to visually identify potential
+geometric errors based on the reconstructed image. This provide one
+way in which we can verify the effectiveness of our geometric
+calibration procedure. By incorporating the calibration information we
+obtain with the calibration, known geometric error artifacts should be
+reduced.
+
+*** ideas                                    :noexport:
+Given that part of the robust nature of optimization-based algorithms
+is the ability to handle the poorly-conditioned nature of the inverse
+problem...
+
+** Results
+   :PROPERTIES:
+   :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
+   :END:
+
+** Conclusion
+   :PROPERTIES:
+   :ID:       80e42b2c-5d4b-4646-91df-753802591344
+   :END:
 * Axial field-of-view extension
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
@@ -302,9 +545,6 @@ the patient.
    :ID:       b42e5e65-dfda-4692-8ea6-f6d96bc1dd5b
    :END:
 *** Simulation
-    :PROPERTIES:
-    :ID:       6888683a-4d00-4cb2-be7e-8ac554af7595
-    :END:
     Clinical extended-axial-FOV images are obtained by stitching
     together two circular scans at different axial locations. We first
     wanted to find the maximum axial coverage that can be achieved with
@@ -387,47 +627,142 @@ the patient.
     quantitative assessment of the image similarity between the reference
     image and the images from different trajectories.
 
+*** Old FOV Paper Simulation
+   :PROPERTIES:
+   :ID:       6888683a-4d00-4cb2-be7e-8ac554af7595
+   :END:
+Since extended axial images in the clinic are obtained with two
+circular scans at different axial locations, we wanted to find the
+maximum axial coverage allowed by this dual-circle trajectory. That
+is, what would be the maximum axial spacing between the two planes of
+the source's trajectory for which a useful extended volume image could
+be reconstructed? Using simulated forward projections from this
+trajectory, we compared the images obtained from stacking the
+independent FDK images to those obtained by reconstructing the two
+circles as a single trajectory with MLEM. We also compared stacked FDK
+images to reconstructions from the simulated CLC and smooth
+trajectories.
+
+**** Phantom
+    :PROPERTIES:
+    :ID:       bd73b61b-002b-481a-8b3a-712f1f2f1743
+    :END:
+The simulated phantom was a Defrise-style phantom modeled with the 3D
+X-ray projection software TAKE cite:seger_matlab/c_2005. The phantom
+was composed of a 15.2 cm outer diameter acrylic cylinder with
+alternating density disks of Delrin and cork 0.5 mm thick. This
+particular phantom with alternating density disks is acknowledged by
+the authors of FDK as being particularly susceptible to cone-angle
+artifacts cite:feldkamp_practical_1984.
+
+**** Forward projection
+    :PROPERTIES:
+    :ID:       17f947de-c9f5-4313-ad70-3b77ff7ca929
+    :END:
+- [ ] Verify that the new version with the tested polychromatic
+  behavior produces sinograms that are comparable to the ones we used
+  in the initial study.
+
+The forward projections of the phantom were acquired from the TAKE
+software. The projector generates a forward projection from a
+specified trajectory given a mathematical definition of the phantom as
+well as its material properties and the spectrum generated by the
+x-ray source. A digitized truth of the phantom was rendered by the
+software to match the image space of the reconstruction for
+calculating comparison metrics.
+
+**** Trajectories
+    :PROPERTIES:
+    :ID:       5d84bea3-21b6-4311-a7de-ee73a956a152
+    :END:
+Given the 1.5 magnification factor and the 30 cm detector size along
+the axial direction, a single circular scan has a maximum axial
+coverage of 20 cm in the image space. Furthermore, the maximum spacing
+between the two circles is 20 cm as any separation larger than this
+means the independent image volumes from the two circles are no longer
+contiguous. We therefore created trajectories with 10, 12, 14, 16, 18,
+and 20 cm separations *only show the larger gaps that are of
+interest?* between the planes of the source's dual-circle trajectory.
+
+We created projection data for a set of dual-circle trajectories that
+had an increasing amount of axial separation between the two
+circles. We uniformly distributed 600 views over the entire trajectory
+which is comparable to the total number of views used in a single
+clinical CBCT scan with the kV imaging system. For the other two
+trajectories with a component of projection views taken during the
+axial translation (CLC and smooth), 600 views were used with 20% of
+the views being distributed along the axial translation stage.
+
+***** TAKE check
+:PROPERTIES:
+:ID:       2bacd921-aa76-4225-9992-4b8f5b1f3198
+:END:
+- [ ] Verify new projection data matches old sinograms.
+- [ ] Verify the number of views that compose the trajectory.
+- [ ] If all of the projection information matches, use the
+  reconstructions I presented in my proposal.
+
+**** Reconstruction
+    :PROPERTIES:
+    :ID:       1c0fa74f-e955-492e-a1d4-bfb81cd21cbf
+    :END:
+The reconstruction image space consisted of a $256\times256$ transverse
+grid of 1 mm isotropic voxels. As the spacing between the circles
+increased, the number of voxels in the axial direction also increased
+to accommodate the increasingly large FOV.
+
+For the extended-volume reconstruction using the stacked FDK, we
+independently reconstructed each circular scan with FDK using a
+standard Hann filter. To combine the two reconstructed volumes for an
+extended axial-coverage image at a given spacing, we used the midplane
+between the two planes of the source's circular trajectory to select
+how much of each reconstruction to put in the combined image.
+
+For the MLEM reconstructions, we used all of the projection data
+simultaneously to reconstruct the extended volume. After defining the
+extended image volume, we computed the system matrix for each of the
+different spacings and trajectories based on the trajectory of the
+source and detector. We used 100 iterations *justify choice* of the
+MLEM algorithm to find an estimate for the image.
+
+**** Evaluation
+:PROPERTIES:
+:ID:       7b8e3df7-2509-4e65-8e5a-9b5a468322d8
+:END:
+Our initial evaluation of the images obtained from non-circular
+trajectories is simply a qualitative visual inspection which does
+provide an informative assessment of the variety of artifacts that
+occur for a given reconstruction. For a more rigorous evaluation of
+the images obtained from different trajectories, we will use mutual
+information (MI) cite:pluim_mutual-information-based_2003 and the
+universal quality index (UQI) cite:wang_universal_2002 to provide a
+quantitative assessment of the image similarity between the reference
+image and the images from different trajectories.
+
 ** Results
    :PROPERTIES:
    :ID:       b2a353e8-8531-4a0e-8337-9f702ecf02f8
    :END:
 
+*** Simulation
+:PROPERTIES:
+:ID:       ff434d74-757c-47b8-bd98-9250d2751ff2
+:END:
+
+
+The initial simulation results demonstrated promising advantages to
+using the optimization-based reconstruction to produce extended-axial
+coverage images.
+
+- [ ] insert comparison table of FDK
+- [ ] show plot of RMSE in the overlap region
+
+From the results shown in Figure (\ref{fig:})
+
 ** Conclusion
    :PROPERTIES:
    :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
    :END:
-
-* Geometric calibration
-  :PROPERTIES:
-  :ID:       652970b8-4916-4190-b83b-2d6ae117c8b3
-  :END:
-** notes                                     :noexport:
-   :PROPERTIES:
-   :ID:       5c9cdd8b-721f-49b3-b136-c3282bf3659c
-   :END:
-- General approach seems to be to make the chapters presentations of
-  different studies (papers/proceedings) and the subsequent results
-  and conclusions that can be made.
-** Introduction
-   :PROPERTIES:
-   :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
-   :END:
-
-** Methods
-   :PROPERTIES:
-   :ID:       0b636fe5-fe45-4f10-a5fc-2de8a82bfbe4
-   :END:
-
-** Results
-   :PROPERTIES:
-   :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
-   :END:
-
-** Conclusion
-   :PROPERTIES:
-   :ID:       80e42b2c-5d4b-4646-91df-753802591344
-   :END:
-
 * Patient-specific trajectories
   :PROPERTIES:
   :ID:       99055e18-4b61-404e-9408-ebd5fd0a5d8d
