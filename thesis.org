@@ -261,18 +261,21 @@ the patient.
    :PROPERTIES:
    :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
    :END:
-When performing tomographic image reconstruction it is critical that
-the geometry of the scanning configuration is properly modeled.
-This is true regardless of whether reconstruction is done with
-analytic-based or optimization-based methods. If there is uncertainty
-in where the projections come from, this will introduce
-inconsistencies that will manifest as artifacts in the reconstruction.
+Correctly modeling the geometric parameters of the image acquisition
+is of paramount importance in tomographic image reconstruction. This
+is true regardless of whether reconstruction is done with
+analytic-based or optimization-based methods. Any inconsistency
+between the real projection geometry and that used for image
+reconstruction will appear as artifacts in the reconstructed image.
 
-With the additional complexity introduced with more exotic scanning
-configurations, geometric calibration is of paramount importance in
-obtaining a useful reconstruction. This is especially true when
-working with trajectories where the object is moving in addition to
-the source and detector during the scan.
+While investigating different non-standard scanning trajectories, we
+found that correct geometric calibration must be performed to avoid
+geometric imaging artifacts. As with the optimization-based image
+reconstruction, we needed a calibration procedure that would provide a
+robust calibration protocol for the different scanning configurations
+we wanted to scan. This is especially true when working with
+trajectories where the object is moving in addition to the source and
+detector during the scan.
 
 Previous work on geometric calibration for tomographic image
 reconstruction has approached the calibration problem via analytic
@@ -412,6 +415,14 @@ phantom. As the geometry information reported by the TrueBeam system
 is in this coordinate system, it is necessary to ensure that the
 specified offsets are pertinent to calculating the system matrix.
 
+For a new trajectory, this phantom is first scanned to identify any
+geometric offsets that are incorrectly reported in the TrueBeam data
+headers. Though we found the self-reported position accuracy to be
+very good, there were still some scanning configurations for which we
+found geometric calibration to be critical. This was particularly true
+for scanning trajectories where the object and the kV imaging system
+were moving simultaneously.
+
 Using the nominal scanning geometry, the simulated phantom fiducials
 are then forward projected onto the detector. These projected spots
 are then matched to the detector spots in the sinogram. The $L_2$-norm
@@ -420,63 +431,19 @@ the cost function. The parameters corresponding to the geometric
 degrees of freedom (DOF) are then allowed to iteratively vary by using
 the Nelder-Mead simplex algorithm cite:lagarias_convergence_1998 to
 search for the geometric offsets that minimize the $L_2$-norm cost
-function.
+function. Once the cost has been minimized, the geometric offsets are
+used as the calibration information for calculating the system matrix
+$(\mathcal{H})$ for the image reconstruction.
 
-*discuss coupling and how DOF order is choosen*
-
-As with the other imaging calibration approaches, the crux of the task
-is correctly determining the correct parameters for the projective
-geometry. For each view, this entails correctly calculating the
-projection matrix for that view. Within the 3D patient space, the
-arrangement between the source, the detector, and the image origin
-must first be correctly determined.
-
-As the goal of our calibration method is to refine the view-by-biew
-geometry of our forward projection model, we first start with an
-initial guess of teh system geometry from the self-reported header
-information from the TrueBeam system.
-
-With these methods the projections of a to the modeled forward
-projection of those fiducials with the nominal geometry
-
-We implemented a calibration method
-
-we developed for determining the geometric offsets related to these
-non-circular scanning trajectories utilizes the parameter estimation cite:hartley_multiple_2003
-
-To utilize the calibration method, the trajectory of interest is first
-used to scan the phantom with the CBCT imaging system. Both the
-projection data as well as the nominal acquisition geometry from the
-projection headers are then used as input to the calibration.
-
-this allows for easy spot
-detection using a circular Hough transform cite:peng_detect_2007. By
-comparing the distance of the centroids of the detected spots to those
-of a model of the spiral pattern projected onto the detector from the
-assumed trajectory geometry, a Nelder-Mead minimization can be used to
-find the view parameters that minimize this cost.
-
-For a new trajectory, this phantom can be scanned first to identify
-any geometric offsets that are incorrectly reported in the TrueBeam
-data headers. Though the self-reported position accuracy has been
-found to be very good, we still need a way to verify the data header
-information that we use to create the system matrix for new
-scanning trajectories. This phantom provides a means of verifying this
-for any of the scans implemented on the OBI.
-
-The fiducials are subsequently forward projected using the same system
-geometry with each projection view being determined from the nominal
-geometry.
-
-The projected spots in the data are found and compared to the
-simulated forward projection of the modeled geometry.
-
-Optimization is then used to minimize the L2-norm between the centroid
-of the detected spot and that of the modeled projection by allowing
-parameters of the system geometry to vary. Once the cost has been
-minimized, the geometric offsets are used as the calibration
-information for calculating the system matrix $(\mathcal{H})$ for the
-image reconstruction.
+Given that there are some motions that effectively introduce the same
+change of the object relative to the source and detector within the
+image coordinate system, there are some degrees of freedom that can
+couple with others. For instance, shifting the patient in the positive
+longitudinal direction if effectively the same as allowing the source
+and detector to move the same distance in the negative longitudinal
+direction. This requires that only a few parameters are allowed to
+vary at once as allowing too many parameters on this non-convex
+surface will often produce meaningless geometric corrections.
 
 *** Image entropy                            :noexport:
     :PROPERTIES:
