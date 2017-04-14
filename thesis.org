@@ -11,14 +11,14 @@
 #+EXCLUDE_TAGS: noexport
 #+LATEX_CLASS:thesis
 
-#+BEGIN_LaTeX
+#+BEGIN_EXPORT latex
 %% Use these commands to set biographic information for the title page:
 \title{Enabling Novel IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
 \author{Andrew Davis}
 \department{Committee on Medical Physics}
 \division{Biological Sciences}
 \degree{Ph. D.}
-\date{June, 2017}
+\date{August, 2017}
 
 %% Use these commands to set a dedication and epigraph text
 \dedication{Dedication Text}
@@ -46,7 +46,7 @@
 
 \mainmatter
 % Main body of text follows
-#+END_LaTeX
+#+END_EXPORT
 
 * notes                                      :noexport:
   :PROPERTIES:
@@ -114,12 +114,12 @@ that are amplified in the filtration process.
     :END:
 Analytic-based reconstruction algorithms are formulated by explicitly
 finding an inverse to the X-ray transform
-#+BEGIN_LaTeX
+#+BEGIN_EXPORT latex
   \begin{equation}
     \label{eq:xray}
     g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
   \end{equation}
-#+END_LaTeX
+#+END_EXPORT
 where the data function $g$ is acquired by integrating along the ray
 from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
 the object function $f$. A fundamental problem with these
@@ -137,12 +137,12 @@ Iterative reconstruction algorithms are more robust because they do
 implement a more accurate DD model of the imaging system. The X-ray
 transform of the object function can be represented as the linear
 system
-#+BEGIN_LaTeX
+#+BEGIN_EXPORT latex
   \begin{equation}
     \label{eq:ddsys}
     \mathbf{g}=\mathcal{H}\mathbf{f},
   \end{equation}
-#+END_LaTeX
+#+END_EXPORT
 where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
 detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
 transform, and $\mathbf{f}$ is the object function represented on a N
@@ -215,18 +215,8 @@ with sufficient angular coverage, the patient must be moved to a
 position where the gantry can make an uninterrupted rotation around
 the patient.
 * Optimization-based algorithms
-  - State "CANCELLED"  from ""           [2017-02-06 Mon 10:30] \\
-    As I do not think there is sufficient time to do the typical parameter
-    sweep approach we now use to address this framework, I am going to
-    distribute this into the other chapters as way to illustrate some of
-    the different optimization methods being used within the context of
-    solving the problem I am setting out to address.
   :PROPERTIES:
   :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
-  :ARCHIVE_TIME: 2017-02-06 Mon 10:34
-  :ARCHIVE_FILE: ~/Seafile/medical_physics/thesis/thesis/thesis.org
-  :ARCHIVE_CATEGORY: thesis
-  :ARCHIVE_TODO: CANCELLED
   :END:
 ** notes                                     :noexport:
    :PROPERTIES:
@@ -272,8 +262,8 @@ the patient.
    :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
    :END:
 When performing tomographic image reconstruction it is critical that
-the geometry of the scanning configuration is properly understood.
-This is true regardless of whether the reconstruction is done with
+the geometry of the scanning configuration is properly modeled.
+This is true regardless of whether reconstruction is done with
 analytic-based or optimization-based methods. If there is uncertainty
 in where the projections come from, this will introduce
 inconsistencies that will manifest as artifacts in the reconstruction.
@@ -284,15 +274,46 @@ obtaining a useful reconstruction. This is especially true when
 working with trajectories where the object is moving in addition to
 the source and detector during the scan.
 
-The importance of accurate geometric has been extensively studied with
-a variety of methods proposed for accurate geometric calibration
-cite:rougee_geometrical_1993,mitschke_optimal_2000,silver_determination_2000,noo_analytic_2000,smekal_geometric_2004,cho_accurate_2005,yang_geometric_2006,panetta_optimization-based_2008,daly_geometric_2008,li_generic_2010,grimmer_empirical_2011,wicklein_image_2012.
-Using the concepts discussed by
-cite:rougee_geometrical_1993-1,silver_determination_2000, we developed
-a calibration method that utilizes a phantom with known placement of
-highly attenuating fiducials. By scanning this phantom and comparing
-the the projections to the modeled forward-projection of a
-mathematical model of the phantom, we can more accurately determine
+Previous work on geometric calibration for tomographic image
+reconstruction has approached the calibration problem via analytic
+cite:noo_analytic_2000,smekal_geometric_2004,cho_accurate_2005,yang_geometric_2006,daly_geometric_2008
+and estimation
+cite:gullberg_estimation_1990,rougee_geometrical_1993,mitschke_optimal_2000,silver_determination_2000,panetta_optimization-based_2008
+frameworks. As with CT, the initial calibration efforts utilized
+optimization-based methods to determine the geometric offsets from
+projections of a known phantom geometry and nominal system setup. By
+framing the calibration as an optimization problem, the acquisition
+parameters were estimated in a way that minimized a cost function
+associated with improper modeling of the acquisition geometry.
+
+These calibration methods (analytic-based methods included) usually
+rely on a known calibration phantom. This is typically a set of highly
+attenuating fiducials arranged in a specific pattern. After scanning
+the phantom with the system of interest, the detected fiducials are
+then compared to the known geometry of the phantom. In the
+analytic-based approach, the offsets are determined by solving for
+parameters that would distort the projection of the phantom. In the
+optimization-based approach, geometric parameters are varied to
+improve the match between the projection of the modeled fiducials an
+the detected fiducials in the sinogram.
+
+Both methods of performing geometric calibration have their own
+strengths and weaknesses. The biggest advantage of utilizing
+analytic-based calibration methods is that the sensitivity to
+initialization and the sensitivity to the order of parameter variation
+due to nonlinearity and coupling of parameters faced by estimation are
+avoided cite:smekal_geometric_2004. However, as with
+optimization-based reconstruction, optimization-based calibration
+methods are more flexible in providing calibration offsets for the
+novel trajectories that we studied.
+
+Using the concepts previously developed optimization-based geometric
+calibration
+cite:rougee_geometrical_1993,gullberg_estimation_1990,silver_determination_2000,
+we developed a calibration method that utilizes a phantom with known
+placement of highly attenuating fiducials. By scanning this phantom
+and comparing the the projections to the modeled forward-projection of
+a mathematical model of the phantom, we can more accurately determine
 the system matrix $(\mathcal{H})$ in Equation ([[ref:eq:ddsys]]) for
 reconstructing from a non-circular scanning trajectory with
 optimization-based methods.
@@ -368,6 +389,61 @@ than that of our original phantom.
     :PROPERTIES:
     :ID:       F53F4B5A-83EB-4B16-9B6D-F557D3E441C2
     :END:
+We designed a calibration work flow specifically for calibrating the
+non-standard scanning trajectories we implemented on the TrueBeam
+system with Developer Mode. As such, the nominal trajectory used to
+initialize our calibration method was with the view-by-view geometry
+information provided by the system for each projection. As this was
+the uncalibrated initial guess with which we calculated our
+reconstruction system matrix $\mathcal{H}$, the output of the
+calibration subsequently improved the system matrix we used for image
+reconstruction.
+
+As with other calibration procedures, our task was to allow the
+degrees of freedom in our scanning geometry to find the offsets that
+improve the match between the scan of our calibration phantom with a
+trajectory of interest, and the simulated projection of our phantom
+model with that geometry. Assuming the accuracy of the modeled phantom
+fiducials (an assumption that motivated our switch to the higher
+tolerances of Varian's Isocal phantom), the phantom is first allowed
+to vary in the room coordinate system to account for potential setup
+errors between the room coordinates and the modeled position of the
+phantom. As the geometry information reported by the TrueBeam system
+is in this coordinate system, it is necessary to ensure that the
+specified offsets are pertinent to calculating the system matrix.
+
+Using the nominal scanning geometry, the simulated phantom fiducials
+are then forward projected onto the detector. These projected spots
+are then matched to the detector spots in the sinogram. The $L_2$-norm
+between the real and simulated projected spots is then calculated as
+the cost function. The parameters corresponding to the geometric
+degrees of freedom (DOF) are then allowed to iteratively vary by using
+the Nelder-Mead simplex algorithm cite:lagarias_convergence_1998 to
+search for the geometric offsets that minimize the $L_2$-norm cost
+function.
+
+*discuss coupling and how DOF order is choosen*
+
+As with the other imaging calibration approaches, the crux of the task
+is correctly determining the correct parameters for the projective
+geometry. For each view, this entails correctly calculating the
+projection matrix for that view. Within the 3D patient space, the
+arrangement between the source, the detector, and the image origin
+must first be correctly determined.
+
+As the goal of our calibration method is to refine the view-by-biew
+geometry of our forward projection model, we first start with an
+initial guess of teh system geometry from the self-reported header
+information from the TrueBeam system.
+
+With these methods the projections of a to the modeled forward
+projection of those fiducials with the nominal geometry
+
+We implemented a calibration method
+
+we developed for determining the geometric offsets related to these
+non-circular scanning trajectories utilizes the parameter estimation cite:hartley_multiple_2003
+
 To utilize the calibration method, the trajectory of interest is first
 used to scan the phantom with the CBCT imaging system. Both the
 projection data as well as the nominal acquisition geometry from the
@@ -403,25 +479,28 @@ information for calculating the system matrix $(\mathcal{H})$ for the
 image reconstruction.
 
 *** Image entropy                            :noexport:
+    :PROPERTIES:
+    :ID:       2410E321-8750-473F-B6B6-13DC1719B6AE
+    :END:
 To further verify the effectiveness of the calibration procedure, we
 will also need to use additional metrics to quantitatively
 characterize the impact of using the calibration on image quality. The
 work of Wicklein et al. has suggested that the best metric for
 measuring the impact of geometric error on image quality is entropy
 $(E)$ of the image's gray-level histogram $(H)$. This is defined as
-#+BEGIN_LaTeX
-  \begin{equation}
-  \label{eq:entropy}
-  E=-\sum_{q=0}^Q h(q)\cdot\text{log}(h(q))
-  \end{equation}
-#+END_LaTeX
+#+BEGIN_EXPORT latex
+\begin{equation}
+\label{eq:entropy}
+E=-\sum_{q=0}^Q h(q)\cdot\text{log}(h(q))
+\end{equation}
+#+END_EXPORT
 where $Q$ is the maximum intensity value and
-#+BEGIN_LaTeX
-  \begin{equation}
-  \label{eq:norm_hist}
-  h(q)=\frac{H(q)}{N}
-  \end{equation}
-#+END_LaTeX
+#+BEGIN_EXPORT latex
+\begin{equation}
+\label{eq:norm_hist}
+h(q)=\frac{H(q)}{N}
+\end{equation}
+#+END_EXPORT
 is the normalized histogram cite:wicklein_image_2012. For this metric,
 minimum entropy is obtained for an image with a single intensity value
 while an image with uniform distribution over all intensity values
@@ -843,12 +922,12 @@ potential means of enabling reconstruction from patient-specific
 collision avoiding trajectories
 cite:bian_optimization-based_2013,han_optimization-based_2012. The
 imaging model is formulated as the linear transform
-#+BEGIN_LaTeX
+#+BEGIN_EXPORT latex
 \begin{equation}
   \label{eq:linmodel}
   \mathbf{g}=\mathcal{H}\mathbf{f},
 \end{equation}
-#+END_LaTeX
+#+END_EXPORT
 where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
 detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
 transform, and $\mathbf{f}$ is the object function represented on a N
@@ -891,15 +970,15 @@ that collisions as shown in Figure ([[ref:fig:barbie_collision]]) are
 avoided; at this point in the trajectory, the couch would have moved
 far enough to the left to avoid the collision.
 
-#+BEGIN_LaTeX
+#+BEGIN_EXPORT latex
 \begin{figure*}[htb]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/collisions/gantry_6angles_a.jpg}
-\caption{
-Patient, kV and MV beams and kV detector at several angles during a virtual isocenter rotation.  Room coordinate system (dotted axes) has its origin at mechanical isocenter, also the intersection of the MV (red) and kV (green) beam axes.  As the gantry rotates, the patient (filled contour) is continually shifted to maintain a specified distance along the MV beam direction between the mechanical isocenter and the chosen virtual isocenter (circle symbol within the patient).  The path of the virtual isocenter is a circle about the mechanical isocenter, with radius equal to the chosen shift (12 cm from the isocenter in this example).  Detector may or may not be shifted as shown, depending on virtual isocenter position and patient geometry.
-\label{fig:virtual_iso}}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/collisions/gantry_6angles_a.jpg}
+  \caption{
+    Patient, kV and MV beams and kV detector at several angles during a virtual isocenter rotation.  Room coordinate system (dotted axes) has its origin at mechanical isocenter, also the intersection of the MV (red) and kV (green) beam axes.  As the gantry rotates, the patient (filled contour) is continually shifted to maintain a specified distance along the MV beam direction between the mechanical isocenter and the chosen virtual isocenter (circle symbol within the patient).  The path of the virtual isocenter is a circle about the mechanical isocenter, with radius equal to the chosen shift (12 cm from the isocenter in this example).  Detector may or may not be shifted as shown, depending on virtual isocenter position and patient geometry.
+    \label{fig:virtual_iso}}
 \end{figure*}
-#+END_LaTeX
+#+END_EXPORT
 
 Another trajectory that could avoid a patient collision with the kV
 detector would be one during which either the patient of the detector
