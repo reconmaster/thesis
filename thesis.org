@@ -11,6 +11,10 @@
 #+EXCLUDE_TAGS: noexport
 #+LATEX_CLASS:thesis
 
+# for tikz figures
+# +LATEX_HEADER: \usepackage{tikz}
+# +LATEX_HEADER: \usetikzlibrary{positioning}
+
 #+BEGIN_EXPORT latex
 %% Use these commands to set biographic information for the title page:
 \title{Enabling Novel IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
@@ -64,6 +68,46 @@
   :PROPERTIES:
   :ID:       852796c3-9a3b-49da-bc08-1299e93e0768
   :END:
+*RE-WRITE INTRODUCTION?*
+
+Derived from the Ancient Greek words τόμος or /tomos/ meaning "slice"
+and γράφω or /grapho/ meaning "to write", tomography is the technique
+of using penetrating wave to create an image of a slice in an object
+while either blurring or obscuring details from other planes in the
+object. The ability to peer inside an object and create a map of its
+contents is a powerful tool that is routinely used in myriad
+applications. Today, tomographic methods can be found being deployed
+in locations ranging from border-control checkpoints to local medical
+clinics.
+
+As the non-invasive nature of tomographic imaging had obvious benefits
+for the field of medicine, a lot of significant advances in
+tomographic technology were driven by clinical research. One such form
+of tomographic imaging is computed tomography (CT) which uses
+projection images acquired from different locations around the object
+to compute the distribution of material densities inside the object.
+Though the mathematical framework for solving this inverse problem had
+been formulated by Johann Radon in 1917 and a patent for what is
+essentially CT was filled in 1940 by Gabriel Frank, it was not until
+1967 that the work of Allan M. Cormack and Godfrey N. Hounsfield led
+to the first clinical CT scanner. For their work, Cormack and
+Housfield shared the 1979 Nobel Prize in Physiology and Medicine
+cite:hsieh_computed_2009.
+
+*MAYBE SCHEMATIC OR DIAGRAM*
+
+In a CT scanner system, an x-ray source and opposing detector
+typically rotate relative to the object being imaged as x-ray
+projection images are acquired at different angular positions. Through
+the years of CT research, a fundamental questions has always been how
+to move the source and detector the imaging system relative to the
+object to obtain sufficient projection information to reconstruction a
+useful tomographic image. Part of this answer must take into account
+certain engineering limitations that go into building such a system.
+However, this is fundamentally a question that must address the
+requirements of the computational reconstruction algorithm used to
+assemble the image from the x-ray projections.
+
 ** Background: Computed Tomography
    :PROPERTIES:
    :ID:       898c8a79-a3b0-4cb2-b1be-2838c8b86426
@@ -342,7 +386,6 @@ information that is provided with the current clinical system. Any
 additional calibration information we could extract in addition to
 this would then be the result of imaging with scanning configurations
 that are not currently in clinical use.
-
 *** Phantoms
     :PROPERTIES:
     :ID:       F5BECB45-8652-47A3-915C-1E96DA6110E7
@@ -391,23 +434,23 @@ than that of our original phantom.
     :PROPERTIES:
     :ID:       F53F4B5A-83EB-4B16-9B6D-F557D3E441C2
     :END:
-We designed a calibration work flow specifically for calibrating the
-non-standard scanning trajectories we implemented on the TrueBeam
-system with Developer Mode. As such, the nominal trajectory used to
-initialize our calibration method was with the view-by-view geometry
-information provided by the system for each projection. As this was
-the uncalibrated initial guess with which we calculated our
-reconstruction system matrix $\mathcal{H}$, the output of the
-calibration subsequently improved the system matrix we used for image
+We designed a calibration procedure specifically for the non-standard
+scanning trajectories we implemented on the TrueBeam system with
+Developer Mode. As such, the nominal trajectory used to initialize our
+calibration method was with the view-by-view geometry information
+provided by the system for each projection. As this was the
+uncalibrated initial guess with which we calculated our reconstruction
+system matrix $\mathcal{H}$, the output of the calibration
+subsequently improved the system matrix we used for image
 reconstruction.
 
-As with other calibration procedures, our task was to allow the
-degrees of freedom in our scanning geometry to find the offsets that
-improve the match between the scan (observed projections) of our
-calibration phantom with a trajectory of interest, and the simulated
-projection of our phantom model with that geometry. Assuming the
-accuracy of the modeled phantom fiducials (an assumption that
-motivated our switch to the tighter tolerances of Varian's Isocal
+As with other calibration procedures, we allowed incremental variation
+in the different geometric parameters of our scanning trajectory to
+find the offsets that improve the match between the scan (observed
+projections) of our calibration phantom with a trajectory of interest,
+and the simulated projection of our phantom model with that geometry.
+Assuming the accuracy of the modeled phantom fiducials (an assumption
+that motivated our switch to the tighter tolerances of Varian's Isocal
 phantom), the phantom pose (position and orientation) is first allowed
 to vary in the room coordinate system to account for potential setup
 errors between the room coordinates and the modeled position of the
@@ -417,23 +460,33 @@ specified offsets are pertinent to calculating the system matrix.
 
 For a new trajectory, this phantom is first scanned to identify any
 geometric offsets that are incorrectly reported in the TrueBeam data
-headers. Though we found the self-reported position accuracy to be
-very good, there were still some scanning configurations for which we
-found geometric calibration to be critical. This was particularly true
-for scanning trajectories where the object and the kV imaging system
-were moving simultaneously.
+headers. Though we found the self-reported position accuracy from the
+acquisition metadata to be very good, there were still some scanning
+configurations for which we found the additional refinement from our
+geometric calibration to be critical for obtaining a useful
+reconstruction. This was particularly true for scanning trajectories
+where the object and the kV imaging system were moving simultaneously.
 
-Using the nominal scanning geometry, the simulated phantom fiducials
-are then forward projected onto the detector. These projected spots
-are then matched to the detector spots in the sinogram. The $L_2$ norm
-between the real and simulated projected spots is then calculated as
-the cost function. The parameters corresponding to the geometric
-degrees of freedom (DOF) are then allowed to iteratively vary by using
-the Nelder-Mead simplex algorithm cite:lagarias_convergence_1998 to
-search for the geometric offsets that minimize the $L_{2}\text{-norm}$
-cost function. Once the cost has been minimized, the geometric offsets
-are used as the calibration information for calculating the system
-matrix $(\mathcal{H})$ for the image reconstruction.
+Starting with the nominal scanning geometry from the projection
+metadata, we first build an initial projection matrix
+$(X_{\text{projmat}})$ that transforms the simulated phantom fiducials in
+room coordinates to projected spots in detector coordinates.
+
+#+CAPTION: Schematic representation of the scanning geometry
+#+ATTR_LaTeX: :width 0.75\textwidth
+#+LABEL: fig:scan_geo
+[[file:figures/system_geometry.pdf]]
+
+These projected spots are then matched to the detector spots in the
+sinogram. The $L_2$ norm between the real and simulated projected spots
+is then calculated as the cost function. The parameters corresponding
+to the geometric degrees of freedom (DOF) are then allowed to
+iteratively vary by using the Nelder-Mead simplex algorithm
+cite:lagarias_convergence_1998 to search for the geometric offsets
+that minimize the $L_{2}\text{-norm}$ cost function. Once the cost has
+been minimized, the geometric offsets are used as the calibration
+information for calculating the system matrix $(\mathcal{H})$ for the
+image reconstruction.
 
 Given that there are there are different combinations of couch, source
 and detector motions that can cause the same change of the object
@@ -447,6 +500,9 @@ allowing too many parameters on this non-convex surface will often
 produce nonphysical geometric corrections.
 
 *** geocal procedure                         :noexport:
+    :PROPERTIES:
+    :ID:       DD6F1968-D9A8-46AB-AC2C-BF79512B530A
+    :END:
 The current version of the geocal procedure uses a single step
 projection matrix to transform positions in room coordinates to pixels
 on the detector. do you want to incude the equation for that? this is
@@ -495,6 +551,9 @@ xprojmat=magicmat*hmatrix_translate(uvpierce)* ...
          hmatrix_translate([usize/2+0.5, vsize/2+0.5, 0]);
 
 #+END_SRC
+*** Experimental Validation
+Once we had a calibration
+
 *** Image entropy                            :noexport:
     :PROPERTIES:
     :ID:       2410E321-8750-473F-B6B6-13DC1719B6AE
@@ -576,6 +635,118 @@ Given that part of the robust nature of optimization-based algorithms
 is the ability to handle the poorly-conditioned nature of the inverse
 problem...
 
+*** figures                                  :noexport:
+**** geometry
+     :PROPERTIES:
+     :ID:       ABFDF4A1-18BE-475C-8044-CFA1D0D63732
+     :END:
+#+BEGIN_SRC latex :packages '(("" "tikz")) :border 1em  :file figures/system_geometry.pdf :tangle no
+\usetikzlibrary{positioning}
+\begin{tikzpicture}[scale=.9,every node/.style={minimum size=1cm},on grid]
+
+  %slanting: production of a set of n 'laminae' to be piled up. N=number of grids.
+  \begin{scope}[
+      yshift=-83,every node/.append style={
+        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    ]
+    % opacity to prevent graphical interference
+    \fill[white,fill opacity=0.9] (0,0) rectangle (5,5);
+    \draw[step=4mm, black] (0,0) grid (5,5); %defining grids
+    \draw[step=1mm, red!50,thin] (3,1) grid (4,2);  %Nested Grid
+    \draw[black,very thick] (0,0) rectangle (5,5);%marking borders
+    \fill[red] (0.05,0.05) rectangle (0.35,0.35);
+    %Idem as above, for the n-th grid:
+  \end{scope}
+
+  \begin{scope}[
+      yshift=0,every node/.append style={
+        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    ]
+    \fill[white,fill opacity=.9] (0,0) rectangle (5,5);
+    \draw[black,very thick] (0,0) rectangle (5,5);
+    \draw[step=5mm, black] (0,0) grid (5,5);
+  \end{scope}
+
+  \begin{scope}[
+      yshift=90,every node/.append style={
+        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    ]
+    \fill[white,fill opacity=.9] (0,0) rectangle (5,5);
+    \draw[step=10mm, black] (1,1) grid (4,4);
+    \draw[black,very thick] (1,1) rectangle (4,4);
+    \draw[black,dashed] (0,0) rectangle (5,5);
+  \end{scope}
+
+  \begin{scope}[
+      yshift=170,every node/.append style={
+        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    ]
+    \fill[white,fill opacity=0.6] (0,0) rectangle (5,5);
+    \draw[step=10mm, black] (2,2) grid (5,5);
+    \draw[step=2mm, green] (2,2) grid (3,3);
+    \draw[black,very thick] (2,2) rectangle (5,5);
+    \draw[black,dashed] (0,0) rectangle (5,5);
+  \end{scope}
+
+  \begin{scope}[
+      yshift=-170,every node/.append style={
+        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
+    ]
+    %marking border
+    \draw[black,very thick] (0,0) rectangle (5,5);
+
+    %drawing corners (P1,P2, P3): only 3 points needed to define a plane.
+    \draw [fill=lime](0,0) circle (.1) ;
+    \draw [fill=lime](0,5) circle (.1);
+    \draw [fill=lime](5,0) circle (.1);
+    \draw [fill=lime](5,5) circle (.1);
+
+    %drawing bathymetric hypotetic countours on the bottom grid:
+    \draw [ultra thick](0,1) parabola bend (2,2) (5,1)  ;
+    \draw [dashed] (0,1.5) parabola bend (2.5,2.5) (5,1.5) ;
+    \draw [dashed] (0,2) parabola bend (2.7,2.7) (5,2)  ;
+    \draw [dashed] (0,2.5) parabola bend (3.5,3.5) (5,2.5)  ;
+    \draw [dashed] (0,3.5)  parabola bend (2.75,4.5) (5,3.5);
+    \draw [dashed] (0,4)  parabola bend (2.75,4.8) (5,4);
+    \draw [dashed] (0,3)  parabola bend (2.75,3.8) (5,3);
+    \draw[-latex,thick](2.8,1)node[right]{$\mathsf{Shoreline}$}
+    to[out=180,in=270] (2,1.99);
+  \end{scope} %end of drawing grids
+
+  %putting arrows and labels:
+  \draw[-latex,thick] (6.2,2) node[right]{$\mathsf{Bathymetry}$}
+  to[out=180,in=90] (4,2);
+
+  \draw[-latex,thick](5.8,-.3)node[right]{$\mathsf{Comp.\ G.}$}
+  to[out=180,in=90] (3.9,-1);
+
+  \draw[-latex,thick](5.9,5)node[right]{$\mathsf{Wind\ G.}$}
+  to[out=180,in=90] (3.6,5);
+
+  \draw[-latex,thick](5.9,8.4)node[right]{$\mathsf{Friction\ G.}$}
+  to[out=180,in=90] (3.2,8);
+
+  \draw[-latex,thick,red](5.3,-4.2)node[right]{$\mathsf{G. Cell}$}
+  to[out=180,in=90] (0,-2.5);
+
+  \draw[-latex,thick,red](4.3,-1.9)node[right]{$\mathsf{Nested\ G.}$}
+  to[out=180,in=90] (2,-.5);
+
+  \draw[-latex,thick](4,-6)node[right]{$\mathsf{Batymetry}$}
+  to[out=180,in=90] (2,-5);
+  %drawing points on grid's conrners.
+  \fill[black,font=\footnotesize]
+  (-5,-4.3) node [above] {$P_{1}$}
+  (-.3,-5.6) node [below] {$P_{2}$}
+  (5.5,-4) node [above] {$P_{3}$};
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_EXPORT latex
+[[file:figures/system_geometry.pdf]]
+#+END_EXPORT
+
 ** Results
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
@@ -585,6 +756,7 @@ problem...
    :PROPERTIES:
    :ID:       80e42b2c-5d4b-4646-91df-753802591344
    :END:
+**
 * Axial field-of-view extension
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
@@ -859,7 +1031,7 @@ From the results shown in Figure (\ref{fig:})
    :PROPERTIES:
    :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
    :END:
-* Patient-specific trajectories
+* Collision-avoiding trajectories
   :PROPERTIES:
   :ID:       99055e18-4b61-404e-9408-ebd5fd0a5d8d
   :END:
