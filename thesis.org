@@ -70,15 +70,15 @@
   :END:
 *RE-WRITE INTRODUCTION?*
 
-Derived from the Ancient Greek words τόμος or /tomos/ meaning "slice"
-and γράφω or /grapho/ meaning "to write", tomography is the technique
-of using penetrating wave to create an image of a slice in an object
-while either blurring or obscuring details from other planes in the
-object. The ability to peer inside an object and create a map of its
-contents is a powerful tool that is routinely used in myriad
-applications. Today, tomographic methods can be found being deployed
-in locations ranging from border-control checkpoints to local medical
-clinics.
+# Derived from the Ancient Greek words τόμος or /tomos/ meaning "slice"
+# and γράφω or /grapho/ meaning "to write", tomography is the technique
+# of using penetrating wave to create an image of a slice in an object
+# while either blurring or obscuring details from other planes in the
+# object. The ability to peer inside an object and create a map of its
+# contents is a powerful tool that is routinely used in myriad
+# applications. Today, tomographic methods can be found being deployed
+# in locations ranging from border-control checkpoints to local medical
+# clinics.
 
 As the non-invasive nature of tomographic imaging had obvious benefits
 for the field of medicine, a lot of significant advances in
@@ -270,12 +270,10 @@ the patient.
   different studies (papers/proceedings) and the subsequent results
   and conclusions that can be made.
 - Chuck said to use this as this is enabling the trajectory work
-*** distribute into the other chapters
 ** Introduction
    :PROPERTIES:
    :ID:       8736adf3-2606-43c1-ba5d-d3f92a74f9f8
    :END:
-
 ** Methods
    :PROPERTIES:
    :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
@@ -472,10 +470,70 @@ metadata, we first build an initial projection matrix
 $(X_{\text{projmat}})$ that transforms the simulated phantom fiducials in
 room coordinates to projected spots in detector coordinates.
 
+# #+CAPTION: Schematic representation of the scanning geometry
+# #+ATTR_LaTeX: :width 0.75\textwidth
+# #+LABEL: fig:scan_geo
+# [[file:figures/system_geometry.pdf]]
+
+#+LABEL: fig:scan_geo
+#+BEGIN_SRC asymptote :file figures/geo/system_geo.pdf :exports results
+settings.render = 0;
+import three;
+size(100);
+path3 g=(1,0,0)..(0,1,0)..(-1,0,0)..(0,-1,0)..cycle;
+draw(g);
+draw(O--Z,red+dashed,Arrow3);
+draw(((-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle));
+#+END_SRC
+
 #+CAPTION: Schematic representation of the scanning geometry
 #+ATTR_LaTeX: :width 0.75\textwidth
-#+LABEL: fig:scan_geo
-[[file:figures/system_geometry.pdf]]
+#+RESULTS: fig:scan_geo
+[[file:figures/geo/system_geo.pdf]]
+
+#+begin_src asymptote :file figures/asymptote.pdf :exports none
+settings.render = 0;
+import three;
+
+size(560,320,IgnoreAspect);
+size3(140,80,15);
+currentprojection=perspective(-2,20,10,up=Y);
+currentlight=White;
+
+real a=-0.4;
+real b=0.95;
+real y1=-5;
+real y2=-3y1/2;
+path A=(a,0){dir(10)}::{dir(89.5)}(0,y2);
+path B=(0,y1){dir(88.3)}::{dir(20)}(b,0);
+real c=0.5*a;
+pair z=(0,2.5);
+transform t=scale(1,15);
+transform T=inverse(scale(t.yy,t.xx));
+path[] g=shift(0,1.979)*scale(0.01)*t*
+  texpath(Label("{\it symptote}",z,0.25*E+0.169S,fontsize(24pt)));
+pair w=(0,1.7);
+pair u=intersectionpoint(A,w-1--w);
+
+real h=0.25*linewidth();
+real hy=(T*(h,h)).x;
+g.push(t*((a,hy)--(b,hy)..(b+hy,0)..(b,-hy)--(a,-hy)..(a-hy,0)..cycle));
+g.push(T*((h,y1)--(h,y2)..(0,y2+h)..(-h,y2)--(-h,y1)..(0,y1-h)..cycle));
+g.push(shift(0,w.y)*t*((u.x,hy)--(w.x,hy)..(w.x+hy,0)..(w.x,-hy)--(u.x,-hy)..(u.x-hy,0)..cycle));
+real f=0.75;
+g.push(point(A,0)--shift(-f*hy,f*h)*A--point(A,1)--shift(f*hy,-f*h)*reverse(A)--cycle);
+g.push(point(B,0)--shift(f*hy,-f*h)*B--point(B,1)--shift(-f*hy,f*h)*reverse(B)--cycle);
+
+triple H=-0.1Z;
+material m=material(lightgray,shininess=1.0);
+
+for(path p : g)
+  draw(extrude(p,H),m);
+
+surface s=surface(g);
+draw(s,red,nolight);
+draw(shift(H)*s,m);
+#+end_src
 
 These projected spots are then matched to the detector spots in the
 sinogram. The $L_2$ norm between the real and simulated projected spots
@@ -498,7 +556,6 @@ to move the same distance in the negative longitudinal direction. This
 requires that only a few parameters are allowed to vary at once as
 allowing too many parameters on this non-convex surface will often
 produce nonphysical geometric corrections.
-
 *** geocal procedure                         :noexport:
     :PROPERTIES:
     :ID:       DD6F1968-D9A8-46AB-AC2C-BF79512B530A
@@ -640,123 +697,15 @@ problem...
      :PROPERTIES:
      :ID:       ABFDF4A1-18BE-475C-8044-CFA1D0D63732
      :END:
-#+BEGIN_SRC latex :packages '(("" "tikz")) :border 1em  :file figures/system_geometry.pdf :tangle no
-\usetikzlibrary{positioning}
-\begin{tikzpicture}[scale=.9,every node/.style={minimum size=1cm},on grid]
-
-  %slanting: production of a set of n 'laminae' to be piled up. N=number of grids.
-  \begin{scope}[
-      yshift=-83,every node/.append style={
-        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
-    ]
-    % opacity to prevent graphical interference
-    \fill[white,fill opacity=0.9] (0,0) rectangle (5,5);
-    \draw[step=4mm, black] (0,0) grid (5,5); %defining grids
-    \draw[step=1mm, red!50,thin] (3,1) grid (4,2);  %Nested Grid
-    \draw[black,very thick] (0,0) rectangle (5,5);%marking borders
-    \fill[red] (0.05,0.05) rectangle (0.35,0.35);
-    %Idem as above, for the n-th grid:
-  \end{scope}
-
-  \begin{scope}[
-      yshift=0,every node/.append style={
-        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
-    ]
-    \fill[white,fill opacity=.9] (0,0) rectangle (5,5);
-    \draw[black,very thick] (0,0) rectangle (5,5);
-    \draw[step=5mm, black] (0,0) grid (5,5);
-  \end{scope}
-
-  \begin{scope}[
-      yshift=90,every node/.append style={
-        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
-    ]
-    \fill[white,fill opacity=.9] (0,0) rectangle (5,5);
-    \draw[step=10mm, black] (1,1) grid (4,4);
-    \draw[black,very thick] (1,1) rectangle (4,4);
-    \draw[black,dashed] (0,0) rectangle (5,5);
-  \end{scope}
-
-  \begin{scope}[
-      yshift=170,every node/.append style={
-        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
-    ]
-    \fill[white,fill opacity=0.6] (0,0) rectangle (5,5);
-    \draw[step=10mm, black] (2,2) grid (5,5);
-    \draw[step=2mm, green] (2,2) grid (3,3);
-    \draw[black,very thick] (2,2) rectangle (5,5);
-    \draw[black,dashed] (0,0) rectangle (5,5);
-  \end{scope}
-
-  \begin{scope}[
-      yshift=-170,every node/.append style={
-        yslant=0.5,xslant=-1},yslant=0.5,xslant=-1
-    ]
-    %marking border
-    \draw[black,very thick] (0,0) rectangle (5,5);
-
-    %drawing corners (P1,P2, P3): only 3 points needed to define a plane.
-    \draw [fill=lime](0,0) circle (.1) ;
-    \draw [fill=lime](0,5) circle (.1);
-    \draw [fill=lime](5,0) circle (.1);
-    \draw [fill=lime](5,5) circle (.1);
-
-    %drawing bathymetric hypotetic countours on the bottom grid:
-    \draw [ultra thick](0,1) parabola bend (2,2) (5,1)  ;
-    \draw [dashed] (0,1.5) parabola bend (2.5,2.5) (5,1.5) ;
-    \draw [dashed] (0,2) parabola bend (2.7,2.7) (5,2)  ;
-    \draw [dashed] (0,2.5) parabola bend (3.5,3.5) (5,2.5)  ;
-    \draw [dashed] (0,3.5)  parabola bend (2.75,4.5) (5,3.5);
-    \draw [dashed] (0,4)  parabola bend (2.75,4.8) (5,4);
-    \draw [dashed] (0,3)  parabola bend (2.75,3.8) (5,3);
-    \draw[-latex,thick](2.8,1)node[right]{$\mathsf{Shoreline}$}
-    to[out=180,in=270] (2,1.99);
-  \end{scope} %end of drawing grids
-
-  %putting arrows and labels:
-  \draw[-latex,thick] (6.2,2) node[right]{$\mathsf{Bathymetry}$}
-  to[out=180,in=90] (4,2);
-
-  \draw[-latex,thick](5.8,-.3)node[right]{$\mathsf{Comp.\ G.}$}
-  to[out=180,in=90] (3.9,-1);
-
-  \draw[-latex,thick](5.9,5)node[right]{$\mathsf{Wind\ G.}$}
-  to[out=180,in=90] (3.6,5);
-
-  \draw[-latex,thick](5.9,8.4)node[right]{$\mathsf{Friction\ G.}$}
-  to[out=180,in=90] (3.2,8);
-
-  \draw[-latex,thick,red](5.3,-4.2)node[right]{$\mathsf{G. Cell}$}
-  to[out=180,in=90] (0,-2.5);
-
-  \draw[-latex,thick,red](4.3,-1.9)node[right]{$\mathsf{Nested\ G.}$}
-  to[out=180,in=90] (2,-.5);
-
-  \draw[-latex,thick](4,-6)node[right]{$\mathsf{Batymetry}$}
-  to[out=180,in=90] (2,-5);
-  %drawing points on grid's conrners.
-  \fill[black,font=\footnotesize]
-  (-5,-4.3) node [above] {$P_{1}$}
-  (-.3,-5.6) node [below] {$P_{2}$}
-  (5.5,-4) node [above] {$P_{3}$};
-\end{tikzpicture}
-#+END_SRC
-
-#+RESULTS:
-#+BEGIN_EXPORT latex
-[[file:figures/system_geometry.pdf]]
-#+END_EXPORT
-
+***** [[file:figures/geo/coords.asy][coords]]
 ** Results
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
    :END:
-
 ** Conclusion
    :PROPERTIES:
    :ID:       80e42b2c-5d4b-4646-91df-753802591344
    :END:
-**
 * Axial field-of-view extension
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
