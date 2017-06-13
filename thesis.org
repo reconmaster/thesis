@@ -5,15 +5,12 @@
 #+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
 #+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:nil e:t
 #+OPTIONS: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t
-#+OPTIONS: tags:t tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
+#+OPTIONS: tags:nil tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
 #+LANGUAGE: en
 #+SELECT_TAGS: export
 #+EXCLUDE_TAGS: noexport
 #+LATEX_CLASS:thesis
-
-# for tikz figures
-# +LATEX_HEADER: \usepackage{tikz}
-# +LATEX_HEADER: \usetikzlibrary{positioning}
+#+STARTUP: hideblocks
 
 #+BEGIN_EXPORT latex
 %% Use these commands to set biographic information for the title page:
@@ -56,15 +53,16 @@
   :PROPERTIES:
   :ID:       7f3d97de-795e-402a-82ac-591717f86bfd
   :END:
+- General approach seems to be to make the chapters presentations of
+  different studies (papers/proceedings) and the subsequent results
+  and conclusions that can be made.
 ** requirements
    :PROPERTIES:
    :ID:       931c9c50-bfaf-4c8e-b2cc-bcfdf62e327d
    :END:
-
 - [[http://www.lib.uchicago.edu/e/phd/][uchicago]] dissertation guide
 - [[https://github.com/zuwiki/ucetd-latex][uoc thesis]] template
-
-* Introduction
+* Introduction                               :intro:
   :PROPERTIES:
   :ID:       852796c3-9a3b-49da-bc08-1299e93e0768
   :END:
@@ -258,7 +256,7 @@ linac's trajectory. As the current FDK algorithm requires a trajectory
 with sufficient angular coverage, the patient must be moved to a
 position where the gantry can make an uninterrupted rotation around
 the patient.
-* Optimization-based algorithms
+* Optimization-based algorithms              :opt:
   :PROPERTIES:
   :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
   :END:
@@ -278,17 +276,136 @@ the patient.
    :PROPERTIES:
    :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
    :END:
+*** Detector weighting
+    :PROPERTIES:
+    :ID:       cc6bcac6-a445-4dfb-8815-a95e31f517ed
+    :END:
+#+LABEL: fig:opt_weighting
+#+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results
+settings.render = 0;
+import geometry;
+// size(8cm,0);
+// unitsize(1cm)
 
+// Affichage du repère par défaut (O,vec{i},vec_{j})
+// show(defaultcoordsys);
+// show(currentcoordsys);
+
+// detector
+real dlat=0, dlng=0, dvrt=50;
+point det=(dvrt,dlat);
+
+real ulen=40.0, vlen=30.0;
+
+draw((dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat),black);
+
+// source
+real slat=0, slng=0, svrt=-100;
+point src=(svrt,slat);
+
+draw(src--(dvrt, 0), dashed+red);
+draw(src--(dvrt, -ulen/2+dlat), dashed+black);
+draw(src--(dvrt, ulen/2+dlat), dashed+black);
+dot("Source", src, N, red);
+
+addMargins(0.5cm, 0.5cm);
+
+// dot("Detector",det,N,5bp+.5blue);
+// dot("Source",src,N,5bp+.5red);
+
+// dot("Source", src)
+
+// real a=5, b=4, theta=-70, poids=3;
+// ellipse el = ellipse(origin, a, b);
+// arc     ar = arc(el,(0,-b),(a,0),CCW);
+// path p = (0,-b-1)--ar--(a+1,0)--(a+1,-b-1)--cycle;
+// point pO = (0,0), pM=angpoint(ar,90+theta);
+// abscissa abscM = nodabscissa(el,pM);
+// real     timeM = abscM.x;
+// vector utangM = -dir(el,timeM),
+//        unormM = rotate(90)*utangM,
+//        vpoids=(0,-poids),
+//        vreactionN = -dot(vpoids,unormM)*unormM,
+//        vfrottement = -dot(vpoids,utangM)*utangM;
+
+// filldraw(p,lightgray,blue);
+// draw(pO--pM,dashed);
+// markangle("$\theta$",1.5cm,pM,origin,(1,0));
+
+// coordsys R=cartesiansystem(pM,i=utangM,j=unormM);
+// show("$M$", "$\vec{u_{\theta}}$", "$\vec{u_{r}}$", R, xpen=invisible);
+
+// point RpM=changecoordsys(R, pM);
+// show(Label("$\vec{f}$",EndPoint),RpM+vfrottement);
+// show(Label("$\vec{R}$",EndPoint),RpM+vreactionN);
+// show(Label("$\vec{P}$",EndPoint),RpM+vpoids);
+
+// // size3(140,80,15);
+// currentprojection=perspective(1,-1,1,up=Z);
+// currentlight=White;
+
+// // detector surface
+// // path3 g=(1,0,0)..(0,1,0)..(-1,0,0)..(0,-1,0)..cycle;
+// // draw(g);
+
+// draw(O--X,red+dashed,Arrow3);
+// draw(O--Y,red+dashed,Arrow3);
+// draw(O--Z,red+dashed,Arrow3);
+
+// // draw detector
+// draw(((-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle));
+
+// real a=-0.4;
+// real b=0.95;
+// real y1=-5;
+// real y2=-3y1/2;
+// path A=(a,0){dir(10)}::{dir(89.5)}(0,y2);
+// path B=(0,y1){dir(88.3)}::{dir(20)}(b,0);
+// real c=0.5*a;
+// pair z=(0,2.5);
+// transform t=scale(1,15);
+// transform T=inverse(scale(t.yy,t.xx));
+// path[] g=shift(0,1.979)*scale(0.01)*t*
+//   texpath(Label("{\it symptote}",z,0.25*E+0.169S,fontsize(24pt)));
+// pair w=(0,1.7);
+// pair u=intersectionpoint(A,w-1--w);
+
+// real h=0.25*linewidth();
+// real hy=(T*(h,h)).x;
+// g.push(t*((a,hy)--(b,hy)..(b+hy,0)..(b,-hy)--(a,-hy)..(a-hy,0)..cycle));
+// g.push(T*((h,y1)--(h,y2)..(0,y2+h)..(-h,y2)--(-h,y1)..(0,y1-h)..cycle));
+// g.push(shift(0,w.y)*t*((u.x,hy)--(w.x,hy)..(w.x+hy,0)..(w.x,-hy)--(u.x,-hy)..(u.x-hy,0)..cycle));
+// real f=0.75;
+// g.push(point(A,0)--shift(-f*hy,f*h)*A--point(A,1)--shift(f*hy,-f*h)*reverse(A)--cycle);
+// g.push(point(B,0)--shift(f*hy,-f*h)*B--point(B,1)--shift(-f*hy,f*h)*reverse(B)--cycle);
+
+// triple H=-0.1Z;
+// material m=material(lightgray,shininess=1.0);
+
+// for(path p : g)
+//   draw(extrude(p,H),m);
+
+// surface s=surface(g);
+// draw(s,red,nolight);
+// draw(shift(H)*s,m);
+#+END_SRC
+
+#+RESULTS: fig:opt_weighting
+[[file:figures/opt/weighting.pdf]]
+
+#+CAPTION: Schematic representation of the scanning geometry
+#+ATTR_LaTeX: :width 0.75\textwidth
+#+RESULTS: fig:scan_geo
+[[file:figures/geo/system_geo.pdf]]
 ** Results
    :PROPERTIES:
    :ID:       04615b7c-c67c-499c-b2f9-d236ff743ea4
    :END:
-
 ** Conclusion
    :PROPERTIES:
    :ID:       0b2ab8ae-fd94-4d01-a7e0-8bef4db30078
    :END:
-* Geometric calibration
+* Geometric calibration                      :geo:
   :PROPERTIES:
   :ID:       652970b8-4916-4190-b83b-2d6ae117c8b3
   :END:
@@ -296,9 +413,6 @@ the patient.
    :PROPERTIES:
    :ID:       5c9cdd8b-721f-49b3-b136-c3282bf3659c
    :END:
-- General approach seems to be to make the chapters presentations of
-  different studies (papers/proceedings) and the subsequent results
-  and conclusions that can be made.
 ** Introduction
    :PROPERTIES:
    :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
@@ -470,70 +584,126 @@ metadata, we first build an initial projection matrix
 $(X_{\text{projmat}})$ that transforms the simulated phantom fiducials in
 room coordinates to projected spots in detector coordinates.
 
-# #+CAPTION: Schematic representation of the scanning geometry
-# #+ATTR_LaTeX: :width 0.75\textwidth
-# #+LABEL: fig:scan_geo
-# [[file:figures/system_geometry.pdf]]
-
-#+LABEL: fig:scan_geo
-#+BEGIN_SRC asymptote :file figures/geo/system_geo.pdf :exports results
+#+LABEL: fig:geo_schematic
+#+BEGIN_SRC asymptote :file figures/geo/schematic.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+settings.prc = false;
 settings.render = 0;
+
+import graph3;
+import solids;
 import three;
-size(100);
-path3 g=(1,0,0)..(0,1,0)..(-1,0,0)..(0,-1,0)..cycle;
-draw(g);
-draw(O--Z,red+dashed,Arrow3);
-draw(((-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle));
+
+// view configuration
+size(10cm);
+// currentprojection=orthographic(-5,1,5,up=Y);
+currentprojection=perspective(-5,1,5,up=Y);
+// currentlight=White;
+
+// Draw axis
+// draw(Label("$y$",1),(0,0,0)--(0,5,0),red,Arrow3);
+// draw(Label("$x$",1),(0,0,0)--(5,0,0),red,Arrow3);
+// draw(Label("$z$",1),(0,0,0)--(0,0,5),red,Arrow3);
+
+// kV schematic
+real dlat=0, dlng=0, dvrt=50;
+triple det=(dvrt,dlat,dlng);
+real ulen=40.0, vlen=30.0;
+
+path3 detector=plane((0,ulen,0), (0,0,vlen), det-(0,ulen/2,vlen/2));
+
+transform3 rot090=rotate(90, Z);
+transform3 rot180=rotate(180, Z);
+transform3 rot270=rotate(270, Z);
+
+path3 det090 = rot090*detector;
+path3 det180 = rot180*detector;
+path3 det270 = rot270*detector;
+
+draw(detector, black);
+draw(det090, black);
+draw(det180, black);
+draw(det270, black);
+
+// labels
+//From Charles Staats's tutorial
+//Direction of a point toward the camera.
+triple cameradirection(triple pt, projection P=currentprojection) {
+  if (P.infinity) {
+    return unit(P.camera);
+  } else {
+    return unit(P.camera - pt);
+  }
+}
+
+//Move a point closer to the camera.
+triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
+  return pt + distance * cameradirection(pt, P);
+}
+
+label("$\theta=0^{\circ}$",red,align=S,position=towardcamera((det-(0, ulen/2, -vlen/2))));
+// label("$B$",align=S,position=towardcamera((B)));
+// label("$C$",align=SE,position=towardcamera((C)));
+// label("$D$",align=SE,position=towardcamera((D)));
+// label("$E$",align=NE,position=towardcamera((E)));
+// label("$F$",align=S,position=towardcamera((F)));
+
+// source
+real slat=0, slng=0, svrt=-100;
+triple src=(svrt,slat, slng);
+
+// lines from source to detector edges
+// draw(src..det-(0,-ulen/2,-vlen/2),black);
+// draw(src..det-(0,-ulen/2,vlen/2),black);
+// draw(src..det-(0,ulen/2,-vlen/2),black);
+// draw(src..det-(0,ulen/2,vlen/2),black);
+
+// Draw cylinder
+// cylinder(startpoint3d, radius, length, along_this_axis)
+triple start = (0,0,-8);
+real length = 16;
+real radius = 11.3;
+triple ax = (0,0,1);
+revolution r = cylinder(start,radius,length,ax);
+draw(r,black);
+
+// isocal spots
+triple[] isocal={(0,-11.3,-7.5),
+                 (7.9903,-7.9903,-7.5),
+                 (7.9903,7.9903,-7.5),
+                 (-11.3,0.0,-7.5),
+                 (-7.9903,7.9903,-5),
+                 (11.3,0.0,-3),
+                 (0,11.3,-2),
+                 (-10.4398,4.3243,2),
+                 (4.3243,10.4398,3),
+                 (-10.4398,-4.3243,5),
+                 (4.3243,-10.4398,5),
+                 (10.4398,-4.3243,7.5),
+                 (10.4398,4.3243,7.5),
+                 (-4.3243,10.4398,7.5),
+                 (-4.3243,-10.4398,7.5)
+};
+
+dot(isocal, black);
+
+// project points
+transform3 proj=planeproject(detector);
+transform3 proj090=planeproject(det090);
+transform3 proj180=planeproject(det180);
+transform3 proj270=planeproject(det270);
+
+dot(proj*isocal,red);
+dot(proj090*isocal,red);
+dot(proj180*isocal,red);
+dot(proj270*isocal,red);
 #+END_SRC
 
 #+CAPTION: Schematic representation of the scanning geometry
 #+ATTR_LaTeX: :width 0.75\textwidth
-#+RESULTS: fig:scan_geo
-[[file:figures/geo/system_geo.pdf]]
-
-#+begin_src asymptote :file figures/asymptote.pdf :exports none
-settings.render = 0;
-import three;
-
-size(560,320,IgnoreAspect);
-size3(140,80,15);
-currentprojection=perspective(-2,20,10,up=Y);
-currentlight=White;
-
-real a=-0.4;
-real b=0.95;
-real y1=-5;
-real y2=-3y1/2;
-path A=(a,0){dir(10)}::{dir(89.5)}(0,y2);
-path B=(0,y1){dir(88.3)}::{dir(20)}(b,0);
-real c=0.5*a;
-pair z=(0,2.5);
-transform t=scale(1,15);
-transform T=inverse(scale(t.yy,t.xx));
-path[] g=shift(0,1.979)*scale(0.01)*t*
-  texpath(Label("{\it symptote}",z,0.25*E+0.169S,fontsize(24pt)));
-pair w=(0,1.7);
-pair u=intersectionpoint(A,w-1--w);
-
-real h=0.25*linewidth();
-real hy=(T*(h,h)).x;
-g.push(t*((a,hy)--(b,hy)..(b+hy,0)..(b,-hy)--(a,-hy)..(a-hy,0)..cycle));
-g.push(T*((h,y1)--(h,y2)..(0,y2+h)..(-h,y2)--(-h,y1)..(0,y1-h)..cycle));
-g.push(shift(0,w.y)*t*((u.x,hy)--(w.x,hy)..(w.x+hy,0)..(w.x,-hy)--(u.x,-hy)..(u.x-hy,0)..cycle));
-real f=0.75;
-g.push(point(A,0)--shift(-f*hy,f*h)*A--point(A,1)--shift(f*hy,-f*h)*reverse(A)--cycle);
-g.push(point(B,0)--shift(f*hy,-f*h)*B--point(B,1)--shift(-f*hy,f*h)*reverse(B)--cycle);
-
-triple H=-0.1Z;
-material m=material(lightgray,shininess=1.0);
-
-for(path p : g)
-  draw(extrude(p,H),m);
-
-surface s=surface(g);
-draw(s,red,nolight);
-draw(shift(H)*s,m);
-#+end_src
+#+RESULTS: fig:geo_schematic
+[[file:figures/geo/schematic.pdf]]
 
 These projected spots are then matched to the detector spots in the
 sinogram. The $L_2$ norm between the real and simulated projected spots
@@ -545,6 +715,127 @@ that minimize the $L_{2}\text{-norm}$ cost function. Once the cost has
 been minimized, the geometric offsets are used as the calibration
 information for calculating the system matrix $(\mathcal{H})$ for the
 image reconstruction.
+
+#+LABEL: fig:geo_coords
+#+BEGIN_SRC asymptote :file figures/geo/coords.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+settings.prc = false;
+settings.render = 0;
+
+import graph3;
+import solids;
+import three;
+
+// view configuration
+size(10cm);
+// currentprojection=orthographic(-5,1,5,up=Y);
+currentprojection=perspective(-5,1,5,up=Y);
+// currentlight=White;
+
+// Draw axis
+// draw(Label("$y$",1),(0,0,0)--(0,5,0),red,Arrow3);
+// draw(Label("$x$",1),(0,0,0)--(5,0,0),red,Arrow3);
+// draw(Label("$z$",1),(0,0,0)--(0,0,5),red,Arrow3);
+
+// kV schematic
+real dlat=0, dlng=0, dvrt=50;
+triple det=(dvrt,dlat,dlng);
+real ulen=40.0, vlen=30.0;
+
+path3 detector=plane((0,ulen,0), (0,0,vlen), det-(0,ulen/2,vlen/2));
+
+transform3 rot090=rotate(90, Z);
+transform3 rot180=rotate(180, Z);
+transform3 rot270=rotate(270, Z);
+
+path3 det090 = rot090*detector;
+path3 det180 = rot180*detector;
+path3 det270 = rot270*detector;
+
+draw(detector, black);
+draw(det090, black);
+draw(det180, black);
+draw(det270, black);
+
+// labels
+//From Charles Staats's tutorial
+//Direction of a point toward the camera.
+triple cameradirection(triple pt, projection P=currentprojection) {
+  if (P.infinity) {
+    return unit(P.camera);
+  } else {
+    return unit(P.camera - pt);
+  }
+}
+
+//Move a point closer to the camera.
+triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
+  return pt + distance * cameradirection(pt, P);
+}
+
+label("$\theta=0^{\circ}$",red,align=S,position=towardcamera((det-(0, ulen/2, -vlen/2))));
+// label("$B$",align=S,position=towardcamera((B)));
+// label("$C$",align=SE,position=towardcamera((C)));
+// label("$D$",align=SE,position=towardcamera((D)));
+// label("$E$",align=NE,position=towardcamera((E)));
+// label("$F$",align=S,position=towardcamera((F)));
+
+// source
+real slat=0, slng=0, svrt=-100;
+triple src=(svrt,slat, slng);
+
+// lines from source to detector edges
+// draw(src..det-(0,-ulen/2,-vlen/2),black);
+// draw(src..det-(0,-ulen/2,vlen/2),black);
+// draw(src..det-(0,ulen/2,-vlen/2),black);
+// draw(src..det-(0,ulen/2,vlen/2),black);
+
+// Draw cylinder
+// cylinder(startpoint3d, radius, length, along_this_axis)
+triple start = (0,0,-8);
+real length = 16;
+real radius = 11.3;
+triple ax = (0,0,1);
+revolution r = cylinder(start,radius,length,ax);
+draw(r,black);
+
+// isocal spots
+triple[] isocal={(0,-11.3,-7.5),
+                 (7.9903,-7.9903,-7.5),
+                 (7.9903,7.9903,-7.5),
+                 (-11.3,0.0,-7.5),
+                 (-7.9903,7.9903,-5),
+                 (11.3,0.0,-3),
+                 (0,11.3,-2),
+                 (-10.4398,4.3243,2),
+                 (4.3243,10.4398,3),
+                 (-10.4398,-4.3243,5),
+                 (4.3243,-10.4398,5),
+                 (10.4398,-4.3243,7.5),
+                 (10.4398,4.3243,7.5),
+                 (-4.3243,10.4398,7.5),
+                 (-4.3243,-10.4398,7.5)
+};
+
+dot(isocal, black);
+
+// project points
+transform3 proj=planeproject(detector);
+transform3 proj090=planeproject(det090);
+transform3 proj180=planeproject(det180);
+transform3 proj270=planeproject(det270);
+
+dot(proj*isocal,red);
+dot(proj090*isocal,red);
+dot(proj180*isocal,red);
+dot(proj270*isocal,red);
+#+END_SRC
+
+#+CAPTION: Schematic representation of the scanning geometry
+#+ATTR_LaTeX: :width 0.75\textwidth
+#+RESULTS: fig:geo_schematic
+[[file:figures/geo/schematic.pdf]]
 
 Given that there are there are different combinations of couch, source
 and detector motions that can cause the same change of the object
@@ -692,12 +983,6 @@ Given that part of the robust nature of optimization-based algorithms
 is the ability to handle the poorly-conditioned nature of the inverse
 problem...
 
-*** figures                                  :noexport:
-**** geometry
-     :PROPERTIES:
-     :ID:       ABFDF4A1-18BE-475C-8044-CFA1D0D63732
-     :END:
-***** [[file:figures/geo/coords.asy][coords]]
 ** Results
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
@@ -706,7 +991,7 @@ problem...
    :PROPERTIES:
    :ID:       80e42b2c-5d4b-4646-91df-753802591344
    :END:
-* Axial field-of-view extension
+* Axial field-of-view extension              :fov:
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
   :END:
@@ -980,7 +1265,7 @@ From the results shown in Figure (\ref{fig:})
    :PROPERTIES:
    :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
    :END:
-* Collision-avoiding trajectories
+* Collision-avoiding trajectories            :col:
   :PROPERTIES:
   :ID:       99055e18-4b61-404e-9408-ebd5fd0a5d8d
   :END:
@@ -1168,7 +1453,7 @@ to maintain the specified separation as shown in Figure
    :ID:       8784656f-c169-410a-9a76-0454c6ab5dde
    :END:
 
-* Summary and Conclusions
+* Summary and Conclusions                    :conc:
   :PROPERTIES:
   :ID:       1bade25b-80d6-4650-b8a3-baf370fa657c
   :END:
