@@ -281,7 +281,7 @@ the patient.
     :ID:       cc6bcac6-a445-4dfb-8815-a95e31f517ed
     :END:
 #+LABEL: fig:opt_weighting
-#+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results
+#+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results :tangle no
 settings.render = 0;
 import geometry;
 // size(8cm,0);
@@ -390,13 +390,10 @@ addMargins(0.5cm, 0.5cm);
 // draw(shift(H)*s,m);
 #+END_SRC
 
+#+CAPTION: Schematic representation of weighting factor
+#+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_weighting
 [[file:figures/opt/weighting.pdf]]
-
-#+CAPTION: Schematic representation of the scanning geometry
-#+ATTR_LaTeX: :width 0.75\textwidth
-#+RESULTS: fig:scan_geo
-[[file:figures/geo/system_geo.pdf]]
 ** Results
    :PROPERTIES:
    :ID:       04615b7c-c67c-499c-b2f9-d236ff743ea4
@@ -503,7 +500,7 @@ that are not currently in clinical use.
     :ID:       F5BECB45-8652-47A3-915C-1E96DA6110E7
     :END:
 Our first calibration phantom for determining geometric offsets is
-shown in Figure (\ref{fig:geocal}). The phantom is a 15.2 cm outer
+shown in Figure (\ref{fig:geo_geocal}). The phantom is a 15.2 cm outer
 diameter acrylic tube with a spiral pattern of CT-spot fiducials
 placed 2.5 cm apart every $45^{\circ}$. When scanned, the CT spots are
 clearly visible in the projection images which is ideal for automating
@@ -525,11 +522,11 @@ with our calibration, this fiducial placement was suboptimal.
 
 #+CAPTION: Initial geometric calibration phantom with a spiral fiducial pattern.
 #+ATTR_LaTeX: scale=0.75
-#+LABEL: fig:geocal
+#+LABEL: fig:geo_geocal
 [[../../research/trajectories/geometry/geocal/20140901_extended_cllc.jpg]]
 
 The phantom we then decided to use for calibration was the Isocal
-phantom created by Varian shown in Figure ([[ref:fig:isocal]]). The Isocal
+phantom created by Varian shown in Figure ([[ref:fig:geo_isocal]]). The Isocal
 phantom directly addresses the two problems encountered with our first
 phantom. First, the phantom is designed with intentional asymmetry.
 Additionally, the phantom is manufactured by Varian to help align the
@@ -539,7 +536,7 @@ than that of our original phantom.
 
 #+CAPTION: Varian's Isocal phantom positioned at the isocenter.
 #+ATTR_LaTeX: scale=0.75
-#+LABEL: fig:isocal
+#+LABEL: fig:geo_isocal
 [[../../research/phantoms/isocal/imgs/161012_isocal.jpg]]
 
 *** Calibration Method
@@ -548,13 +545,238 @@ than that of our original phantom.
     :END:
 We designed a calibration procedure specifically for the non-standard
 scanning trajectories we implemented on the TrueBeam system with
-Developer Mode. As such, the nominal trajectory used to initialize our
-calibration method was with the view-by-view geometry information
-provided by the system for each projection. As this was the
-uncalibrated initial guess with which we calculated our reconstruction
-system matrix $\mathcal{H}$, the output of the calibration
-subsequently improved the system matrix we used for image
+Developer Mode. As such, the nominal trajectory we used to initialize
+our calibration method was self-reported, view-by-view geometry
+provided by the TrueBeam system for each projection. Starting with
+this initial guess with which we calculated our reconstruction system
+matrix $\mathcal{H}$, the additional calibration information we were
+able to extract with our calibration improved our estimate of both the
+system matrix and subsequently the estimated image from the
 reconstruction.
+
+Figure ([[ref:fig:geo_cal_schematic]]) provides a schematic illustration
+of this with the Isocal phantom for a single view. Ideally, the
+nominal geometry used to calculate a single projection would produce
+the simulated projected fiducials in blue. However, as both our work
+and that of others has found, this is not usually the case.
+Discrepancies between the reported geometry and the actual scanning
+geometry can arise from multiple sources in a given acquisition.
+
+With a typical CBCT scan, deviations from the nominal geometry can
+occur in both the phantom's setup (translation and rotation in all
+three dimensions) as well as that of the source and detector positions
+(due to translation and rotation deviations in the gantry, source, and
+detector). The collective impact of these various discrepancies will
+subsequently produce projection views for which the projected
+fiducials in the data domain do not match the simulated projections
+from the nominal geometry as shown by the red projected fiducials in
+Figure ([[ref:fig:geo_cal_schematic]]).
+
+#+NAME: fig:geo_cal_schematic
+#+BEGIN_SRC asymptote :file figures/geo/cal_schematic.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+settings.prc = false;
+settings.render = 0;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+// view configuration
+size(10cm);
+currentprojection=orthographic(-15,5,13,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// Draw axis
+// draw(Label("$y$",1),(0,0,0)--(0,5,0),red,Arrow3);
+// draw(Label("$x$",1),(0,0,0)--(5,0,0),red,Arrow3);
+// draw(Label("$z$",1),(0,0,0)--(0,0,5),red,Arrow3);
+
+// kV schematic
+real dlat=0, dlng=0, dvrt=50;
+triple det_cent=(dvrt,dlat,dlng);
+real ulen=40.0, vlen=30.0;
+
+path3 detector=plane((0,ulen,0), (0,0,vlen), det_cent-(0,ulen/2,vlen/2));
+
+triple det0 = det_cent-(0,-ulen/2,vlen/2);
+real s=5;
+triple u = (det0+s*(0,-1,0));
+triple v = (det0+s*(0,0,1));
+triple w = (det0+s*(-1,0,0));
+
+// detector coordinate system
+draw(det0--u,blue,Arrow3,L=Label("$u$", position=EndPoint, align=W));
+draw(det0--v,blue,Arrow3,L=Label("$v$", position=EndPoint, align=N));
+draw(det0--w,blue,Arrow3,L=Label("$w$", position=EndPoint, align=N));
+
+draw(detector, blue);
+
+// path3 det180 = rot180*detector;
+// path3 det270 = rot270*detector;
+
+// uncal detector coordinate system
+transform3 det_pitch=rotate(-5, det_cent, det_cent+(-1,0,0));
+transform3 det_roll=rotate(-5, det_cent, det_cent+(0,0,1));
+transform3 det_yaw=rotate(5, det_cent, det_cent+(0,-1,0));
+transform3 det_shift=shift(5, -7, 3);
+
+path3 detector_uncal = det_pitch*det_roll*det_yaw*det_shift*detector;
+path3 det_cent_uncal = det_pitch*det_roll*det_yaw*det_shift*det_cent;
+// path3 detector_uncal = det_shift*detector;
+// path3 det_cent_uncal = det_shift*det_cent;
+real op_uncal=0.35;
+draw(detector_uncal, red+opacity(op_uncal));
+
+// labels
+//From Charles Staats's tutorial
+//Direction of a point toward the camera.
+triple cameradirection(triple pt, projection P=currentprojection) {
+  if (P.infinity) {
+    return unit(P.camera);
+  } else {
+    return unit(P.camera - pt);
+  }
+}
+
+//Move a point closer to the camera.
+triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
+  return pt + distance * cameradirection(pt, P);
+}
+
+// label("$\theta=0^{\circ}$",red,align=S,position=towardcamera((det_cent-(0, ulen/2, -vlen/2))));
+
+// source
+real slat=0, slng=0, svrt=-100;
+triple src=(svrt,slat, slng);
+
+// uncal source
+// triple src_uncal=shift(0,10,5)*(svrt,slat, slng);
+
+// lines from source to detector edges
+draw(src..det_cent-(0,-ulen/2,-vlen/2),blue+opacity(0.15));
+draw(src..det_cent-(0,-ulen/2,vlen/2),blue+opacity(0.15));
+draw(src..det_cent-(0,ulen/2,vlen/2),blue+opacity(0.15));
+draw(src..det_cent-(0,ulen/2,-vlen/2),blue+opacity(0.15));
+
+draw(Label("$\widetilde{X}_{\theta_g=0^{\circ}}$", 1),src--det_cent-(110,0,0), blue, arrow=Arrow3);
+
+// transformed frame vectors
+triple det0_uncal = point(detector_uncal, 1);
+triple u_p = point(detector_uncal, 0) - det0_uncal;
+triple v_p = point(detector_uncal, 2) - det0_uncal;
+
+// unit vectors
+triple uhat_p = u_p / length(u_p);
+triple vhat_p = v_p / length(v_p);
+triple what_p = cross(uhat_p, vhat_p);
+
+// scale
+triple u_p = s*uhat_p + det0_uncal;
+triple v_p = s*vhat_p + det0_uncal;
+triple w_p = s*what_p + det0_uncal;
+
+// uncalibrated detector coordinate system
+draw(det0_uncal--u_p,red,Arrow3,L=Label("$u'$", position=EndPoint, align=W));
+draw(det0_uncal--v_p,red,Arrow3,L=Label("$v'$", position=EndPoint, align=N));
+draw(det0_uncal--w_p,red,Arrow3,L=Label("$w'$", position=EndPoint, align=N));
+
+// draw(point(detector_uncal, 1)--src, red+opacity(0.15));
+// real arrowlength = 5
+// vector v_p=new path(real x){
+//     return point(detector_uncal, 1)--arrowlength*(-1)*point(detector_uncal, 2));
+// };
+
+// draw(v_p)
+// draw(point(detector_uncal, 1)--point(detector_uncal, 2),red, arrow=Arrow3);
+
+// // and for real projection
+// draw(src_uncal..point(detector_uncal, 0), red+opacity(0.15));
+// draw(src_uncal..point(detector_uncal, 1), red+opacity(0.15));
+// draw(src_uncal..point(detector_uncal, 2), red+opacity(0.15));
+// draw(src_uncal..point(detector_uncal, 3), red+opacity(0.15));
+
+// draw(Label("$\mathcal{H}$", 1),src--det_cent_uncal, red, arrow=Arrow3);
+
+// Draw cylinder
+// cylinder(startpoint3d, radius, length, along_this_axis)
+triple start = (0,0,-8);
+real length = 16;
+real radius = 11.3;
+triple ax = (0,0,1);
+revolution r = cylinder(start,radius,length,ax);
+draw(r,black);
+
+// isocal spots
+triple[] isocal={(0,-11.3,-7.5),
+                 (7.9903,-7.9903,-7.5),
+                 (7.9903,7.9903,-7.5),
+                 (-11.3,0.0,-7.5),
+                 (-7.9903,7.9903,-5),
+                 (11.3,0.0,-3),
+                 (0,11.3,-2),
+                 (-10.4398,4.3243,2),
+                 (4.3243,10.4398,3),
+                 (-10.4398,-4.3243,5),
+                 (4.3243,-10.4398,5),
+                 (10.4398,-4.3243,7.5),
+                 (10.4398,4.3243,7.5),
+                 (-4.3243,10.4398,7.5),
+                 (-4.3243,-10.4398,7.5)
+};
+
+dot(isocal, black);
+
+// project points
+transform3 proj=planeproject(detector);
+transform3 proj_uncal=planeproject(detector_uncal);
+// transform3 proj090=planeproject(det090);
+// transform3 proj180=planeproject(det180);
+// transform3 proj270=planeproject(det270);
+
+dot(proj*isocal,blue);
+dot(proj_uncal*isocal,red+opacity(op_uncal));
+// dot(proj090*isocal,red);
+// dot(proj180*isocal,red);
+// dot(proj270*isocal,red);
+#+END_SRC
+
+#+CAPTION: Schematic represenation of a single projection view for the isocal phantom with the TrueBeam kV-CBCT scanning geometry shown using an orthographic projection. The blue detector and projected isocal fiducials correspond to the self-reported geometry from the imaging system. The red detector and projected fiducials illustrates how translation and rotation offsets create variations in the projected fiducials in the sinogram space. The top left corner of each detector repreents the origin of the detector coordinate system. The geometric translation and rotation offsets are exaggerated here for illustrative purposes.
+#+LABEL: fig:geo_cal_schematic
+#+ATTR_LaTeX: :width 0.9\textwidth
+#+RESULTS: fig:geo_cal_schematic
+[[file:figures/geo/cal_schematic.pdf]]
+
+Starting with the nominal scanning geometry reported by the projection
+metadata, we first build an initial projection matrix
+$(\widetilde{X}_{\text{nom}})$ that transforms the simulated phantom
+fiducials in room coordinates to projected spots in detector
+coordinates. This is done on a view-by-view basis much like the single
+view shown in Figure ([[ref:fig:geo_cal_schematic]]). Using the source
+$(\vec{r}_s)$, detector $(\vec{r}_d)$, and gantry positions
+$(\theta_g)$, the source and detector are rotated into the global
+coordinate system of the isocal phantom using the gantry angle.
+
+
+
+These projected spots are then matched to the detector spots in the
+sinogram. The $L_2$ norm between the real and simulated projected spots
+is then calculated as the cost function. The parameters corresponding
+to the geometric degrees of freedom (DOF) are then allowed to
+iteratively vary by using the Nelder-Mead simplex algorithm
+cite:lagarias_convergence_1998 to search for the geometric offsets
+that minimize the $L_{2}\text{-norm}$ cost function. Once the cost has
+been minimized, the geometric offsets are used as the calibration
+information for calculating the system matrix $(\mathcal{H})$ for the
+image reconstruction.
 
 As with other calibration procedures, we allowed incremental variation
 in the different geometric parameters of our scanning trajectory to
@@ -570,273 +792,6 @@ phantom. As the geometry information reported by the TrueBeam system
 is in this coordinate system, it is necessary to ensure that the
 specified offsets are pertinent to calculating the system matrix.
 
-For a new trajectory, this phantom is first scanned to identify any
-geometric offsets that are incorrectly reported in the TrueBeam data
-headers. Though we found the self-reported position accuracy from the
-acquisition metadata to be very good, there were still some scanning
-configurations for which we found the additional refinement from our
-geometric calibration to be critical for obtaining a useful
-reconstruction. This was particularly true for scanning trajectories
-where the object and the kV imaging system were moving simultaneously.
-
-Starting with the nominal scanning geometry from the projection
-metadata, we first build an initial projection matrix
-$(X_{\text{projmat}})$ that transforms the simulated phantom fiducials in
-room coordinates to projected spots in detector coordinates.
-
-#+LABEL: fig:geo_schematic
-#+BEGIN_SRC asymptote :file figures/geo/schematic.pdf :exports results
-settings.multisample=0;
-settings.outformat="pdf";
-settings.prc = false;
-settings.render = 0;
-
-import graph3;
-import solids;
-import three;
-
-// view configuration
-size(10cm);
-// currentprojection=orthographic(-5,1,5,up=Y);
-currentprojection=perspective(-5,1,5,up=Y);
-// currentlight=White;
-
-// Draw axis
-// draw(Label("$y$",1),(0,0,0)--(0,5,0),red,Arrow3);
-// draw(Label("$x$",1),(0,0,0)--(5,0,0),red,Arrow3);
-// draw(Label("$z$",1),(0,0,0)--(0,0,5),red,Arrow3);
-
-// kV schematic
-real dlat=0, dlng=0, dvrt=50;
-triple det=(dvrt,dlat,dlng);
-real ulen=40.0, vlen=30.0;
-
-path3 detector=plane((0,ulen,0), (0,0,vlen), det-(0,ulen/2,vlen/2));
-
-transform3 rot090=rotate(90, Z);
-transform3 rot180=rotate(180, Z);
-transform3 rot270=rotate(270, Z);
-
-path3 det090 = rot090*detector;
-path3 det180 = rot180*detector;
-path3 det270 = rot270*detector;
-
-draw(detector, black);
-draw(det090, black);
-draw(det180, black);
-draw(det270, black);
-
-// labels
-//From Charles Staats's tutorial
-//Direction of a point toward the camera.
-triple cameradirection(triple pt, projection P=currentprojection) {
-  if (P.infinity) {
-    return unit(P.camera);
-  } else {
-    return unit(P.camera - pt);
-  }
-}
-
-//Move a point closer to the camera.
-triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
-  return pt + distance * cameradirection(pt, P);
-}
-
-label("$\theta=0^{\circ}$",red,align=S,position=towardcamera((det-(0, ulen/2, -vlen/2))));
-// label("$B$",align=S,position=towardcamera((B)));
-// label("$C$",align=SE,position=towardcamera((C)));
-// label("$D$",align=SE,position=towardcamera((D)));
-// label("$E$",align=NE,position=towardcamera((E)));
-// label("$F$",align=S,position=towardcamera((F)));
-
-// source
-real slat=0, slng=0, svrt=-100;
-triple src=(svrt,slat, slng);
-
-// lines from source to detector edges
-// draw(src..det-(0,-ulen/2,-vlen/2),black);
-// draw(src..det-(0,-ulen/2,vlen/2),black);
-// draw(src..det-(0,ulen/2,-vlen/2),black);
-// draw(src..det-(0,ulen/2,vlen/2),black);
-
-// Draw cylinder
-// cylinder(startpoint3d, radius, length, along_this_axis)
-triple start = (0,0,-8);
-real length = 16;
-real radius = 11.3;
-triple ax = (0,0,1);
-revolution r = cylinder(start,radius,length,ax);
-draw(r,black);
-
-// isocal spots
-triple[] isocal={(0,-11.3,-7.5),
-                 (7.9903,-7.9903,-7.5),
-                 (7.9903,7.9903,-7.5),
-                 (-11.3,0.0,-7.5),
-                 (-7.9903,7.9903,-5),
-                 (11.3,0.0,-3),
-                 (0,11.3,-2),
-                 (-10.4398,4.3243,2),
-                 (4.3243,10.4398,3),
-                 (-10.4398,-4.3243,5),
-                 (4.3243,-10.4398,5),
-                 (10.4398,-4.3243,7.5),
-                 (10.4398,4.3243,7.5),
-                 (-4.3243,10.4398,7.5),
-                 (-4.3243,-10.4398,7.5)
-};
-
-dot(isocal, black);
-
-// project points
-transform3 proj=planeproject(detector);
-transform3 proj090=planeproject(det090);
-transform3 proj180=planeproject(det180);
-transform3 proj270=planeproject(det270);
-
-dot(proj*isocal,red);
-dot(proj090*isocal,red);
-dot(proj180*isocal,red);
-dot(proj270*isocal,red);
-#+END_SRC
-
-#+CAPTION: Schematic representation of the scanning geometry
-#+ATTR_LaTeX: :width 0.75\textwidth
-#+RESULTS: fig:geo_schematic
-[[file:figures/geo/schematic.pdf]]
-
-These projected spots are then matched to the detector spots in the
-sinogram. The $L_2$ norm between the real and simulated projected spots
-is then calculated as the cost function. The parameters corresponding
-to the geometric degrees of freedom (DOF) are then allowed to
-iteratively vary by using the Nelder-Mead simplex algorithm
-cite:lagarias_convergence_1998 to search for the geometric offsets
-that minimize the $L_{2}\text{-norm}$ cost function. Once the cost has
-been minimized, the geometric offsets are used as the calibration
-information for calculating the system matrix $(\mathcal{H})$ for the
-image reconstruction.
-
-#+LABEL: fig:geo_coords
-#+BEGIN_SRC asymptote :file figures/geo/coords.pdf :exports results
-settings.multisample=0;
-settings.outformat="pdf";
-settings.prc = false;
-settings.render = 0;
-
-import graph3;
-import solids;
-import three;
-
-// view configuration
-size(10cm);
-// currentprojection=orthographic(-5,1,5,up=Y);
-currentprojection=perspective(-5,1,5,up=Y);
-// currentlight=White;
-
-// Draw axis
-// draw(Label("$y$",1),(0,0,0)--(0,5,0),red,Arrow3);
-// draw(Label("$x$",1),(0,0,0)--(5,0,0),red,Arrow3);
-// draw(Label("$z$",1),(0,0,0)--(0,0,5),red,Arrow3);
-
-// kV schematic
-real dlat=0, dlng=0, dvrt=50;
-triple det=(dvrt,dlat,dlng);
-real ulen=40.0, vlen=30.0;
-
-path3 detector=plane((0,ulen,0), (0,0,vlen), det-(0,ulen/2,vlen/2));
-
-transform3 rot090=rotate(90, Z);
-transform3 rot180=rotate(180, Z);
-transform3 rot270=rotate(270, Z);
-
-path3 det090 = rot090*detector;
-path3 det180 = rot180*detector;
-path3 det270 = rot270*detector;
-
-draw(detector, black);
-draw(det090, black);
-draw(det180, black);
-draw(det270, black);
-
-// labels
-//From Charles Staats's tutorial
-//Direction of a point toward the camera.
-triple cameradirection(triple pt, projection P=currentprojection) {
-  if (P.infinity) {
-    return unit(P.camera);
-  } else {
-    return unit(P.camera - pt);
-  }
-}
-
-//Move a point closer to the camera.
-triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
-  return pt + distance * cameradirection(pt, P);
-}
-
-label("$\theta=0^{\circ}$",red,align=S,position=towardcamera((det-(0, ulen/2, -vlen/2))));
-// label("$B$",align=S,position=towardcamera((B)));
-// label("$C$",align=SE,position=towardcamera((C)));
-// label("$D$",align=SE,position=towardcamera((D)));
-// label("$E$",align=NE,position=towardcamera((E)));
-// label("$F$",align=S,position=towardcamera((F)));
-
-// source
-real slat=0, slng=0, svrt=-100;
-triple src=(svrt,slat, slng);
-
-// lines from source to detector edges
-// draw(src..det-(0,-ulen/2,-vlen/2),black);
-// draw(src..det-(0,-ulen/2,vlen/2),black);
-// draw(src..det-(0,ulen/2,-vlen/2),black);
-// draw(src..det-(0,ulen/2,vlen/2),black);
-
-// Draw cylinder
-// cylinder(startpoint3d, radius, length, along_this_axis)
-triple start = (0,0,-8);
-real length = 16;
-real radius = 11.3;
-triple ax = (0,0,1);
-revolution r = cylinder(start,radius,length,ax);
-draw(r,black);
-
-// isocal spots
-triple[] isocal={(0,-11.3,-7.5),
-                 (7.9903,-7.9903,-7.5),
-                 (7.9903,7.9903,-7.5),
-                 (-11.3,0.0,-7.5),
-                 (-7.9903,7.9903,-5),
-                 (11.3,0.0,-3),
-                 (0,11.3,-2),
-                 (-10.4398,4.3243,2),
-                 (4.3243,10.4398,3),
-                 (-10.4398,-4.3243,5),
-                 (4.3243,-10.4398,5),
-                 (10.4398,-4.3243,7.5),
-                 (10.4398,4.3243,7.5),
-                 (-4.3243,10.4398,7.5),
-                 (-4.3243,-10.4398,7.5)
-};
-
-dot(isocal, black);
-
-// project points
-transform3 proj=planeproject(detector);
-transform3 proj090=planeproject(det090);
-transform3 proj180=planeproject(det180);
-transform3 proj270=planeproject(det270);
-
-dot(proj*isocal,red);
-dot(proj090*isocal,red);
-dot(proj180*isocal,red);
-dot(proj270*isocal,red);
-#+END_SRC
-
-#+CAPTION: Schematic representation of the scanning geometry
-#+ATTR_LaTeX: :width 0.75\textwidth
-#+RESULTS: fig:geo_schematic
-[[file:figures/geo/schematic.pdf]]
-
 Given that there are there are different combinations of couch, source
 and detector motions that can cause the same change of the object
 relative to the source and detector within the image coordinate
@@ -847,6 +802,16 @@ to move the same distance in the negative longitudinal direction. This
 requires that only a few parameters are allowed to vary at once as
 allowing too many parameters on this non-convex surface will often
 produce nonphysical geometric corrections.
+
+For a new trajectory, this phantom is first scanned to identify any
+geometric offsets that are incorrectly reported in the TrueBeam data
+headers. Though we found the self-reported position accuracy from the
+acquisition metadata to be very good, there were still some scanning
+configurations for which we found the additional refinement from our
+geometric calibration to be critical for obtaining a useful
+reconstruction. This was particularly true for scanning trajectories
+where the object and the kV imaging system were moving simultaneously.
+
 *** geocal procedure                         :noexport:
     :PROPERTIES:
     :ID:       DD6F1968-D9A8-46AB-AC2C-BF79512B530A
@@ -861,7 +826,7 @@ the matrix by the vector, i.e. X’ = X M, so the component
 transformations are applied from left to right - if M=ABC, then it’s A
 first followed by B followed by C.
 
-#+BEGIN_SRC matlab
+#+BEGIN_SRC matlab :tangle no
 grotvecs=framevecs;
 dnormrot=grotvecs(3,:);
 
@@ -899,6 +864,9 @@ xprojmat=magicmat*hmatrix_translate(uvpierce)* ...
          hmatrix_translate([usize/2+0.5, vsize/2+0.5, 0]);
 
 #+END_SRC
+
+#+RESULTS:
+
 *** Experimental Validation
 Once we had a calibration
 
@@ -978,6 +946,127 @@ calibration procedure. By incorporating the calibration information we
 obtain with the calibration, known geometric error artifacts should be
 reduced.
 
+*** figures                                  :noexport:
+**** four detector schematic
+# +LABEL: fig:geo_schematic
+#+BEGIN_SRC asymptote :file figures/geo/schematic.pdf :exports results :tangle no
+settings.multisample=0;
+settings.outformat="pdf";
+settings.prc = false;
+settings.render = 0;
+
+import graph3;
+import solids;
+import three;
+
+// view configuration
+size(10cm);
+// currentprojection=orthographic(-5,1,5,up=Y);
+currentprojection=perspective(-5,1,5,up=Y);
+// currentlight=White;
+
+// Draw axis
+// draw(Label("$y$",1),(0,0,0)--(0,5,0),red,Arrow3);
+// draw(Label("$x$",1),(0,0,0)--(5,0,0),red,Arrow3);
+// draw(Label("$z$",1),(0,0,0)--(0,0,5),red,Arrow3);
+
+// kV schematic
+real dlat=0, dlng=0, dvrt=50;
+triple det=(dvrt,dlat,dlng);
+real ulen=40.0, vlen=30.0;
+
+path3 detector=plane((0,ulen,0), (0,0,vlen), det-(0,ulen/2,vlen/2));
+
+transform3 rot090=rotate(90, Z);
+transform3 rot180=rotate(180, Z);
+transform3 rot270=rotate(270, Z);
+
+path3 det090 = rot090*detector;
+path3 det180 = rot180*detector;
+path3 det270 = rot270*detector;
+
+draw(detector, black);
+draw(det090, black);
+draw(det180, black);
+draw(det270, black);
+
+// labels
+//From Charles Staats's tutorial
+//Direction of a point toward the camera.
+triple cameradirection(triple pt, projection P=currentprojection) {
+  if (P.infinity) {
+    return unit(P.camera);
+  } else {
+    return unit(P.camera - pt);
+  }
+}
+
+//Move a point closer to the camera.
+triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
+  return pt + distance * cameradirection(pt, P);
+}
+
+label("$\theta=0^{\circ}$",red,align=S,position=towardcamera((det-(0, ulen/2, -vlen/2))));
+// label("$B$",align=S,position=towardcamera((B)));
+// label("$C$",align=SE,position=towardcamera((C)));
+// label("$D$",align=SE,position=towardcamera((D)));
+// label("$E$",align=NE,position=towardcamera((E)));
+// label("$F$",align=S,position=towardcamera((F)));
+
+// source
+real slat=0, slng=0, svrt=-100;
+triple src=(svrt,slat, slng);
+
+// lines from source to detector edges
+// draw(src..det-(0,-ulen/2,-vlen/2),black);
+// draw(src..det-(0,-ulen/2,vlen/2),black);
+// draw(src..det-(0,ulen/2,-vlen/2),black);
+// draw(src..det-(0,ulen/2,vlen/2),black);
+
+// Draw cylinder
+// cylinder(startpoint3d, radius, length, along_this_axis)
+triple start = (0,0,-8);
+real length = 16;
+real radius = 11.3;
+triple ax = (0,0,1);
+revolution r = cylinder(start,radius,length,ax);
+draw(r,black);
+
+// isocal spots
+triple[] isocal={(0,-11.3,-7.5),
+                 (7.9903,-7.9903,-7.5),
+                 (7.9903,7.9903,-7.5),
+                 (-11.3,0.0,-7.5),
+                 (-7.9903,7.9903,-5),
+                 (11.3,0.0,-3),
+                 (0,11.3,-2),
+                 (-10.4398,4.3243,2),
+                 (4.3243,10.4398,3),
+                 (-10.4398,-4.3243,5),
+                 (4.3243,-10.4398,5),
+                 (10.4398,-4.3243,7.5),
+                 (10.4398,4.3243,7.5),
+                 (-4.3243,10.4398,7.5),
+                 (-4.3243,-10.4398,7.5)
+};
+
+dot(isocal, black);
+
+// project points
+transform3 proj=planeproject(detector);
+transform3 proj090=planeproject(det090);
+transform3 proj180=planeproject(det180);
+transform3 proj270=planeproject(det270);
+
+dot(proj*isocal,red);
+dot(proj090*isocal,red);
+dot(proj180*isocal,red);
+dot(proj270*isocal,red);
+#+END_SRC
+
+#+CAPTION: Schematic representation of the scanning geometry
+#+ATTR_LaTeX: :width 0.75\textwidth
+# +RESULTS: fig:geo_schematic
 *** ideas                                    :noexport:
 Given that part of the robust nature of optimization-based algorithms
 is the ability to handle the poorly-conditioned nature of the inverse
@@ -987,6 +1076,10 @@ problem...
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
    :END:
+*** Cost function
+Here is an example of the cost function.
+**** notes                                   :noexport:
+- [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
 ** Conclusion
    :PROPERTIES:
    :ID:       80e42b2c-5d4b-4646-91df-753802591344
@@ -1318,8 +1411,8 @@ complete projection data.
 
 #+CAPTION: Example of a typical patient-gantry collision. The patient's arms for this treatment position can often collide with the MV-treatment head.
 #+ATTR_LaTeX: :width \columnwidth :placement [t]
-#+LABEL: fig:barbie_collision
-[[./figures/collisions/barbie.jpg]]
+#+LABEL: fig:col_barbie
+[[./figures/col/barbie.jpg]]
 
 The analytic-based FDK reconstruction algorithm, still the clinical
 workhorse for CT reconstruction, imposes certain requirements on the
@@ -1388,18 +1481,18 @@ isocenter'') in the patient. At the beginning of the scan, the patient
 is moved away from the linac head along the MV beam direction. As the
 gantry rotates, the couch continuously moves away from the linac head
 to maintain the specified separation as shown in Figure
-([[ref:fig:virtual_iso]]). The virtual SAD can be chosen large enough so
-that collisions as shown in Figure ([[ref:fig:barbie_collision]]) are
+([[ref:fig:col_virtiso]]). The virtual SAD can be chosen large enough so
+that collisions as shown in Figure ([[ref:fig:col_barbie]]) are
 avoided; at this point in the trajectory, the couch would have moved
 far enough to the left to avoid the collision.
 
 #+BEGIN_EXPORT latex
 \begin{figure*}[htb]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/collisions/gantry_6angles_a.jpg}
+  \includegraphics[width=0.9\textwidth]{figures/col/gantry_6angles_a.pdf}
   \caption{
     Patient, kV and MV beams and kV detector at several angles during a virtual isocenter rotation.  Room coordinate system (dotted axes) has its origin at mechanical isocenter, also the intersection of the MV (red) and kV (green) beam axes.  As the gantry rotates, the patient (filled contour) is continually shifted to maintain a specified distance along the MV beam direction between the mechanical isocenter and the chosen virtual isocenter (circle symbol within the patient).  The path of the virtual isocenter is a circle about the mechanical isocenter, with radius equal to the chosen shift (12 cm from the isocenter in this example).  Detector may or may not be shifted as shown, depending on virtual isocenter position and patient geometry.
-    \label{fig:virtual_iso}}
+    \label{fig:col_virtiso}}
 \end{figure*}
 #+END_EXPORT
 
@@ -1435,7 +1528,7 @@ isocenter'') in the patient. At the beginning of the scan, the patient
 is moved away from the linac head along the MV beam direction. As the
 gantry rotates, the couch continuously moves away from the linac head
 to maintain the specified separation as shown in Figure
-([[ref:fig:virtual_iso]]).
+([[ref:fig:col_virtiso]]).
 
 *** Dynamic magnification trajectory
 
