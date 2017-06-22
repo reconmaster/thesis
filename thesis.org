@@ -156,12 +156,10 @@ that are amplified in the filtration process.
     :END:
 Analytic-based reconstruction algorithms are formulated by explicitly
 finding an inverse to the X-ray transform
-#+BEGIN_EXPORT latex
-  \begin{equation}
-    \label{eq:xray}
-    g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
-  \end{equation}
-#+END_EXPORT
+\begin{equation}
+  \label{eq:xray}
+  g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
+\end{equation}
 where the data function $g$ is acquired by integrating along the ray
 from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
 the object function $f$. A fundamental problem with these
@@ -179,12 +177,10 @@ Iterative reconstruction algorithms are more robust because they do
 implement a more accurate DD model of the imaging system. The X-ray
 transform of the object function can be represented as the linear
 system
-#+BEGIN_EXPORT latex
-  \begin{equation}
-    \label{eq:ddsys}
-    \mathbf{g}=\mathcal{H}\mathbf{f},
-  \end{equation}
-#+END_EXPORT
+\begin{equation}
+  \label{eq:ddsys}
+  \mathbf{g}=\mathcal{H}\mathbf{f},
+\end{equation}
 where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
 detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
 transform, and $\mathbf{f}$ is the object function represented on a N
@@ -607,16 +603,16 @@ real ulen=40.0, vlen=30.0;
 
 path3 detector=plane((0,ulen,0), (0,0,vlen), det_cent-(0,ulen/2,vlen/2));
 
-triple det0 = det_cent-(0,-ulen/2,vlen/2);
+triple det0 = det_cent-(0,ulen/2,vlen/2);
 real s=5;
-triple u = (det0+s*(0,-1,0));
+triple u = (det0+s*(0,1,0));
 triple v = (det0+s*(0,0,1));
 triple w = (det0+s*(-1,0,0));
 
 // detector coordinate system
 draw(det0--u,blue,Arrow3,L=Label("$u$", position=EndPoint, align=W));
 draw(det0--v,blue,Arrow3,L=Label("$v$", position=EndPoint, align=N));
-draw(det0--w,blue,Arrow3,L=Label("$w$", position=EndPoint, align=N));
+draw(det0--w,blue,Arrow3,L=Label("$w$", position=EndPoint, align=S));
 
 draw(detector, blue);
 
@@ -627,7 +623,7 @@ draw(detector, blue);
 transform3 det_pitch=rotate(-5, det_cent, det_cent+(-1,0,0));
 transform3 det_roll=rotate(-5, det_cent, det_cent+(0,0,1));
 transform3 det_yaw=rotate(5, det_cent, det_cent+(0,-1,0));
-transform3 det_shift=shift(5, -7, 3);
+transform3 det_shift=shift(5, -8, 2);
 
 path3 detector_uncal = det_pitch*det_roll*det_yaw*det_shift*detector;
 path3 det_cent_uncal = det_pitch*det_roll*det_yaw*det_shift*det_cent;
@@ -667,17 +663,17 @@ draw(src..det_cent-(0,-ulen/2,vlen/2),blue+opacity(0.15));
 draw(src..det_cent-(0,ulen/2,vlen/2),blue+opacity(0.15));
 draw(src..det_cent-(0,ulen/2,-vlen/2),blue+opacity(0.15));
 
-draw(Label("$\widetilde{X}_{\theta_g=0^{\circ}}$", 1),src--det_cent-(110,0,0), blue, arrow=Arrow3);
+draw(Label("$\widetilde{\bold{X}}_{\theta_g=0^{\circ}}$", 1),src--det_cent-(110,0,0), blue, arrow=Arrow3);
 
 // transformed frame vectors
-triple det0_uncal = point(detector_uncal, 1);
-triple u_p = point(detector_uncal, 0) - det0_uncal;
-triple v_p = point(detector_uncal, 2) - det0_uncal;
+triple det0_uncal = point(detector_uncal, 0);
+triple u_p = point(detector_uncal, 1) - det0_uncal;
+triple v_p = point(detector_uncal, 3) - det0_uncal;
 
 // unit vectors
 triple uhat_p = u_p / length(u_p);
 triple vhat_p = v_p / length(v_p);
-triple what_p = cross(uhat_p, vhat_p);
+triple what_p = cross(uhat_p, -vhat_p);
 
 // scale
 triple u_p = s*uhat_p + det0_uncal;
@@ -685,9 +681,9 @@ triple v_p = s*vhat_p + det0_uncal;
 triple w_p = s*what_p + det0_uncal;
 
 // uncalibrated detector coordinate system
-draw(det0_uncal--u_p,red,Arrow3,L=Label("$u'$", position=EndPoint, align=W));
-draw(det0_uncal--v_p,red,Arrow3,L=Label("$v'$", position=EndPoint, align=N));
-draw(det0_uncal--w_p,red,Arrow3,L=Label("$w'$", position=EndPoint, align=N));
+draw(det0_uncal--u_p,red,Arrow3,L=Label("$u'$", position=EndPoint, align=SE));
+draw(det0_uncal--v_p,red,Arrow3,L=Label("$v'$", position=EndPoint, align=S));
+draw(det0_uncal--w_p,red,Arrow3,L=Label("$w'$", position=EndPoint, align=S));
 
 // draw(point(detector_uncal, 1)--src, red+opacity(0.15));
 // real arrowlength = 5
@@ -749,48 +745,230 @@ dot(proj_uncal*isocal,red+opacity(op_uncal));
 // dot(proj270*isocal,red);
 #+END_SRC
 
-#+CAPTION: Schematic represenation of a single projection view for the isocal phantom with the TrueBeam kV-CBCT scanning geometry shown using an orthographic projection. The blue detector and projected isocal fiducials correspond to the self-reported geometry from the imaging system. The red detector and projected fiducials illustrates how translation and rotation offsets create variations in the projected fiducials in the sinogram space. The top left corner of each detector repreents the origin of the detector coordinate system. The geometric translation and rotation offsets are exaggerated here for illustrative purposes.
+#+CAPTION: Schematic represenation of a single projection view for the isocal phantom with the TrueBeam kV-CBCT scanning geometry shown using an orthographic projection. The blue detector and projected isocal fiducials correspond to the self-reported geometry from the imaging system. The red detector and projected fiducials illustrates how translation and rotation offsets create variations in the projected fiducials in the sinogram space. The bottom left corner corresponds to the origin of the detector coordinate system. The detector's translation and rotation offsets are exaggerated here for illustrative purposes.
 #+LABEL: fig:geo_cal_schematic
 #+ATTR_LaTeX: :width 0.9\textwidth
 #+RESULTS: fig:geo_cal_schematic
 [[file:figures/geo/cal_schematic.pdf]]
 
 Starting with the nominal scanning geometry reported by the projection
-metadata, we first build an initial projection matrix
-$(\widetilde{X}_{\text{nom}})$ that transforms the simulated phantom
-fiducials in room coordinates to projected spots in detector
-coordinates. This is done on a view-by-view basis much like the single
-view shown in Figure ([[ref:fig:geo_cal_schematic]]). Using the source
-$(\vec{r}_s)$, detector $(\vec{r}_d)$, and gantry positions
-$(\theta_g)$, the source and detector are rotated into the global
-coordinate system of the isocal phantom using the gantry angle.
+metadata, we first build an initial projection matrix $\left(
+\widetilde{X} \right)$ that transforms the simulated phantom fiducials
+in room coordinates to projected spots in detector coordinates. The
+matrix $\left( \widetilde{X} \right)$ is calculated using the
+variables describing each view shown in Figure ([[ref:fig:geo_cal_proj]]).
+The source and detector (including the detector's frame vectors
+$\left\{ \hat{u}, \hat{v}, \hat{w} \right\}$) are rotated into the
+global image space by rotating these vectors by the gantry angle
+$\left( \theta_{g} \right)$ at each view (the gantry rotation axis is the $y$
+axis in Figures ([[ref:fig:geo_cal_schematic]], [[ref:fig:geo_cal_proj]]).
+
+Next, the orthogonal component of the rays from the source to the
+detector is calculated by first finding a ray connecting the source to
+the detector, $\vec{r}_{\text{sd}}$. The component of this ray that is
+orthogonal to the detector is then found using the dot product
+\begin{equation}
+  L=\vec{r}_{sd}}\cdot \hat{w},
+  \label{eq:geo_along}
+\end{equation}
+where the frame vector $\hat{w}$ corresponds to the detector's normal
+unit vector. This then provides the vector describing the piercing
+point $\left( \vec{p} \right)$ at that view which is given by
+\begin{equation}
+  \vec{p}=\vec{r}_s+L \hat{w},
+  \label{eq:geo_pierce}
+\end{equation}
+where $\vec{r}_s$ is the vector corresponding to the source position in
+the image coordinates for that view.
+
+#+NAME: fig:geo_cal_proj
+#+BEGIN_SRC asymptote :file figures/geo/cal_proj.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+settings.prc = false;
+settings.render = 0;
 
 
+import graph3;
+import geometry;
+import solids;
+import three;
 
-These projected spots are then matched to the detector spots in the
-sinogram. The $L_2$ norm between the real and simulated projected spots
-is then calculated as the cost function. The parameters corresponding
-to the geometric degrees of freedom (DOF) are then allowed to
-iteratively vary by using the Nelder-Mead simplex algorithm
-cite:lagarias_convergence_1998 to search for the geometric offsets
-that minimize the $L_{2}\text{-norm}$ cost function. Once the cost has
-been minimized, the geometric offsets are used as the calibration
-information for calculating the system matrix $(\mathcal{H})$ for the
-image reconstruction.
+import graph3;
+import geometry;
+import solids;
+import three;
 
-As with other calibration procedures, we allowed incremental variation
-in the different geometric parameters of our scanning trajectory to
-find the offsets that improve the match between the scan (observed
-projections) of our calibration phantom with a trajectory of interest,
-and the simulated projection of our phantom model with that geometry.
-Assuming the accuracy of the modeled phantom fiducials (an assumption
-that motivated our switch to the tighter tolerances of Varian's Isocal
-phantom), the phantom pose (position and orientation) is first allowed
-to vary in the room coordinate system to account for potential setup
-errors between the room coordinates and the modeled position of the
-phantom. As the geometry information reported by the TrueBeam system
-is in this coordinate system, it is necessary to ensure that the
-specified offsets are pertinent to calculating the system matrix.
+// view configuration
+size(10cm);
+currentprojection=orthographic(-15,10,20,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// Draw axis
+real ax_scale=15;
+draw(Label("$z$",position=EndPoint,align=N),(0,0,0)--(0,ax_scale,0),black,Arrow3);
+draw(Label("$x$",position=EndPoint,align=S),(0,0,0)--(ax_scale,0,0),black,Arrow3);
+draw(Label("$y$",position=EndPoint,align=SW),(0,0,0)--(0,0,-ax_scale),black,Arrow3);
+
+// show gantry angle
+draw(Label("$\theta_{g}$", (2, -0.5, 0)), arc((0, 0, 0), (ax_scale/3, 0, 0), (0, -ax_scale/3, 0)), red, arrow=Arrow3);
+
+// kV schematic
+real dlat=-13, dlng=0, dvrt=50;
+triple det_cent=(dvrt,dlat,dlng);
+real ulen=40.0, vlen=30.0;
+
+path3 detector=plane((0,ulen,0), (0,0,vlen), det_cent-(0,ulen/2,vlen/2));
+
+triple det0 = det_cent-(0,ulen/2,vlen/2);
+triple u = (det0+ax_scale/2*(0,1,0));
+triple v = (det0+ax_scale/2*(0,0,1));
+triple w = (det0+ax_scale/2*(-1,0,0));
+
+// detector norm
+triple dnorm = (det_cent+ax_scale*(-1,0,0));
+
+// detector coordinate system
+draw(det0--u,black,Arrow3,L=Label("$u$", position=EndPoint, align=W));
+draw(det0--v,black,Arrow3,L=Label("$v$", position=EndPoint, align=N));
+draw(det0--w,black,Arrow3,L=Label("$w$", position=EndPoint, align=N));
+
+draw(detector, black);
+
+// labels
+//From Charles Staats's tutorial
+//Direction of a point toward the camera.
+triple cameradirection(triple pt, projection P=currentprojection) {
+  if (P.infinity) {
+    return unit(P.camera);
+  } else {
+    return unit(P.camera - pt);
+  }
+}
+
+//Move a point closer to the camera.
+triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
+  return pt + distance * cameradirection(pt, P);
+}
+
+// source
+real slat=0, slng=0, svrt=-100;
+triple src=(svrt,slat, slng);
+
+// lines from source to detector edges
+draw(src..det_cent-(0,-ulen/2,-vlen/2),black+opacity(0.15));
+draw(src..det_cent-(0,-ulen/2,vlen/2),black+opacity(0.15));
+draw(src..det_cent-(0,ulen/2,vlen/2),black+opacity(0.15));
+draw(src..det_cent-(0,ulen/2,-vlen/2),black+opacity(0.15));
+
+// draw(Label("$\widetilde{X}_{\theta_g=0^{\circ}}$", 1),src--det_cent-(110,0,0), blue, arrow=Arrow3);
+
+// ray connecting the source to the detector
+triple ray_sd = det_cent-src;
+draw(L=Label("$\vec{r}_{sd}$", position=EndPoint, align=E), src--det_cent, blue, Arrow3);
+
+// dot product of ray onto normal vecotr
+real along = dot(ray_sd, dnorm);
+
+// detector projection operator
+transform3 proj=planeproject(detector);
+
+// show pierecing point
+triple pierce = proj*src;
+
+draw(L=Label("$\vec{p}$", position=EndPoint, align=NW),src--pierce,blue+dashed,arrow=Arrow3);
+draw(L=Label("$\vec{p}_{uv}$", position=EndPoint, align=SE),det0--pierce,red+dashed,arrow=Arrow3);
+// draw(src--pierce,red+dotted, arrow=Arrow3);
+#+END_SRC
+
+#+CAPTION: Orthographic schematic of a single projection view and the associated variables used in building the projective transform matrix $\left( \boldsymbol{X} \right)$ for that view. The $\left\{x, y, z \right\}$ coordinate system corresponds to the standard IEC global coordinate system, and the $\left\{u, v, w \right\}$ coordinate system corresponds to the detector frame vectors for that view. The red arrow labeled by $\theta_g$ denotes the gantry rotation angle which is defined from the $x$ axis as shown here for the kV imaging system. The blue vector $\vec{r}_{sd}$ points from the source to the detector center, and the blue vector $\vec{p}$ shows the piercing point of the x-ray source on the detector. The red vector $\vec{p}_{uv}$ corresponds to the piercing point in the detector basis as calculated in Equation ([[ref:eq:geo_pierecuv]]).
+#+LABEL: fig:geo_cal_proj
+#+ATTR_LaTeX: :width 0.9\textwidth
+#+RESULTS: fig:geo_cal_proj
+[[file:figures/geo/cal_proj.pdf]]
+
+With this new piercing point, it is possible to now construct a
+transform that projects the fiducials as well as transforms them to
+the detector basis. The transform to the detector basis is represented
+by the homogeneous coordinate transform
+\begin{equation}
+  \boldsymbol{G} = \begin{bmatrix}
+    u_i & u_j & u_k & -r_x \\
+    v_i & v_j & v_k & -r_y \\
+    w_i & w_j & w_k & -r_z \\
+    0 & 0 & 0 & 1
+  \end{bmatrix}.
+  \label{eq:geo_gmat}
+\end{equation}
+Then using the orthogonal ray component found in Equation
+([[ref:eq:geo_along]]), the homogeneous coordinate projection matrix is
+\begin{equation}
+  \boldsymbol{P} = \begin{bmatrix}
+    1 & 0 & 0 & 0 \\
+    0 & 1 & 0 & 0 \\
+    0 & 0 & \frac{1}{L} & 0 \\
+    0 & 0 & 0 & 0
+  \end{bmatrix}.
+  \label{eq:geo_pmat}
+\end{equation}
+Using these transforms so that they are pre-multiplied by the fiducial
+position vectors, the combined transform is then
+\begin{equation}
+  \boldsymbol{M} = \boldsymbol{G}\boldsymbol{P}.
+  \label{eq:geo_magicmat}
+\end{equation}
+
+Finally, this information can be combined to create a single transform
+of the fiducials in the global image coordinate system to the
+projected spots on the detector in discretized detector bin
+coordinates. First, the coordinates of the piercing point must be
+calculated in the detector basis as
+\begin{equation}
+  \vec{p}_{uv} = \(\vec{p}-\vec{r}_d\)\boldsymbol{G},
+  \label{eq:geo_pierecuv}
+\end{equation}
+where $\vec{r}_d_{}$ is the detector coordinates rotated into the global
+coordinate system. With all this, the projection transform used to
+calculate the projected fiducials in discretized detector bin
+coordinates is
+\begin{equation}
+  \boldsymbol{X} = \boldsymbol{M}\boldsymbol{T} (\vec{p}_{uv})
+  \boldsymbol{S}\left( \left[\frac{1}{s_{\text{pix}}},
+    \frac{1}{s_{\text{pix}}}, 1 \right]\right) \boldsymbol{T} \left(
+  \left[\frac{u_{\text{len}}}{2}+0.5, \frac{v_{\text{len}}}{2}+0.5, 0
+    \right] \right),
+  \label{eq:geo_xproj}
+\end{equation}
+where $boldsymbol{S}$ is a scaling transformation along the $\left\{
+u,v \right\}$ basis by the inverse of the pixel size $\left(
+s_{{\text{pix}} \right)$, and \boldsymbol{T} is a translation
+transformation to place the origin of the discretized detector basis
+at the center of the corner pixel.
+
+With the projection transform $\boldsymbol{X}$, each vector
+corresponding to the fiducials on the Isocal phantom can be projected
+onto the discretized detector basis as illustrated in Figure
+([[ref:fig:geo_cal_schematic]]). These projected spots are then matched to
+the detector spots in the real sinogram. The $L_2$ norm between the
+real and simulated projected spots is then calculated as it serves as
+the cost function for the optimization-based calibration. The idea
+behind this being that when deviations from the nominal geometry are
+identified, the simulated and real projected fiducials should
+correspond to the same detector coordinates.
+
+As with other optimization-based calibration procedures, we
+iteratively varied the parameters corresponding to the geometric
+degrees of freedom (DOF) of the scanning trajectory. The phantom pose
+(position and orientation) is first allowed to vary in the room
+coordinate system to account for potential setup errors between the
+room coordinates and the modeled position of the phantom. Once the
+pose of the Isocal phantom is identified, then the source, detector,
+and patient couch translations and rotations are allowed to vary, and
+the cost of the simulated fiducial projections are calculated at each
+step. We used the Nelder-Mead simplex algorithm
+cite:lagarias_convergence_1998 to minimize the $L_{2}\text{-norm}$ cost
+function.
 
 Given that there are there are different combinations of couch, source
 and detector motions that can cause the same change of the object
@@ -801,7 +979,10 @@ direction if effectively the same as allowing the source and detector
 to move the same distance in the negative longitudinal direction. This
 requires that only a few parameters are allowed to vary at once as
 allowing too many parameters on this non-convex surface will often
-produce nonphysical geometric corrections.
+produce nonphysical geometric corrections. Once the cost has been
+minimized, the geometric offsets are used as the calibration
+information for calculating the system matrix $(\mathcal{H})$ for the
+image reconstruction.
 
 For a new trajectory, this phantom is first scanned to identify any
 geometric offsets that are incorrectly reported in the TrueBeam data
@@ -811,113 +992,6 @@ configurations for which we found the additional refinement from our
 geometric calibration to be critical for obtaining a useful
 reconstruction. This was particularly true for scanning trajectories
 where the object and the kV imaging system were moving simultaneously.
-
-*** geocal procedure                         :noexport:
-    :PROPERTIES:
-    :ID:       DD6F1968-D9A8-46AB-AC2C-BF79512B530A
-    :END:
-The current version of the geocal procedure uses a single step
-projection matrix to transform positions in room coordinates to pixels
-on the detector. do you want to incude the equation for that? this is
-it basically, where “framevecs” are the 3 detector basis vectors
-rotated by roll, pitch, yaw and then gantry angle - your usual frame
-vectors. also note that my htransform_vectors function premultiplies
-the matrix by the vector, i.e. X’ = X M, so the component
-transformations are applied from left to right - if M=ABC, then it’s A
-first followed by B followed by C.
-
-#+BEGIN_SRC matlab :tangle no
-grotvecs=framevecs;
-dnormrot=grotvecs(3,:);
-
-sourcedetray=rotdet-rotsrc;  % this can be any ray connecting the source
-                             % with a point on the detector
-
-along=dot(sourcedetray,dnormrot);  % this is the new L for projection.
-                                   % the "along" component is the same for
-                                   % every ray from source to detector
-
-% find the new piercing point, of ray through source along det normal
-% direction.
-newpierce=rotsrc+along*dnormrot;
-mygmat=eye(4,4);
-mygmat(1:3,1:3)=grotvecs';
-mygtmat=hmatrix_translate(-rotsrc)*mygmat;
-
-projmat=eye(4,4);
-projmat(4,4)=0;
-projmat(3,4)=1.0/along;
-% compress the above to a single step - transform to detector basis,
-% project
-magicmat=mygtmat*projmat;
-
-% to compute pixel coordinates, first find the U and V coordinates of the
-% piercing point.  then just add the fids_on_detector U and V values.
-% note these will still be in cm, not in pixels.  last thing will be to
-% scale by pixel size and add detector center position, e.g. (512,384).
-pierceoffset=newpierce-rotdet;
-uvpierce=htransform_vectors(mygmat,pierceoffset);
-
-%uvfids1=(fids_on_det_4(:,1:2)+repmat(uvpierce(1:2),size(fids_on_det_4,1),1))/pixsize;
-xprojmat=magicmat*hmatrix_translate(uvpierce)* ...
-         hmatrix_scale([1.0/pixsize 1.0/pixsize 1])* ...
-         hmatrix_translate([usize/2+0.5, vsize/2+0.5, 0]);
-
-#+END_SRC
-
-#+RESULTS:
-
-*** Experimental Validation
-Once we had a calibration
-
-*** Image entropy                            :noexport:
-    :PROPERTIES:
-    :ID:       2410E321-8750-473F-B6B6-13DC1719B6AE
-    :END:
-To further verify the effectiveness of the calibration procedure, we
-will also need to use additional metrics to quantitatively
-characterize the impact of using the calibration on image quality. The
-work of Wicklein et al. has suggested that the best metric for
-measuring the impact of geometric error on image quality is entropy
-$(E)$ of the image's gray-level histogram $(H)$. This is defined as
-#+BEGIN_EXPORT latex
-\begin{equation}
-\label{eq:entropy}
-E=-\sum_{q=0}^Q h(q)\cdot\text{log}(h(q))
-\end{equation}
-#+END_EXPORT
-where $Q$ is the maximum intensity value and
-#+BEGIN_EXPORT latex
-\begin{equation}
-\label{eq:norm_hist}
-h(q)=\frac{H(q)}{N}
-\end{equation}
-#+END_EXPORT
-is the normalized histogram cite:wicklein_image_2012. For this metric,
-minimum entropy is obtained for an image with a single intensity value
-while an image with uniform distribution over all intensity values
-would have maximum entropy.
-
-Geometric errors introduce blurring at sharp boundaries in the image
-which increases the entropy. By reducing geometric errors with
-calibration, this blurring effect and subsequently entropy should
-reduced. For our non-circular trajectories, Wicklein's conclusion can
-be verified readily with the images in our catalog of geometric
-errors. The image entropy of the correct-geometry reconstruction will
-be against the reconstructions with intentional geometric errors to
-determine if improved geometric modeling reduces the image entropy in
-Equation (\ref{eq:entropy}).
-
-If the entropy calculations based on simulation agree with Wicklein's
-findings, entropy would be reasonable metric to characterize the
-benefits and limitations of using the geometric offsets from the
-calibration phantom on different non-circular trajectory
-reconstructions. We would then use entropy as the metric to compare
-reconstructions with and without calibration. From this, we can not
-only verify the effectiveness of our calibration method with different
-non-circular trajectories, but also then characterize the impact
-additional geometric corrections have on image quality.
-
 *** Geometric-offset artifact catalog        :noexport:
 Though the type of artifacts that are introduced by geometric offsets
 for circular scanning trajectories are relatively well known, this
@@ -945,6 +1019,52 @@ way in which we can verify the effectiveness of our geometric
 calibration procedure. By incorporating the calibration information we
 obtain with the calibration, known geometric error artifacts should be
 reduced.
+
+*** Image entropy                            :noexport:
+    :PROPERTIES:
+    :ID:       2410E321-8750-473F-B6B6-13DC1719B6AE
+    :END:
+To further verify the effectiveness of the calibration procedure, we
+will also need to use additional metrics to quantitatively
+characterize the impact of using the calibration on image quality. The
+work of Wicklein et al. has suggested that the best metric for
+measuring the impact of geometric error on image quality is entropy
+$(E)$ of the image's gray-level histogram $(H)$. This is defined as
+\begin{equation}
+  \label{eq:entropy}
+  E=-\sum_{q=0}^Q h(q)\cdot\text{log}(h(q))
+\end{equation}
+where $Q$ is the maximum intensity value and
+\begin{equation}
+  \label{eq:norm_hist}
+  h(q)=\frac{H(q)}{N}
+\end{equation}
+is the normalized histogram cite:wicklein_image_2012. For this metric,
+minimum entropy is obtained for an image with a single intensity value
+while an image with uniform distribution over all intensity values
+would have maximum entropy.
+
+Geometric errors introduce blurring at sharp boundaries in the image
+which increases the entropy. By reducing geometric errors with
+calibration, this blurring effect and subsequently entropy should
+reduced. For our non-circular trajectories, Wicklein's conclusion can
+be verified readily with the images in our catalog of geometric
+errors. The image entropy of the correct-geometry reconstruction will
+be against the reconstructions with intentional geometric errors to
+determine if improved geometric modeling reduces the image entropy in
+Equation (\ref{eq:entropy}).
+
+If the entropy calculations based on simulation agree with Wicklein's
+findings, entropy would be reasonable metric to characterize the
+benefits and limitations of using the geometric offsets from the
+calibration phantom on different non-circular trajectory
+reconstructions. We would then use entropy as the metric to compare
+reconstructions with and without calibration. From this, we can not
+only verify the effectiveness of our calibration method with different
+non-circular trajectories, but also then characterize the impact
+additional geometric corrections have on image quality.
+*** Experimental Validation
+Once we had a calibration
 
 *** figures                                  :noexport:
 **** four detector schematic
@@ -1067,11 +1187,64 @@ dot(proj270*isocal,red);
 #+CAPTION: Schematic representation of the scanning geometry
 #+ATTR_LaTeX: :width 0.75\textwidth
 # +RESULTS: fig:geo_schematic
+*** geocal procedure                         :noexport:
+    :PROPERTIES:
+    :ID:       DD6F1968-D9A8-46AB-AC2C-BF79512B530A
+    :END:
+The current version of the geocal procedure uses a single step
+projection matrix to transform positions in room coordinates to pixels
+on the detector. do you want to incude the equation for that? this is
+it basically, where “framevecs” are the 3 detector basis vectors
+rotated by roll, pitch, yaw and then gantry angle - your usual frame
+vectors. also note that my htransform_vectors function premultiplies
+the matrix by the vector, i.e. X’ = X M, so the component
+transformations are applied from left to right - if M=ABC, then it’s A
+first followed by B followed by C.
+
+#+BEGIN_SRC matlab :tangle no
+grotvecs=framevecs;
+dnormrot=grotvecs(3,:);
+
+sourcedetray=rotdet-rotsrc;  % this can be any ray connecting the source
+                             % with a point on the detector
+
+along=dot(sourcedetray,dnormrot);  % this is the new L for projection.
+                                   % the "along" component is the same for
+                                   % every ray from source to detector
+
+% find the new piercing point, of ray through source along det normal
+% direction.
+newpierce=rotsrc+along*dnormrot;
+mygmat=eye(4,4);
+mygmat(1:3,1:3)=grotvecs';
+mygtmat=hmatrix_translate(-rotsrc)*mygmat;
+
+projmat=eye(4,4);
+projmat(4,4)=0;
+projmat(3,4)=1.0/along;
+% compress the above to a single step - transform to detector basis,
+% project
+magicmat=mygtmat*projmat;
+
+% to compute pixel coordinates, first find the U and V coordinates of the
+% piercing point.  then just add the fids_on_detector U and V values.
+% note these will still be in cm, not in pixels.  last thing will be to
+% scale by pixel size and add detector center position, e.g. (512,384).
+pierceoffset=newpierce-rotdet;
+uvpierce=htransform_vectors(mygmat,pierceoffset);
+
+%uvfids1=(fids_on_det_4(:,1:2)+repmat(uvpierce(1:2),size(fids_on_det_4,1),1))/pixsize;
+xprojmat=magicmat*hmatrix_translate(uvpierce)* ...
+         hmatrix_scale([1.0/pixsize 1.0/pixsize 1])* ...
+         hmatrix_translate([usize/2+0.5, vsize/2+0.5, 0]);
+
+#+END_SRC
+
+#+RESULTS:
 *** ideas                                    :noexport:
 Given that part of the robust nature of optimization-based algorithms
 is the ability to handle the poorly-conditioned nature of the inverse
 problem...
-
 ** Results
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
@@ -1438,12 +1611,10 @@ potential means of enabling reconstruction from patient-specific
 collision avoiding trajectories
 cite:bian_optimization-based_2013,han_optimization-based_2012. The
 imaging model is formulated as the linear transform
-#+BEGIN_EXPORT latex
 \begin{equation}
   \label{eq:linmodel}
   \mathbf{g}=\mathcal{H}\mathbf{f},
 \end{equation}
-#+END_EXPORT
 where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
 detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
 transform, and $\mathbf{f}$ is the object function represented on a N
