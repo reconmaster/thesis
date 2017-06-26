@@ -11,6 +11,7 @@
 #+EXCLUDE_TAGS: noexport
 #+LATEX_CLASS:thesis
 #+STARTUP: hideblocks
+#+STARTUP: latexpreview
 
 #+BEGIN_EXPORT latex
 %% Use these commands to set biographic information for the title page:
@@ -272,6 +273,11 @@ the patient.
    :PROPERTIES:
    :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
    :END:
+*** Algorithms
+**** MLEM
+     :PROPERTIES:
+     :ID:       e0a24b69-d136-4f9a-9e85-dc42e1d114a9
+     :END:
 *** Detector weighting
     :PROPERTIES:
     :ID:       cc6bcac6-a445-4dfb-8815-a95e31f517ed
@@ -390,6 +396,10 @@ addMargins(0.5cm, 0.5cm);
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_weighting
 [[file:figures/opt/weighting.pdf]]
+*** Stopping criteria
+    :PROPERTIES:
+    :ID:       03857328-5d45-4133-b4a0-eff3fd941eaa
+    :END:
 ** Results
    :PROPERTIES:
    :ID:       04615b7c-c67c-499c-b2f9-d236ff743ea4
@@ -535,7 +545,7 @@ than that of our original phantom.
 #+LABEL: fig:geo_isocal
 [[../../research/phantoms/isocal/imgs/161012_isocal.jpg]]
 
-*** Calibration Method
+*** Calibration method
     :PROPERTIES:
     :ID:       F53F4B5A-83EB-4B16-9B6D-F557D3E441C2
     :END:
@@ -663,7 +673,7 @@ draw(src..det_cent-(0,-ulen/2,vlen/2),blue+opacity(0.15));
 draw(src..det_cent-(0,ulen/2,vlen/2),blue+opacity(0.15));
 draw(src..det_cent-(0,ulen/2,-vlen/2),blue+opacity(0.15));
 
-draw(Label("$\widetilde{\bold{X}}_{\theta_g=0^{\circ}}$", 1),src--det_cent-(110,0,0), blue, arrow=Arrow3);
+draw(Label("$X_{\theta_g=0^{\circ}}$", 1),src--det_cent-(110,0,0), blue, arrow=Arrow3);
 
 // transformed frame vectors
 triple det0_uncal = point(detector_uncal, 0);
@@ -752,16 +762,16 @@ dot(proj_uncal*isocal,red+opacity(op_uncal));
 [[file:figures/geo/cal_schematic.pdf]]
 
 Starting with the nominal scanning geometry reported by the projection
-metadata, we first build an initial projection matrix $\left(
-\widetilde{X} \right)$ that transforms the simulated phantom fiducials
-in room coordinates to projected spots in detector coordinates. The
-matrix $\left( \widetilde{X} \right)$ is calculated using the
-variables describing each view shown in Figure ([[ref:fig:geo_cal_proj]]).
-The source and detector (including the detector's frame vectors
-$\left\{ \hat{u}, \hat{v}, \hat{w} \right\}$) are rotated into the
-global image space by rotating these vectors by the gantry angle
-$\left( \theta_{g} \right)$ at each view (the gantry rotation axis is the $y$
-axis in Figures ([[ref:fig:geo_cal_schematic]], [[ref:fig:geo_cal_proj]]).
+metadata, we first build an initial projection matrix $\boldsymbol{X}$
+that transforms the simulated phantom fiducials in room coordinates to
+projected spots in detector coordinates. The matrix $\boldsymbol{X}$
+is calculated using the variables describing each view shown in Figure
+([[ref:fig:geo_cal_proj]]). The source and detector (including the
+detector's frame vectors $\left\{ \hat{u}, \hat{v}, \hat{w} \right\}$)
+are rotated into the global image space by rotating these vectors by
+the gantry angle $\left( \theta_{g} \right)$ at each view (the gantry rotation
+axis is the $y$ axis in Figures ([[ref:fig:geo_cal_schematic]],
+[[ref:fig:geo_cal_proj]]).
 
 Next, the orthogonal component of the rays from the source to the
 detector is calculated by first finding a ray connecting the source to
@@ -861,8 +871,6 @@ draw(src..det_cent-(0,-ulen/2,-vlen/2),black+opacity(0.15));
 draw(src..det_cent-(0,-ulen/2,vlen/2),black+opacity(0.15));
 draw(src..det_cent-(0,ulen/2,vlen/2),black+opacity(0.15));
 draw(src..det_cent-(0,ulen/2,-vlen/2),black+opacity(0.15));
-
-// draw(Label("$\widetilde{X}_{\theta_g=0^{\circ}}$", 1),src--det_cent-(110,0,0), blue, arrow=Arrow3);
 
 // ray connecting the source to the detector
 triple ray_sd = det_cent-src;
@@ -981,7 +989,7 @@ requires that only a few parameters are allowed to vary at once as
 allowing too many parameters on this non-convex surface will often
 produce nonphysical geometric corrections. Once the cost has been
 minimized, the geometric offsets are used as the calibration
-information for calculating the system matrix $(\mathcal{H})$ for the
+information for calculating the system matrix $\mathcal{H}$ for the
 image reconstruction.
 
 For a new trajectory, this phantom is first scanned to identify any
@@ -993,6 +1001,9 @@ geometric calibration to be critical for obtaining a useful
 reconstruction. This was particularly true for scanning trajectories
 where the object and the kV imaging system were moving simultaneously.
 *** Geometric-offset artifact catalog        :noexport:
+    :PROPERTIES:
+    :ID:       DED4A0A6-3775-41ED-AF64-BD6604B2B3AD
+    :END:
 Though the type of artifacts that are introduced by geometric offsets
 for circular scanning trajectories are relatively well known, this
 same sort of understanding is lacking for these new trajectories. To
@@ -1019,7 +1030,9 @@ way in which we can verify the effectiveness of our geometric
 calibration procedure. By incorporating the calibration information we
 obtain with the calibration, known geometric error artifacts should be
 reduced.
-
+**** notebooks                               :noexport:
+***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"geometry/overview.ipynb")][geometry/overview.ipynb]]
+- Overview of the simulated work/analysis
 *** Image entropy                            :noexport:
     :PROPERTIES:
     :ID:       2410E321-8750-473F-B6B6-13DC1719B6AE
@@ -1063,9 +1076,30 @@ reconstructions with and without calibration. From this, we can not
 only verify the effectiveness of our calibration method with different
 non-circular trajectories, but also then characterize the impact
 additional geometric corrections have on image quality.
-*** Experimental Validation
-Once we had a calibration
+*** Experimental validation
+    :PROPERTIES:
+    :ID:       150f19dd-e68d-4226-bdd4-01e31ea1176f
+    :END:
+To evaluate the efficacy of our calibration procedure, we investigated
+its performance on calibrating both a standard, half-fan, circular
+trajectory where the couch is stationary as well as a virtual
+isocenter trajectory with the same object illumination where the couch
+moves during the acquisition. For each of these trajectories, we used
+the same Developer Mode script to scan both the Catphan phantom and
+the Isocal phantom. We subsequently used the sinogram from the Isocal
+scan to extract calibration offsets for that particular trajectory
+using the calibration method described in Section ([[id:F53F4B5A-83EB-4B16-9B6D-F557D3E441C2][Calibration
+method]]).
 
+With this calibration extracted from the data domain using our
+calibration routine, we reconstructed the Catphan scans from these two
+trajectories with and without the calibrations offsets. We
+reconstructed onto an isotropic image grid of 0.473 mm for each
+reconstruction, and applied the half-fan weighting described in
+Section ([[id:cc6bcac6-a445-4dfb-8815-a95e31f517ed][Detector weighting]]). For all of these reconstructions we used
+200 iterations of MLEM as described in Section ([[id:e0a24b69-d136-4f9a-9e85-dc42e1d114a9][MLEM]]).
+
+*Should we run the metric analysis on these two scans w/ and w/o calibration?*
 *** figures                                  :noexport:
 **** four detector schematic
 # +LABEL: fig:geo_schematic
@@ -1249,14 +1283,96 @@ problem...
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
    :END:
-*** Cost function
-Here is an example of the cost function.
+*** Experimental validation
+    :PROPERTIES:
+    :ID:       2c3c25d5-477a-4013-bf2a-5a74716b9c20
+    :END:
+Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the CTP 528 spatial
+resolution module slice from the reconstructions of both the circular
+scan in the left column and the virtual isocenter scan in the right
+column. The top row shows the slice from the uncalibrated
+reconstruction using just the nominal scanning information from scan's
+metadata. It can be seen by comparing the circle and virtual isocenter
+scans without calibration that the additional complexity of moving the
+treatment couch during the scan introduces additional geometric error
+over the standard circle scan which visually degrades spatial
+resolution.
+
+The bottom row of Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the same
+slice from the corresponding trajectory with the geometric offsets
+from the calibration procedure incorporated into the system matrix
+$\mathcal(H)$. For the circular scan, using the calibration
+information does provide a bit of an improvement in spatial
+resolution. However, the efficacy of the calibration method is
+particularly striking for the virtual isocenter scan. By using the
+calibration offsets in the reconstruction model, the spatial
+resolution of the virtual isocenter reconstruction becomes comparable
+to that of the circular scan.
+
+Figure ([[ref:fig:geo_cal_cost]]) shows the $L_{2}_{}-\text{norm}$ from the data
+domain between the simulated fiducial projections and the real
+fiducial projections acquired from the circle and virtual isocenter
+scans of the isocal phantom. As this served as the cost function which
+we used as the minimization objective for the optimized offset search,
+we can see that the calibration did effectively reduce this cost from
+the nominal geometry (blue) to the calibrated geometry (green). This
+cost also reflects the same trend we see in the spatial resolution of
+the images shown in Figure ([[ref:fig:geo_cal_catphan_sens]]).
+
+Comparing the the $L_{2}_{}-\text{norm}$ of the uncalibrated scans in Figure
+([[ref:fig:geo_cal_cost]]), we see that there is far more disagreement
+between the nominal trajectory and the real data for the virtual
+isocenter scan than that of the circular scan. We see that this
+subsequently produces far more artifacts and loss of spatial
+resolution in the virtual isocenter reconstruction than in that of the
+circular scan. We also see that after running the optimization-based
+calibration procedure, the cost for both trajectories is reduced to
+approximately the same order of magnitude. Again, this agrees with the
+reconstructed images as the spatial resolution in both the circular
+scan and the virtual isocetner scan is comparable after incorporating
+the calibrated geometry into the system matrix $\mathcal{H}$.
+
+*Describe TB1 virtual isocenter couch backlash?*
+#+BEGIN_EXPORT latex
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.65\textwidth}
+    \includegraphics[width=\textwidth]{figures/geo/catphanCalComp}
+    \caption{}
+    \label{fig:geo_cal_catphan_sens}
+  \end{subfigure}
+  ~ %add desired spacing between images, e. g. ~, \quad, \qquad,
+  % \hfill etc.
+  % (or a blank line to force the subfigure onto a new line)
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{figures/geo/costComp1p5}
+    \caption{}
+    \label{fig:geo_cal_cost}
+  \end{subfigure}
+  \caption{(a) shows the 200$^{\text{th}}$ iteration of MLEM
+    reconstructions of the CTP 528 spatial resolution module from the
+    Catphan phantom for two different trajectories. The left column is
+    from a 1.5X circular scan, and the right column is from a 1.5X
+    virtual isocenter scan reconstructed onto a 0.473 mm isotropic
+    image grid([-100, 2000] HU). The top row shows the reconstruction
+    using the nominal geometry from self-reported metadata, and the
+    bottom row corresponds to the calibrated reconstructions. (b)
+    shows the $L_{2}$-norm used for the calibration cost function
+    before (blue) and after (green) calibration for both the circle
+    (left) and the virtual isocenter (right).}
+  \label{fig:geo_cal_sens_cost}
+\end{figure}
+#+END_EXPORT
+**** figures                                 :noexport:
+- [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/calibration_images.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/calibration_images.ipynb]]
 **** notes                                   :noexport:
-- [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
+- [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
 ** Conclusion
    :PROPERTIES:
-   :ID:       80e42b2c-5d4b-4646-91df-753802591344
+   :ID:       fd41d566-a4b3-4dcd-9f8c-7417276ad25c
    :END:
+In developing our optimization-based geometry calibration procedure,
+we came to the same conclusion.
 * Axial field-of-view extension              :fov:
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
