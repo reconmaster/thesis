@@ -1372,7 +1372,52 @@ the calibrated geometry into the system matrix $\mathcal{H}$.
    :ID:       fd41d566-a4b3-4dcd-9f8c-7417276ad25c
    :END:
 In developing our optimization-based geometry calibration procedure,
-we came to the same conclusion.
+we found that proper geometric calibration is a critical component of
+improving tomographic image quality. This is particularly true for
+more complicated trajectories where additional motion components such
+as that of the treatment couch introduce additional degrees of freedom
+in which geometric errors can arise. As shown in Figure
+([[ref:fig:geo_cal_sens_cost]]), the additional motion of the couch with
+the simultaneous motion of the source and detector introduces a larger
+deviation from the nominal scanning geometry.
+
+The optimization-based calibration we used in this study provides a
+robust framework for calibrating arbitrary scanning trajectories. The
+ability to acquire view-by-view calibration information with this
+approach dovetails nicely with the optimization-based framework that
+enables the reconstruction from the different trajectories we studied
+in this research. Though many of the different analytic-based methods
+described in the literature could be adopted to many of these
+trajectories (and have been for some), the benefit of the
+optimization-based framework for both reconstruction and geometric
+calibration comes from freedom to easily model and reconstruct from
+trajectories as well as geometric offsets that deviate from the
+analytically prescribed model.
+
+Though this does imply that calibration scans must be acquired for
+each scan of interest, there are optimization-based calibration
+methods similar to ours that attempt to extract calibration
+information with no /a priori/ knowledge of the phantom
+cite:panetta_optimization-based_2008. Such calibration methods or
+built-in calibration markers in the table are potential ways in which
+it would be possible to avoid acquiring calibration information for
+every scan of interest. As we used the TrueBeam kV-CBCT system for our
+data acquisition, Varian's Isocal phantom provided a convenient means
+of calibrating the imaging system as the linac use case already
+demands accurate calibration for treatment accuracy in addition to
+image quality alone.
+
+In the following chapters we where we investigate particular
+applications of these different trajectories, we will use our
+calibration method with the Isocal phantom to more accurately model
+the system matrix $\mathcal(H)$. Though the more exotic scanning
+trajectories introduce more degrees of freedom that create greater
+geometric uncertainty, our calibration procedure performs rather well
+in determining what these deviations are from the self-reported
+geometry metadata. For these trajectories, we found that
+incorporating geometric calibration consistently improves image
+quality.
+
 * Axial field-of-view extension              :fov:
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
