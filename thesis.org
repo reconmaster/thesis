@@ -103,6 +103,36 @@ However, this is fundamentally a question that must address the
 requirements of the computational reconstruction algorithm used to
 assemble the image from the x-ray projections.
 
+** Organization
+In this work, we will discuss the optimization-based,
+image-reconstruction framework that enables the use of these new
+scanning trajectories. In particular, we will focus on how this
+approach was developed in addressing the two clinical bottlenecks of
+limited axial FOV coverage and patient collisions with the linac
+gantry. By using these two examples, we will hopefully not only show
+the feasibility of using these non-circular trajectories, but also a
+potential solution to existing clinical needs.
+
+First, we will discuss the framework and considerations of using
+optimization-based reconstruction with different scanning trajectories
+in [[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][Optimization-based algorithms]]. Next, we will look at the need for
+geometric calibration and discuss a method we developed to do this for
+these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]. We will then look at
+using new trajectories to address the limited axial FOV issue in [[id:eaae199f-f899-4862-af50-720895a31c36][Axial
+field-of-view extension]] followed by using these trajectories to
+alleviate the issue of patient collisions in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
+trajectories]]. Finally, we will summarize this work and discuss
+possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
+conclusions]].
+
+* Optimization-based algorithms              :opt:
+  :PROPERTIES:
+  :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
+  :END:
+CT image reconstruction using a linearized imaging model of the x-ray
+transform has existed since the first CT system built by Cormack and
+Hounsfield.
+
 ** Background: Computed tomography
    :PROPERTIES:
    :ID:       898c8a79-a3b0-4cb2-b1be-2838c8b86426
@@ -339,45 +369,6 @@ the kV detector, it is not possible to change the position of the
 treatment head. In this case, moving the patient would be the only
 viable trajectory to avoid a collision.
 
-** Organization
-In this work, we will discuss the optimization-based,
-image-reconstruction framework that enables the use of these new
-scanning trajectories. In particular, we will focus on how this
-approach was developed in addressing the two clinical bottlenecks of
-limited axial FOV coverage and patient collisions with the linac
-gantry. By using these two examples, we will hopefully not only show
-the feasibility of using these non-circular trajectories, but also a
-potential solution to existing clinical needs.
-
-First, we will discuss the framework and considerations of using
-optimization-based reconstruction with different scanning trajectories
-in [[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][Optimization-based algorithms]]. Next, we will look at the need for
-geometric calibration and discuss a method we developed to do this for
-these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]. We will then look at
-using new trajectories to address the limited axial FOV issue in [[id:eaae199f-f899-4862-af50-720895a31c36][Axial
-field-of-view extension]] followed by using these trajectories to
-alleviate the issue of patient collisions in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
-trajectories]]. Finally, we will summarize this work and discuss
-possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
-conclusions]].
-
-* Optimization-based algorithms              :opt:
-  :PROPERTIES:
-  :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
-  :END:
-** notes                                     :noexport:
-   :PROPERTIES:
-   :ID:       8ae68db5-8b7d-4458-ab2f-0e46b3b5beb4
-   :END:
-- General approach seems to be to make the chapters presentations of
-  different studies (papers/proceedings) and the subsequent results
-  and conclusions that can be made.
-- Chuck said to use this as this is enabling the trajectory work
-** Introduction
-   :PROPERTIES:
-   :ID:       8736adf3-2606-43c1-ba5d-d3f92a74f9f8
-   :END:
-
 ** Methods
    :PROPERTIES:
    :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
@@ -509,10 +500,6 @@ addMargins(0.5cm, 0.5cm);
     :PROPERTIES:
     :ID:       03857328-5d45-4133-b4a0-eff3fd941eaa
     :END:
-** Results
-   :PROPERTIES:
-   :ID:       04615b7c-c67c-499c-b2f9-d236ff743ea4
-   :END:
 ** Conclusion
    :PROPERTIES:
    :ID:       0b2ab8ae-fd94-4d01-a7e0-8bef4db30078
@@ -1780,7 +1767,6 @@ image and the images from different trajectories.
    :PROPERTIES:
    :ID:       b2a353e8-8531-4a0e-8337-9f702ecf02f8
    :END:
-
 *** Simulation
 :PROPERTIES:
 :ID:       ff434d74-757c-47b8-bd98-9250d2751ff2
