@@ -1771,8 +1771,6 @@ image and the images from different trajectories.
 :PROPERTIES:
 :ID:       ff434d74-757c-47b8-bd98-9250d2751ff2
 :END:
-
-
 The initial simulation results demonstrated promising advantages to
 using the optimization-based reconstruction to produce extended-axial
 coverage images.
@@ -1781,7 +1779,9 @@ coverage images.
 - [ ] show plot of RMSE in the overlap region
 
 From the results shown in Figure (\ref{fig:})
-
+*** Data
+**** notebooks
+***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/fov/em_vs_fdk.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/fov/em_vs_fdk.ipynb]]
 ** Conclusion
    :PROPERTIES:
    :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
