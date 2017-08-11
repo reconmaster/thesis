@@ -103,6 +103,36 @@ However, this is fundamentally a question that must address the
 requirements of the computational reconstruction algorithm used to
 assemble the image from the x-ray projections.
 
+** Organization
+In this work, we will discuss the optimization-based,
+image-reconstruction framework that enables the use of these new
+scanning trajectories. In particular, we will focus on how this
+approach was developed in addressing the two clinical bottlenecks of
+limited axial FOV coverage and patient collisions with the linac
+gantry. By using these two examples, we will hopefully not only show
+the feasibility of using these non-circular trajectories, but also a
+potential solution to existing clinical needs.
+
+First, we will discuss the framework and considerations of using
+optimization-based reconstruction with different scanning trajectories
+in [[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][Optimization-based algorithms]]. Next, we will look at the need for
+geometric calibration and discuss a method we developed to do this for
+these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]. We will then look at
+using new trajectories to address the limited axial FOV issue in [[id:eaae199f-f899-4862-af50-720895a31c36][Axial
+field-of-view extension]] followed by using these trajectories to
+alleviate the issue of patient collisions in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
+trajectories]]. Finally, we will summarize this work and discuss
+possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
+conclusions]].
+
+* Optimization-based algorithms              :opt:
+  :PROPERTIES:
+  :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
+  :END:
+CT image reconstruction using a linearized imaging model of the x-ray
+transform has existed since the first CT system built by Cormack and
+Hounsfield.
+
 ** Background: Computed tomography
    :PROPERTIES:
    :ID:       898c8a79-a3b0-4cb2-b1be-2838c8b86426
@@ -339,45 +369,6 @@ the kV detector, it is not possible to change the position of the
 treatment head. In this case, moving the patient would be the only
 viable trajectory to avoid a collision.
 
-** Organization
-In this work, we will discuss the optimization-based,
-image-reconstruction framework that enables the use of these new
-scanning trajectories. In particular, we will focus on how this
-approach was developed in addressing the two clinical bottlenecks of
-limited axial FOV coverage and patient collisions with the linac
-gantry. By using these two examples, we will hopefully not only show
-the feasibility of using these non-circular trajectories, but also a
-potential solution to existing clinical needs.
-
-First, we will discuss the framework and considerations of using
-optimization-based reconstruction with different scanning trajectories
-in [[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][Optimization-based algorithms]]. Next, we will look at the need for
-geometric calibration and discuss a method we developed to do this for
-these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]. We will then look at
-using new trajectories to address the limited axial FOV issue in [[id:eaae199f-f899-4862-af50-720895a31c36][Axial
-field-of-view extension]] followed by using these trajectories to
-alleviate the issue of patient collisions in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
-trajectories]]. Finally, we will summarize this work and discuss
-possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
-conclusions]].
-
-* Optimization-based algorithms              :opt:
-  :PROPERTIES:
-  :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
-  :END:
-** notes                                     :noexport:
-   :PROPERTIES:
-   :ID:       8ae68db5-8b7d-4458-ab2f-0e46b3b5beb4
-   :END:
-- General approach seems to be to make the chapters presentations of
-  different studies (papers/proceedings) and the subsequent results
-  and conclusions that can be made.
-- Chuck said to use this as this is enabling the trajectory work
-** Introduction
-   :PROPERTIES:
-   :ID:       8736adf3-2606-43c1-ba5d-d3f92a74f9f8
-   :END:
-
 ** Methods
    :PROPERTIES:
    :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
@@ -509,10 +500,6 @@ addMargins(0.5cm, 0.5cm);
     :PROPERTIES:
     :ID:       03857328-5d45-4133-b4a0-eff3fd941eaa
     :END:
-** Results
-   :PROPERTIES:
-   :ID:       04615b7c-c67c-499c-b2f9-d236ff743ea4
-   :END:
 ** Conclusion
    :PROPERTIES:
    :ID:       0b2ab8ae-fd94-4d01-a7e0-8bef4db30078
@@ -1576,6 +1563,178 @@ quality.
    :PROPERTIES:
    :ID:       b815fcd4-92c6-4f72-9905-10acc22b580e
    :END:
+# What question (problem) was studied?
+The use of cone-beam computed tomography (CBCT) in image-guided
+radiation therapy (IGRT) has become increasingly popular in radiation
+oncology
+cite:xing_overview_2006,bissonnette_quality_2012,dawson_advances_2007. A
+kV imaging system is mounted on the treatment linear accelerator
+(linac) orthogonally to the MV treatment beam. This allows the
+acquisition of projection data of the patient while the gantry
+rotates. The reconstructed CT image from these projections provides
+volumetric information to assist with patient setup and target volume
+positioning cite:jaffray_flat-panel_2002-1. Linac manufacturers now
+routinely included kV imaging systems on their linacs, such as the
+Varian Medical Systems' (Palo Alto, CA) TrueBeam kV imaging system.
+
+A major limitation of these imaging systems is a lack of extended
+axial coverage. This is partially due to the detector size which is
+restricted due to engineering concerns. Another reason for this
+limited coverage is the prevalence of analytic-based reconstruction
+algorithms in the clinic cite:pan_why_2009. These algorithms, such as
+FDK cite:feldkamp_practical_1984, are known to suffer from cone-angle
+artifacts at the axial extremes of the reconstruction volume. The
+increasing severity of these artifacts at the axial extremes is
+partially why developing larger kV detectors have not been pursued.
+
+Analytic-based reconstruction algorithms are problematic in that they
+require a fixed trajectory in formulating the inverse. When
+approximations are made for the inverse as in FDK, deviations from
+where these approximations are valid lead to inconsistencies in the
+model and subsequently artifacts in the reconstruction. For FDK, at
+larger cone angles (edges of the FOV at the axial extremes), the
+assumption of quasi redundancy for planes other than that of the
+source's circular trajectory becomes increasingly invalid at larger
+cone angles leading to cone-angle artifacts.  In contrast to these
+analytic models, optimization-based reconstruction algorithms have
+demonstrated more robust model of the image formation process reducing
+the artifacts that arise from these analytic-based methods
+cite:shepp_maximum_1982,han_optimization-based_2012,sidky_image_2008,sidky_accurate_2006,bian_evaluation_2010.
+
+By utilizing the robust modeling properties of these new
+optimization-based algorithms, we are no longer bound to the strict
+trajectory limitations imposed by analytic-based reconstruction
+methods. Provided that the correct geometry of the acquisition
+trajectory is well understood, the system matrix of the image
+formation process can be calculated for arbitrary CBCT scanning
+configurations. These new trajectories are no longer limited to the
+few cases of non-circular trajectories for which analytic inverse
+formulations exist such as the line cite:sidky_volume_2005, circle and
+line cite:zeng_cone-beam_1992,katsevich_image_2004, circle and arcs
+cite:zou_image_2005-1,katsevich_image_2005, and non-planar orbits
+cite:kudo_derivation_1994
+
+With some of the new trajectories allowed by these optimization-based
+algorithms, we can address the problem of the limited axial coverage
+for these kV imaging systems. This is possible for trajectories with a
+component of axial translation that extends the projection information
+beyond the limits of the small detector coverage. For source
+trajectories where the source and detector move in the axial direction
+relative to the patient, projection data can be obtained for axial
+positions beyond what is acquired with a traditional circular
+trajectory. Optimization-based reconstruction algorithms make it
+possible to formulate an imaging model for any trajectory that could
+resolve a variety of limitations imposed by traditional trajectories.
+
+In this work, we compare a few different trajectories that can address
+the limited axial coverage that currently restricts clinical work in
+head and neck cancer as well as breast cancer patients *CITE*. Using
+these new optimization-based reconstruction algorithms, we studied
+some potential trajectories and then compared the subsequent
+extended-axial images to the clinical FDK standard. The hypothesis is
+that there can be extensive gains in clinical utility for these
+extended volume images provided that the image quality is comparable
+to the current clinical standard.
+*** proposal                                 :noexport:
+ In the 1980s, a lot of work was done to directly solve the inverse
+ problem for the cone-beam geometry. By modeling the projection
+ formation process as a Radon transform or an X-ray transform,
+ reconstruction algorithms were formulated by finding an analytic-based
+ inverse to the transform. However, for the inverse to be exact, it
+ needed to meet strict requirements such as Tuy's condition which
+ states that every plane through the object must intersect the source
+ trajectory cite:tuy_inversion_1983. While some exceptions to this
+ requirement were found, it demonstrates the strict requirements on the
+ types of scanning trajectories for which an exact inverse could be
+ found.
+
+ The circular scanning trajectory that is ubiquitous in the clinic for
+ CBCT is one trajectory that fails to meet Tuy's condition. The most
+ popular reconstruction algorithm for the circular CBCT trajectory is
+ the filtered-backprojection (FBP) algorithm proposed by Feldkamp,
+ Davis, and Kress (FDK) cite:feldkamp_practical_1984 which is still the
+ industry standard. FDK is only an exact inversion to the Radon
+ transform on the midplane containing the circular source
+ trajectory. For transaxial planes other than the midplane, a
+ quasi-redundancy in the scanning data is assumed. It is the violation
+ of this assumption which leads to cone-angle artifacts. These
+ artifacts become more severe at larger cone angles where this
+ assumption is less applicable.
+
+ The presence of cone-angle artifacts in FDK reconstructions from the
+ incomplete data acquired with circular scanning trajectories led to
+ research into inverse algorithms for cone-beam scans from
+ theoretically complete trajectories such as a circle plus a line
+ cite:zeng_cone-beam_1992. It became apparent in the reconstruction
+ results that implementing these direct reconstruction algorithms did
+ not produce the anticipated results cite:kudo_derivation_1994. Severe
+ artifacts and numerical errors were found in the reconstructions due
+ to factors such as truncation introducing high-frequency components
+ that are amplified in the filtration process.
+
+ Analytic-based reconstruction algorithms are formulated by explicitly
+ finding an inverse to the X-ray transform
+ #+BEGIN_LaTeX
+   \begin{equation}
+     \label{eq:xray}
+     g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
+   \end{equation}
+ #+END_LaTeX
+ where the data function $g$ is acquired by integrating along the ray
+ from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
+ the object function $f$. A fundamental problem with these
+ reconstruction algorithms when practically reconstructing $f$ is the
+ assumption of a continuous-to-continuous (CC) model. These
+ analytic-based reconstruction algorithms impose dense sampling
+ requirements for both the detector and number of views to approximate
+ a continuous data function. Given that the data function from the
+ digital detector and the numerical array for storing the reconstructed
+ image are both discrete, a more natural approach to the inverse
+ problem would be a discrete-to-discrete (DD) imaging model
+ cite:barrett_foundations_2003.
+
+ Iterative reconstruction algorithms are more robust because they do
+ implement a more accurate DD model of the imaging system. The X-ray
+ transform of the object function can be represented as the linear
+ system
+ #+BEGIN_LaTeX
+   \begin{equation}
+     \label{eq:ddsys}
+     \mathbf{g}=\mathcal{H}\mathbf{f},
+   \end{equation}
+ #+END_LaTeX
+ where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
+ detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
+ transform, and $\mathbf{f}$ is the object function represented on a N
+ voxel basis. As direct inversion of $\mathcal{H}$ is impractical due
+ to both its size and inconsistencies from factors such as noise,
+ optimization techniques are used to solve this system for an estimate
+ of the object $\widetilde{\mathbf{f}}$.
+
+ The optimization problem for these iterative reconstruction algorithms
+ is formulated as an objective function based on the actual data
+ $\mathbf{g}$ and the image model $\mathcal{H}\mathbf{f}$. An
+ optimization algorithm is then used to iteratively update the estimate
+ of $\widetilde{\mathbf{f}}$ until a suitable convergence criterion has
+ been met. The parameters of the optimization problem, the optimization
+ algorithm, and the convergence criteria are all important factors in
+ determining the properties of the reconstructed image and subsequently
+ its utility.
+
+ Two optimization-based reconstruction methods we will use with these
+ non-circular trajectories are maximum-likelihood expectation
+ maximization (MLEM) cite:shepp_maximum_1982,dempster_maximum_1977 and
+ constrained, total-variation (TV) minimization by adaptive steepest
+ descent-projection onto convex sets (ASD-POCS)
+ cite:sidky_image_2008. Previous work has shown that these iterative
+ algorithms are able to reconstruct clinically useful images under
+ scanning conditions for which analytic-based FDK fails
+ cite:han_optimization-based_2012,sidky_image_2007,sidky_accurate_2006. The
+ reconstruction work from sparse-view data cite:bian_evaluation_2010
+ alone suggests that views could be distributed at different axial
+ positions to acquire additional scan information without imparting
+ more dose than the dense set of angular views used in current clinical
+ circular scans with analytic-based reconstruction.
 
 ** Methods
    :PROPERTIES:
@@ -1776,17 +1935,637 @@ universal quality index (UQI) cite:wang_universal_2002 to provide a
 quantitative assessment of the image similarity between the reference
 image and the images from different trajectories.
 
+*** Linac-mounted kV-imaging system geometry
+    :PROPERTIES:
+    :ID:       60de42d1-aa6d-47d0-a27d-cc2e1a632254
+    :END:
+ We used the Varian TrueBeam kV imaging system to acquire the data in
+ this study. It consists of a kV imaging source opposite a flat-panel
+ detector with a source-to-detector-distance of 150 cm and a
+ source-to-isocenter distance of 100 cm. The detector's active area is
+ 40 cm $\times$ 30 cm with a $2048 \times 1536$ pixel array that performs a $2 \times
+ 2$ binning for a readout of $1024 \times 768$ square pixels of effective
+ size 0.388 mm.
+
+*** Reconstruction
+    :PROPERTIES:
+    :ID:       6cdf439a-318d-4c75-a479-e4dbfcb7a076
+    :END:
+ To utilize optimization-based methods for image reconstruction, the
+ image formation process is modeled as the linear system
+ #+BEGIN_LaTeX
+ \begin{equation}
+   \label{eq:ddsys}
+   \mathbf{g}=\mathcal{H}\mathbf{f},
+ \end{equation}
+ #+END_LaTeX
+ where $\mathbf{g}$ is the discrete $M$-pixel sampled projection on the
+ detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
+ transform, and $\mathbf{f}$ is the object function represented on a
+ $N$-voxel basis. As direct inversion of $\mathcal{H}$ is impractical
+ due to both its size and inconsistencies from factors such as noise,
+ optimization techniques are used to solve this system for an estimate
+ of the object $\widetilde{\mathbf{f}}$.
+
+ The optimization problem for this approach is then framed as an
+ objective function based on the actual data $\mathbf{g}$ and the image
+ model $\mathcal{H}\mathbf{f}$. An optimization algorithm is then used
+ to iteratively update the estimate of $\widetilde{\mathbf{f}}$ until a
+ suitable convergence criterion has been met.
+
+ Where, we used the maximum-likelihood expectation maximization (MLEM)
+ algorithm cite:dempster_maximum_1977. As we are interested in using
+ optimization-based methods to enable reconstruction from novel
+ trajectories, we selected an algorithm that is well understood and has
+ relatively few parameters. However, the freedom in calculating the
+ system matrix by modeling the image formation process as a linear
+ system does not limit the algorithm choice to MLEM alone.
+
+ The reconstruction program for solving Equation (\ref{eq:ddsys}) using
+ MLEM can be formulated as
+ #+BEGIN_LaTeX
+ \begin{equation}
+   D_{KL}(\mathbf{f})\leq \epsilon_{KL}
+   \label{eq:kl}
+ \end{equation}
+ #+END_LaTeX
+ where $D_{KL}(\mathbf{f})$ is the Kullback-Leibler (KL) divergence
+ between $\mathbf{g}$ and $\mathcal{H}\mathbf{f}$
+ cite:barrett_foundations_2003 and $\epsilon_{KL}>0$ is the upper bound for the
+ KL divergence. The KL divergence can be minimized with the MLEM
+ algorithm
+ #+BEGIN_LaTeX
+ \begin{equation}
+   f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}}
+     \label{eq:mlem}
+ \end{equation}
+ #+END_LaTeX
+ where $f_{j}^{n}$ is $j$-th voxel value at iteration $n$ and
+ $\mathcal{H}_{ij}$ is the element of the system matrix at the $i$-th
+ row and $j$-th column for $i=1,2,...,M$ and $j=1,2,...,N$. The initial
+ image estimate for the reconstructions was $\mathbf{f}^{(0)}=1$. The
+ $M\times M$ diagonal matrix $\mathcal{W}$ weights the corresponding
+ data entries cite:bian_optimization-based_2013.
+
+ *list the voxel/FOV size*
+
+*** Trajectories
+    :PROPERTIES:
+    :ID:       b16942be-e3d8-4fb2-a872-aa68fe6bd4fd
+    :END:
+ We define a scanning trajectory as the sequence of source and detector
+ positions used to acquire each projection view. The coordinates of the
+ trajectory are then defined relative to a fixed origin in the patient.
+ Moving either the imaging arms or the patient, it is possible to
+ create a component of axial translation that acquires projection views
+ with information of the patient volume at extended axial positions.
+ Moving either the imaging arms or the patient is equivalent provided
+ the relative translation is correctly accounted for when developing
+ the system matrix for the acquisition.
+
+ The current clinical method of obtaining an extended axial image
+ involves stacking the FDK reconstructions of two circular scans at
+ different axial positions. For this reason, the first trajectory we
+ wanted to study was the dual-circle trajectory show in Figure ([[ref:fig:traj_dcirc][double
+ circle]]). This provided a direct comparison between the clinical
+ practice of using analytic-based to optimization-based reconstruction
+ of the entire image volume using all the dual-circle projection data
+ at once.
+
+ In addition to the dual circle trajectory, we studied two additional
+ trajectories. One trajectory consists of two circles with a line
+ connecting them in the axial direction shown in Figure ([[ref:fig:traj_clc][clc]]). We will
+ refer to this as the circle-line-circle (CLC) trajectory. The other
+ trajectory is a smooth trajectory that translates the source in the
+ axial direction while the gantry rotation is slowing and reversing
+ direction before acquiring the second circle show in Figure ([[ref:fig:traj_smth][smooth]]).
+
+ #+BEGIN_LaTeX
+ \begin{figure*}
+   \centering
+   \begin{subfigure}[b]{0.3\textwidth}
+     \includegraphics[width=\textwidth]{img/traject/dual_circle_20cm.png}
+     \caption{Dual circle}
+     \label{fig:traj_dcirc}
+   \end{subfigure}
+   ~
+   \begin{subfigure}[b]{0.3\textwidth}
+     \includegraphics[width=\textwidth]{img/traject/dual_circle_line_20cm.png}
+     \caption{Circle line circle}
+     \label{fig:traj_clc}}
+   \end{subfigure}
+   ~
+   \begin{subfigure}[b]{0.3\textwidth}
+     \includegraphics[width=\textwidth]{img/traject/dual_smth_20cm.png}
+     \caption{Smooth}
+     \label{fig:traj_smth}}
+   \end{subfigure}
+   ~
+   \caption{The left image shows the dual circle trajectory. The center
+     image shows the circle-line-circle trajectory. The right image shows
+     the smooth trajectory. These diagrams of the source trajectory do
+     not show the opposing trajectory of the detector around the digital
+     patient.}
+   \label{fig:poly}
+ \end{figure*}
+ #+END_LaTeX
+
+**** Developer mode
+     :PROPERTIES:
+     :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
+     :END:
+ To study the new trajectories with a real clinical kV imaging system,
+ we implemented some of these trajectories on Varian's TrueBeam
+ system. The TrueBeam Developer Mode provides control of the kV imaging
+ system to allow for motion control that is unavailable in clinical
+ modes. Developer Mode allows control of the gantry rotation, the c-arm
+ positions of the source and detector as well as the position of the
+ treatment couch. By combining motions with all of these components, it
+ is possible to acquire kV projection data for the trajectories studied
+ in the simulations.
+
+**** Trajectories
+     :PROPERTIES:
+     :ID:       4787aeca-bdf3-4b8b-bfda-6c7248cb01d4
+     :END:
+ After simulation, we then wanted to see how well combining these
+ trajectories with optimization-based reconstruction could extend the
+ axial FOV with real projection data. Based on the simulation results,
+ we acquired a scans from spacings of 17, 18,19, and 20 cm between the
+ two circular planes of these trajectories. These larger spacings
+ provided data for potential axial FOV's of 37, 38, 39, and 40 cm
+ respectively.
+
+ For each of these spacings, we acquired the same three trajectories
+ mentioned in the simulation study. First the dual-circle trajectory
+ was acquired by moving the c-arms and acquiring circular scans at two
+ different axial positions. We then acquired the CLC trajectory with
+ the c-arms by also acquiring projection data as they translated along
+ the axial direction from the plane of the first circle to the plane of
+ the second circle. Finally, the smooth trajectory was acquired by
+ having the treatment couch move relative to the source and detector as
+ the gantry rotated. *maybe cut this last sentence?* While we would
+ like to demonstrate this motion while moving only the c-arms during
+ the gantry rotation, this is unfortunately not possible with our
+ TrueBeam model due to hardware limitations.
+
+ #+NAME: tab:disk_trajects
+ | Trajectory | Axial gap [cm] | Detector configuration | Air scan  | lognorm | Notes                      |
+ |------------+----------------+------------------------+-----------+---------+----------------------------|
+ | Circle     |                | Full                   |           | x       |                            |
+ | Circle     |                | Half                   |           | x       |                            |
+ |------------+----------------+------------------------+-----------+---------+----------------------------|
+ | CLLC       |             20 | Full                   | 20 cm air | x       |                            |
+ | CLLC       |             19 | Full                   | ""        | x       |                            |
+ | CLLC       |             18 | Full                   | ""        | x       |                            |
+ | CLLC       |             17 | Full                   | ""        | x       |                            |
+ |------------+----------------+------------------------+-----------+---------+----------------------------|
+ | CLLC       |             18 | Half                   |           | x       | 2 of these for some reason |
+ |------------+----------------+------------------------+-----------+---------+----------------------------|
+ | SMTH       |             20 | Full                   |           | x       |                            |
+ | SMTH       |             19 | Full                   |           | x       |                            |
+ | SMTH       |             18 | Full                   |           | x       |                            |
+ | SMTH       |             17 | Full                   |           | x       |                            |
+ |------------+----------------+------------------------+-----------+---------+----------------------------|
+ | SMTH       |             18 | Half                   |           | x       |                            |
+ |------------+----------------+------------------------+-----------+---------+----------------------------|
+
+**** Phantoms
+     :PROPERTIES:
+     :ID:       cd67b907-804c-4212-bf45-6ca6daad766c
+     :END:
+ The image quality that results from using these trajectories with
+ optimization-based algorithms must be quantitatively evaluated for the
+ different trajectories and spacings chosen. Given that contrast
+ resolution is on of the tasks that enables physicians to utilize the
+ imaging system's clinical potential cite:dawson_advances_2007, we
+ wanted to characterize the low-contrast resolution as a function of
+ axial position for the different trajectories and spacings.
+
+ As the extended axial coverage we obtain with the kV imaging system
+ using these methods is novel, the authors do not know of any standard
+ phantom for characterizing low-contrast resolution as a function of
+ axial position within a single scan. For this reason, we built a
+ custom low-contrast disk phantoms that fit in an acrylic tube with
+ extended axial coverage as shown in Figure ([[ref:fig:disk_tube][tube setup]]). The disks
+ themselves, such as the one shown in Figure ([[ref:fig:lc_disk][low constrast disk]]) *get
+ updated disk*, are designed to provide similar metrics such as those
+ obtained with the Catphan (The Phantom Laboratory, Salem, NY)
+ phantom's low-contrast module CTP515. Additionally, the largest holes
+ are designed to hold the different electron density plugs from the
+ Gammex (Middleton, WI) RMI tissue characterization phantom. By placing
+ four of these disks in the tube, we can obtain these metrics as a
+ function of axial position within a given reconstruction.
+
+ #+BEGIN_LaTeX
+   \begin{figure}
+   \centering
+   \begin{subfigure}[b]{0.45\textwidth}
+   \centering
+   \includegraphics[height=1.75in]{img/poly/20150408_183320_setup.jpg}
+   \caption{Disk phantom tube}
+   \label{fig:disk_tube}
+   \end{subfigure}
+   \qquad
+   \begin{subfigure}[b]{0.45\textwidth}
+   \centering
+   \includegraphics[height=1.75in]{img/poly/20150609_disk_phantom.jpg}
+   \caption{Low-contrast disk phantom}
+   \label{fig:lc_disk}}
+   \end{subfigure}
+   \caption{The left image shows the experimental setup of the acrylic
+     tube with four low-contrast disks. Given they symmetry of the
+     scanning geometry, one disk is placed at the plane between the two
+     circles. The remaining 3 are place at different axial positions in
+     one half of the image volume. The right image shows one of the
+     low-contrast disks with the larger holes for the solid water RMI
+     inserts.}
+   \label{fig:poly}
+   \end{figure}
+ #+END_LaTeX
+
+ To study these techniques with an anthropomorphic phantom, we used the
+ CIRS (Norfolk, VA) Model 600 torso phantom shown in Figure ([[ref:fig:ed][ed]]). Using
+ a 14 cm offset detector, we acquired a smooth trajectory scan at *18
+ cm spacing*? This scan was chosen as it had the best performance with
+ the metrics obtained with the disk phantom.
+
+ #+BEGIN_LaTeX
+   \begin{figure}
+   \centering
+   \begin{subfigure}[b]{0.45\textwidth}
+   \centering
+   \includegraphics[height=1.75in]{../../research/trajectories/phantoms/cirs/20140901_ed_cllc.jpg}
+   \caption{CIRS torso phantom}
+   \label{fig:ed_setup}
+   \end{subfigure}
+   \qquad
+   \begin{subfigure}[b]{0.45\textwidth}
+   \centering
+   \includegraphics[height=1.75in]{../../research/trajectories/phantoms/cirs/600_PHO_01.jpg}
+   \caption{Phantom cross sections}
+   \label{fig:ed_secs}}
+   \end{subfigure}
+   \caption{The left image shows the experimental setup of the CIRS torso
+     phantom. The right image shows the cross sections of this phantom
+     with some of its low-contrast features.}
+   \label{fig:ed}
+   \end{figure}
+ #+END_LaTeX
+
+**** TODO Evaluation
+     :PROPERTIES:
+     :ID:       3e094a71-3492-4025-885c-12414ccddab5
+     :END:
+ - Rather than get into a discussion with the reviewers in regard to
+   FDK vs iterative, I could use just the EM reconstruction of a
+   typical circular scan to avoid complicating the argument in regard
+   to the simply the algorithm. Except that I need to show what happens
+   at the axial extremes with stacked FDK.
+
+*** proposal                                 :noexport:
+**** Simulated non-circular trajectories
+     :PROPERTIES:
+     :ID:       e054809f-7e83-4b52-9005-5c8b325624b9
+     :END:
+ When an extended axial FOV is needed in the clinic, in current
+ practice two circular scans are acquired at different axial
+ positions. Once each independent volume has been reconstructed with
+ the analytic-based FDK, the two volumes are stacked to create the
+ extended image. While this stacked image does have extended axial
+ coverage, there are problems with this approach that can be alleviated
+ with iterative reconstruction techniques. To evaluate this, we
+ compared the simulated results of stacking FDK images from two
+ circular scans to the iterative reconstruction from the combined
+ projection data of the two circular scans treated as a single
+ trajectory composed of two circles cite:davis_extended_2013.
+
+ # How much detail do I want to go into, just present the main point
+ # that at the extended spacing, the FDK algorithm cannot even recover
+ # enough of the volume to provide a useful image volume
+ # *Leave XCAT out for now* The
+ # other phantom was the anthropomorphic XCAT phantom which is defined
+ # analytically as a NURBS surface with polychromatic forward projectors
+ # cite:segars_realistic_2008.
+
+***** Simulation model
+      :PROPERTIES:
+      :ID:       e4cdbd91-3ea9-4606-81bb-2e4e8380942d
+      :END:
+ For these simulations, the imaging system was modeled from the
+ TrueBeam kV imaging system. This imaging system consists of a 40 x 30 cm^2 flat-panel
+ detector with a 1.5 magnification factor. Given the detector's length
+ in the axial direction is 30 cm, a 1.5 magnification factor means the
+ axial length in the image FOV from a single circular scan is 20 cm.
+
+ We generated forward projections from pairs of circular scans with
+ different axial spacing between the two planes of the source's
+ rotation. Since the maximum axial coverage for a single circular scan
+ in the image volume is 20 cm, the maximum shift that will still allow
+ data collection from a contiguous region of the image volume is 20
+ cm. This 20 cm shift should provide a maximum axial coverage in the
+ image volume of 40 cm, the same axial length as the treatment field of
+ the TrueBeam.
+
+***** Defrise-style phantom
+      :PROPERTIES:
+      :ID:       89bedf9d-7a7b-410b-aef9-a4b5e021d0f0
+      :END:
+ We used a simulated Defrise-style phantom composed of 5 mm thick disks
+ of alternating high and low densities in the axial direction. This
+ geometric design is acknowledged by the FDK authors as being the type
+ of phantom most susceptible to cone-angle artifacts
+ cite:feldkamp_practical_1984. We simulated and forward projected the
+ Defrise phantom with the TAKE software
+ cite:muller-merbach_simulation_1996 using 300 views distributed
+ uniformly over each circular scan.
+
+***** Reconstruction
+      :PROPERTIES:
+      :ID:       db5e90cd-9b76-4ca9-95ee-f48c122bed6b
+      :END:
+ To create the stacked FDK reconstructions, we first reconstructed the
+ FDK volume from each circular scan. We then used the axial plane at
+ the midpoint between the two circular planes as a discriminator for
+ selecting the FDK volume from which each slice was taken. For
+ iterative reconstructions, we used 100 iterations of the maximum
+ likelihood expectation maximization (MLEM) algorithm
+ cite:dempster_maximum_1977,shepp_maximum_1982 to reconstruct the
+ entire extended image from all of the projection data at once. Both
+ the FDK and iterative reconstructions used the same 256 x 256
+ transverse grid size with 1 mm isotropic voxels. Figure
+ (\ref{fig:sim_take}) shows mid-sagittal slices from some of these
+ simulations.
+
+ #+BEGIN_LaTeX
+   \begin{figure*}[t!]
+     \centering
+     \begin{tabular}{lccc}
+       \toprule
+       &FDK stacked&MLEM double circle&MLEM smooth\\
+       \midrule
+
+       18~cm&
+       \includegraphics[height=3cm]{img/take/fdk_18cm.png}&
+       \includegraphics[height=3cm]{img/take/mlem_dual_18cm.png}&
+       \includegraphics[height=3cm]{img/take/mlem_smth_18cm.png}\\
+       20~cm&
+       \includegraphics[height=3cm]{img/take/fdk_20cm.png}&
+       \includegraphics[height=3cm]{img/take/mlem_dual_20cm.png}&
+       \includegraphics[height=3cm]{img/take/mlem_smth_20cm.png}\\
+
+       \bottomrule
+     \end{tabular}
+     \caption{Mid-sagittal views of the Defrise disk phantom
+       reconstructions at different separation distances. The display
+       window is [0.1, 0.3]~cm$^{-1}$. The left column shows the stacked
+       FDK extended volumes, and the remaining columns show the
+       100$^{\text{th}}$ iteration of the MLEM extended volumes for
+       different trajectories.}
+     \label{fig:sim_take}
+     %\vspace{-1em}
+   \end{figure*}
+
+ #+END_LaTeX
+
+***** Trajectories
+      :PROPERTIES:
+      :ID:       f5de64b9-d14d-4a3a-a051-93538e9fc35b
+      :END:
+ By increasing the separation between the two circular scans up to the
+ maximum spacing of 20 cm, it is apparent that FDK has fundamental
+ support limitations that restricts the acceptable distance between
+ these two circles to less than the maximum 20 cm spacing. The gap in
+ the axial coverage is a region with insufficient scan information
+ which is known as the shadow zone cite:forthmann_adaptive_2009. The
+ MLEM algorithm can use information from both circular scans
+ simultaneously, leading to improved reconstruction of the image in the
+ shadow zone as seen in Figure (\ref{fig:sim_take}). It is likely that
+ if such an extended image volume were to be used in the clinic, it
+ would be centered on an object of interest. If this were so, the most
+ important content in the image would be in the region most afflicted
+ by cone-angle artifacts.
+
+ To acquire more scan information from the central region between the
+ two circles, we also simulated two other trajectories. Both of these
+ trajectories acquire additional view while translating the source and
+ detector from the axial position of one circle to the other. One of
+ these trajectories is a circle-line-circle trajectory where the
+ translation phase of the source and detector between the two circles
+ is a line as Figure (\ref{fig:traj_clc}) shows. The other trajectory
+ shown in Figure (\ref{fig:traj_smth}) is a smooth trajectory that is
+ similar to the circle-line-circle, but the gantry rotation and
+ longitudinal translation are designed to avoid sharp transition points
+ in the imaging trajectory.
+
+ #+BEGIN_LaTeX
+   \begin{figure}
+     \centering
+     \subfloat[Circle line circle]{\includegraphics[width=0.45\textwidth]{img/traject/clc.pdf}%
+       \label{fig:traj_clc}}
+     \qquad
+     \subfloat[Smooth]{\includegraphics[width=0.45\textwidth]{img/traject/smth.pdf}%
+       \label{fig:traj_smth}}
+     \caption{The left image (a) shows the circle-line-circle trajectory
+       with a 20 cm spacing between the circles. The right image (b)
+       shows the smooth trajectory with a 20 cm spacing between the
+       circles. The units for the axes are in centimeters, and the color
+       gradient shows the temporal evolution of the source position.}
+     \label{fig:poly}
+   \end{figure}
+ #+END_LaTeX
+
+ #+CAPTION: Plot of the RMSE for extended volumes of different trajectories with different spacing between planes of the circles, compared to the central CBCT volume of a single circular scan.
+ #+ATTR_LaTeX: :width \textwidth
+ #+LABEL: fig:take_rmse
+ file:./img/take/central_cbct_rmse.pdf
+
+***** RMSE
+      :PROPERTIES:
+      :ID:       b579be25-3925-455b-ad5a-00c6bb4bb1fa
+      :END:
+ Figure (\ref{fig:take_rmse}) shows a root-mean-square error (RMSE)
+ comparison of a variety of different trajectories with different
+ spacings between the two planes of the circles. The volume for which
+ the RMSE is calculated is the central volume between the two circles
+ with a 20 cm axial length, which would be the region seen with a
+ single CBCT scan. The figure shows that for any extended volume
+ spacing, the stacked-FDK reconstruction from two separate circles
+ deviates the most from the truth, and it degrades with increasing
+ separation. The figure also shows that the iterative reconstruction of
+ the same dual-circle trajectory is much closer to the truth, but
+ demonstrates the same degradation with increasing spacing between the
+ two circles. Finally, the double circle and line trajectory and the
+ new smooth trajectory iterative reconstructions remain relatively
+ constant for increasing spacing, with the smooth trajectory being
+ closer to the truth. The slices shown in Figure (\ref{fig:sim_take})
+ visually agree with these results. The double circle and line
+ trajectory was left out of Figure (\ref{fig:sim_take}) since the
+ results were not visually distinguishable from the smooth trajectory
+ reconstructions.
+
+**** TODO Experimental non-circular trajectories
+     :PROPERTIES:
+     :ID:       eef6d73b-7ca0-4031-bd66-4a14c1fcc015
+     :END:
+ # We don't need to include the Trilogy data since we have the smooth
+ # trajectory acquired with Ed from the smooth trajectory
+
+ After identifying potential benefits from using these non-circular
+ trajectories with iterative reconstruction methods from simulations,
+ we acquired experimental scan data with Varian's Trilogy OnBoard
+ Imager. Though the Trilogy lacks the mechanical control features of
+ the TrueBeam Developer Mode, we were able to acquire circular scans at
+ different axial positions by translating the treatment couch.
+
+***** Phantoms
+      :PROPERTIES:
+      :ID:       16e0ec1b-d733-4e67-912e-a6a1f5ac800d
+      :END:
+ We repeated the same reconstruction process of stacking FDK
+ reconstructions and using MLEM to iteratively reconstruct the entire
+ image volume from a single trajectory composed of two circular
+ scans. One phantom was a Defrise disk phantom of the same dimensions
+ of the simulated disk phantom, with alternating disks of Delrin and
+ cork. The other phantom was the upper torso of the RANDO Man phantom
+ (The Phantom Laboratory, Salem NY). The experimental results shown in
+ Figure (\ref{fig:trilogy_data}) demonstrate the same finding that
+ iterative reconstruction could recover more of the shadow zone where
+ the FDK fails.
+
+ #+BEGIN_LaTeX
+   \begin{figure*}[t!]
+     \centering
+     \begin{tabular}{lccc}
+       \toprule
+       &Central Single Circle&12~cm Double Circle&20~cm Double Circle\\
+       \midrule
+
+       FDK&
+       \includegraphics[height=3cm]{img/trilogy/stacked_defrise_00cm_256x256x200_sag.png}&
+       \includegraphics[height=3cm]{img/trilogy/stacked_defrise_12cm_256x256x320_sag.png}&
+       \includegraphics[height=3cm]{img/trilogy/stacked_defrise_20cm_256x256x400_sag.png}\\
+       MLEM&
+       \includegraphics[height=3cm]{img/trilogy/disk_dual_00cm_em_list_256x256x234_sag.png}&
+       \includegraphics[height=3cm]{img/trilogy/disk_dual_12cm_em_list_256x256x354_sag.png}&
+       \includegraphics[height=3cm]{img/trilogy/disk_dual_20cm_em_list_256x256x434_sag.png}\\
+
+       \midrule
+
+       FDK&
+       \includegraphics[height=3.5cm]{img/trilogy/stacked_rando_00cm_200x512x512_sag.png}&
+       \includegraphics[height=3.5cm]{img/trilogy/stacked_rando_12cm_320x512x512_sag.png}&
+       \includegraphics[height=3.5cm]{img/trilogy/stacked_rando_20cm_400x512x512_sag.png}\\
+       MLEM&
+       \includegraphics[height=3.5cm]{img/trilogy/rando_00cm_hf_300x512x512_sag.png}&
+       \includegraphics[height=3.5cm]{img/trilogy/rando_12cm_hf_380x512x512_sag.png}&
+       \includegraphics[height=3.5cm]{img/trilogy/rando_20cm_hf_440x512x512_sag.png}\\
+
+       \bottomrule
+     \end{tabular}
+     \caption{Mid-sagittal views of the Defrise disk and RANDO phantom
+       reconstructions for a single scan and double circular scans at
+       different separation distances. The top two rows show the Defrise
+       disk phantom, and the bottom two rows show the RANDO phantom. The
+       display window is [0.1, 0.3]~cm$^{-1}$. The red arrows indicate
+       misalignment artifacts in the MLEM reconstruction introduced by
+       the couch translation.}
+     \label{fig:trilogy_data}
+     %\vspace{-1em}
+   \end{figure*}
+
+ #+END_LaTeX
+
+***** Dual-circle trajectory
+      :PROPERTIES:
+      :ID:       fe10444a-7b7c-4eaf-9e2e-6b44b8bb7dc9
+      :END:
+ While a 20 cm spacing between the two circles is the theoretical
+ maximum spacing where contiguous volumes can be combined in an
+ extended axial image, there are some practical limitations that
+ further limit the spacing. Specifically, the edge of the kV detector
+ has a few rows of unusable pixels. When the maximum spacing is used,
+ these rows result in a small volume in the image where there is no
+ redundancy to fill in the corrupted volume. The lack of redundancy in
+ this overlap region also makes the reconstruction more susceptible to
+ geometric artifacts like the vertical displacement in the couch
+ between the two longitudinal positions. The geometric calibration
+ phantom is being developed to detect such displacements which will
+ reduce the subsequent artifacts in these regions. By using a slightly
+ smaller spacing of 18 cm which still produces an axial FOV of 38 cm,
+ sufficient redundancy is available to reconstruct this volume.
+
+***** Dual-circle-extended-line trajectory
+      :PROPERTIES:
+      :ID:       d48ac1be-2a33-4769-8591-720d753d7bb5
+      :END:
+ Subsequent experimental scans were performed with Varian's TrueBeam
+ kV imaging system. This allowed the use of the TrueBeam Developer Mode to acquire
+ scan data from non-circular trajectories other than two circles. In
+ addition to programming couch motion, Developer Mode allows the motion
+ of the source and detector arms to be programmed as a series of
+ control points. The advantage of using just the imaging arms to cover
+ an extended axial volume is that the patient can be left at the
+ isocenter. This is very advantageous as moving the patient will always
+ introduce some uncertainty after moving the patient back, and it is
+ more comfortable for the patient when the couch does not move.
+
+ For the dual-circle-extended-line trajectory, it was possible to
+ acquire this in Developer Mode by controlling just the c-arms. This
+ trajectory shown in Figure (\ref{fig:cllc_traj}) acquires data from
+ two circles 19 cm apart and during the translation of the source and
+ detector from the superior to inferior circle. It also acquires an
+ additional 4.5 cm linear scan above and below the two circles, which
+ helps reduce the cone-angle artifacts at the edge of the
+ FOV. Downsampling from this data set can provide scan data for the
+ dual circle, the dual circle and line, and the dual circle extended
+ line. We scanned the CIRS Torso Phantom (Computerized Imaging
+ Reference Systems, Norfolk, VA) which contains low-contrast structures
+ unlike the RANDO phantom.
+
+ #+BEGIN_LaTeX
+   \begin{figure}
+     \centering
+     \subfloat[Source
+     trajectory]{\includegraphics[height=4.5cm]{img/tb/cllc_detector_trajectory_18cm.png}%
+       \label{fig:cllc_traj}}
+     \qquad
+     \subfloat[Mid-sagittal]{\includegraphics[height=4.5cm]{img/tb/ed_cllc_19cm_sag}%
+       \label{fig:ed_sag}}
+     \qquad
+     \subfloat[Mid-coronal]{\includegraphics[height=4.5cm]{img/tb/ed_cllc_19cm_cor}%
+       \label{fig:ed_cor}}
+     \caption{Dual-circle-extended-line TrueBeam acquisition and
+       reconstruction. The left image (a) shows the kV source trajectory
+       from the data headers of the scan implemented with Developer
+       Mode. Figures (b) and (c) are the sagittal and coronal views of
+       200$^{\text{th}}$ MLEM iteration reconstruction of the CIRS torso phantom
+       in this scan.}
+     \label{fig:cllc}
+   \end{figure}
+ #+END_LaTeX
+
+***** Smooth trajectory
+      :PROPERTIES:
+      :ID:       baac07b2-2ba8-4de5-a77b-9c4a75b50da7
+      :END:
+ One limitation of our version of Developer Mode is that it is not
+ possible to move the source and detector arms during the gantry
+ rotation. For this work, any desired arm translation during gantry
+ rotation is mimicked with the couch translation whenever it will
+ produce an equivalent relative translation. While this is not exactly
+ equivalent, it allows a close approximation of such a trajectory. For
+ this reason, the smooth trajectory discussed in the previous section
+ was implemented with gantry rotation and couch translation.
+
 ** Results
    :PROPERTIES:
    :ID:       b2a353e8-8531-4a0e-8337-9f702ecf02f8
    :END:
-
 *** Simulation
 :PROPERTIES:
 :ID:       ff434d74-757c-47b8-bd98-9250d2751ff2
 :END:
-
-
 The initial simulation results demonstrated promising advantages to
 using the optimization-based reconstruction to produce extended-axial
 coverage images.
@@ -1795,7 +2574,9 @@ coverage images.
 - [ ] show plot of RMSE in the overlap region
 
 From the results shown in Figure (\ref{fig:})
-
+*** Data
+**** notebooks
+***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/fov/em_vs_fdk.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/fov/em_vs_fdk.ipynb]]
 ** Conclusion
    :PROPERTIES:
    :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
