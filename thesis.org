@@ -11,7 +11,7 @@
 #+EXCLUDE_TAGS: noexport
 #+LATEX_CLASS:thesis
 #+STARTUP: hideblocks
-#+STARTUP: latexpreview
+# +STARTUP: latexpreview
 
 #+BEGIN_EXPORT latex
 %% Use these commands to set biographic information for the title page:
@@ -41,7 +41,15 @@
 \listoftables
 
 \acknowledgments
-% Enter Acknowledgements here
+
+Funding was provided in part by Varian Medical Systems, the Lawrence
+H. Lanzl Fellowship (to A. D.), and NIH Grants R01 CA182264, R01
+EB018102, S10 RR021039 and P30 CA14599. We are grateful to Pascal
+Paysan and Dieter Seghers (also Varian) for providing and assisting
+with the iTools Reconstruction software. The contents of this work are
+solely the responsibility of the authors and do not necessarily
+represent the official view of any of the supporting organizations.
+The authors have no relevant conflicts of interest to disclose.
 
 \abstract
 % Enter Abstract here
@@ -369,6 +377,19 @@ the kV detector, it is not possible to change the position of the
 treatment head. In this case, moving the patient would be the only
 viable trajectory to avoid a collision.
 
+* Optimization-based algorithms              :opt:
+  :PROPERTIES:
+  :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
+  :END:
+** notes                                     :noexport:
+- General approach seems to be to make the chapters presentations of
+  different studies (papers/proceedings) and the subsequent results
+  and conclusions that can be made.
+- Chuck said to use this as this is enabling the trajectory work
+** Introduction
+   :PROPERTIES:
+   :ID:       8736adf3-2606-43c1-ba5d-d3f92a74f9f8
+   :END:
 ** Methods
    :PROPERTIES:
    :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
@@ -2602,171 +2623,1340 @@ From the results shown in Figure (\ref{fig:})
 - 2017 Varian dynamic magnification
 ** Introduction
    :PROPERTIES:
-   :ID:       d5a22c7a-f72e-4a1c-b90f-69f7084d42e1
+   :ID:       b0e53ca9-9c57-46e5-a558-c878b2ee1bdd
    :END:
-The addition of a linac-mounted, kV-imaging, cone-beam computed
-tomography (CBCT) system to the gantry-mounted clinical linear
-accelerator (linac) helped this modality become the most popular form
-of image-guided radiation therapy (IGRT)
-cite:rahman_linac:_2015,jaffray_flat-panel_2002-1,letourneau_cone-beam-ct_2005.
-The tomographic information provided in the kV energy range improves
-soft-tissue contrast resolution over that provided by the MV
-electronic portal imaging device (EPID) alone
-cite:jaffray_radiographic_1999. The linac-mounted, kV-imaging, CBCT
-system not only helps with patient setup and target verification, but
-it also allows the monitoring of the tumor response during treatment
-cite:dawson_advances_2007.
+ The addition of a linac-mounted, kV-imaging, cone-beam computed
+ tomography (CBCT) system to the gantry-mounted clinical linear
+ accelerator (linac)
+ cite:jaffray_flat-panel_2002,letourneau_cone-beam-ct_2005,rahman_linac:_2015
+ helped this modality become the most popular form of image-guided
+ radiation therapy (IGRT). The tomographic information provided in the
+ kV energy range improves soft-tissue contrast resolution over that
+ provided by the MV electronic portal imaging device (EPID) alone
+ cite:jaffray_radiographic_1999. The linac-mounted, kV-imaging, CBCT
+ system not only helps with patient setup and target verification, but
+ it also allows the monitoring of the tumor response during treatment
+ cite:oldham_cone-beam-ct_2005,xing_overview_2006,dawson_advances_2007.
 
-There is therefore a loss in clinical utility when it is not possible
-to obtain tomographic information from the kV-imaging CBCT system. One
-situation in which this can occur is when a collision between the
-patient and the gantry arises cite:padilla_collision_2015. These may
-be of particular concern in breast and lung cancer patients where the
-arm positions leads to a possible collision as shown in Figure ([[ref:fig:barbie_collision][barbie
-collision]]). Collisions also present a problem in treatment of
-posterior and lateral lesions in stereotactic body radiosurgery
-(SBRT). Similarly in prone breast treatments, where the target is near
-the couch top and a lateral couch translation is needed to bring the
-target to isocenter, collision with the contralateral side of the
-patient may occur. When collisions do occur, the angular range
-available for scanning is restricted and it is not possible to acquire
-complete projection data.
+ It is therefore detrimental when adequate tomographic information
+ cannot be obtained from the kV-imaging CBCT system. One situation in
+ which this can occur is when a collision between the patient and the
+ machine arises cite:padilla_collision_2015. These may be of particular
+ concern in breast and lung cancer patients where the arm position
+ leads to a possible collision as shown in Figure ([[ref:fig:barbie_collision][barbie collision]]).
+ Collisions also present a problem in treatment of posterior and
+ lateral lesions in stereotactic body radiosurgery (SBRT). Similarly in
+ prone breast treatments, where the target is near the couch top and a
+ lateral couch translation is needed to bring the target to isocenter,
+ collision with the contralateral side of the patient may occur. When
+ collisions do occur, the angular range available for scanning is
+ restricted and it is not possible to acquire a complete circular scan
+ in the treatment position .
 
-#+CAPTION: Example of a typical patient-gantry collision. The patient's arms for this treatment position can often collide with the MV-treatment head.
-#+ATTR_LaTeX: :width \columnwidth :placement [t]
-#+LABEL: fig:col_barbie
-[[./figures/col/barbie.jpg]]
+ #+BEGIN_EXPORT latex
+ \begin{figure*}
+   \centering
+   \begin{subfigure}[b]{0.45\textwidth}
+     \includegraphics[width=\textwidth]{figures/barbie_mv.jpg}
+     \caption{}
+     \label{fig:barbie_mv}
+   \end{subfigure}
+   ~%add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+   %(or a blank line to force the subfigure onto a new line)
+   \begin{subfigure}[b]{0.45\textwidth}
+     \includegraphics[width=\textwidth]{figures/barbie_kv.jpg}
+     \caption{}
+     \label{fig:barbie_kv}
+   \end{subfigure}
+   \caption{Two examples of potential collision for a
+     typical patient setup using a mannequin in a supine treatment
+     position. As can be seen, collisions can occur both with the face
+     of the MV treatment head (distance 41.7 cm from isocenter for this
+     linac) and with the kV detector (distance 45-70 cm from isocenter,
+     depending on magnification).}
+   \label{fig:barbie_collision}
+ \end{figure*}
+ #+END_EXPORT
 
-The analytic-based FDK reconstruction algorithm, still the clinical
-workhorse for CT reconstruction, imposes certain requirements on the
-acquisition trajectory cite:feldkamp_practical_1984,pan_why_2009.
-Specifically, the inverse problem is derived from a circular scanning
-trajectory, and such a trajectory must be acquired to meet the data
-sufficiency conditions. A potential patient-gantry collision
-restricting the angular coverage could prevent sufficient projection
-data from being acquired.
+ To avoid collisions with the treatment head, it could be desirable to
+ move the patient away from the gantry as it approaches a collision,
+ simply by translating the couch. To avoid collisions with the imaging
+ panel, the patient might also be moved away from the panel as a
+ collision approaches. As some linac-mounted, kV-imaging panels have
+ motion capabilities, another solution would be to move the imager away
+ from the patient in the collision zone, which changes the imaging
+ magnification for that portion of the scan. Given that the clearance
+ distance of the kV-imaging panel is not much larger than that of the
+ MV-treatment head, a collision avoidance solution nneeds to take into
+ account both of these components.
 
-Though there has been previous work in developing analytic methods for
-addressing the inverse problem from some novel trajectories
-cite:katsevich_image_2004,katsevich_theoretically_2002,katsevich_image_2005,katsevich_formulation_2006,
-it could be clinically useful to enable reconstruction from an
-arbitrary, collision-avoiding trajectory. As the collision region (if
-one arises) is contingent on the patient's treatment position, the
-imaging trajectory would then vary on a per patient basis. As such,
-deriving the analytic inverse for each patient's scanning trajectory
-would be impractical in a clinical work flow.
+ Though there has been previous work in developing analytic methods for
+ addressing the reconstruction from some novel trajectories
+ cite:katsevich_theoretically_2002,katsevich_image_2004,katsevich_image_2005,katsevich_formulation_2006,
+ it could be clinically useful to enable reconstruction from an
+ arbitrary, collision-avoiding trajectory. As the collision region (if
+ one arises) is contingent on the patient's treatment position, the
+ imaging trajectory would then vary on a per patient basis. As such,
+ deriving the analytic inverse for each patient's scanning trajectory
+ would be impractical in a clinical work flow.
 
-Advances in optimization-based reconstruction algorithms provide a
-potential means of enabling reconstruction from patient-specific
-collision avoiding trajectories
-cite:bian_optimization-based_2013,han_optimization-based_2012. The
-imaging model is formulated as the linear transform
-\begin{equation}
-  \label{eq:linmodel}
-  \mathbf{g}=\mathcal{H}\mathbf{f},
-\end{equation}
-where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
-detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
-transform, and $\mathbf{f}$ is the object function represented on a N
-voxel basis. As the direct inversion of Equation ([[ref:eq:linmodel][linear model]]) is
-impractical due to both its size and inconsistencies from factors such
-as noise, optimization techniques are used to solve this system for an
-estimate of the object $\widetilde{\mathbf{f}}$.
+ Optimization-based reconstruction algorithms provide a straightforward
+ means of enabling reconstruction from patient-specific collision
+ avoiding trajectories
+ cite:han_optimization-based_2012,bian_optimization-based_2013. The
+ imaging model is formulated as the linear transform
+ \begin{equation}
+   \label{eq:linmodel}
+   \mathbf{g}=\mathcal{H}\mathbf{f},
+ \end{equation}
+ where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
+ detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
+ transform, and $\mathbf{f}$ is the object function represented on a N
+ voxel basis. As the direct inversion of Equation ([[ref:eq:linmodel][linear model]]) is
+ impractical due to both its size and inconsistencies from factors such
+ as noise, optimization techniques are used to solve this system for an
+ estimate of the object $\mathbf{f^{*}}$.
 
-These optimization-based methods impose no restrictions on the
-trajectory of the acquired views. Provided the geometry of each view
-is correctly incorporated into the system matrix $\mathcal{H}$, these
-robust algorithms can provide clinically useful reconstructions from
-acquisitions that fail to meet the stipulated data conditions assumed
-in the formulation of an analytic inverse.
+ This approach allows for a generalized reconstruction framework that
+ allows for greater flexibility in reconstructing from projections
+ acquired with non-circular trajectories. Provided the geometry of each
+ view is correctly incorporated into the system matrix $\mathcal{H}$,
+ clinically useful reconstructions can be obtained from acquisitions
+ for which an analytic inverse may not be available. As the collision
+ zone for a given patient would be patient specific, this robust
+ approach enables tomographic imaging from collision-avoiding
+ trajectories that would accommodate the patient's specific needs.
 
-In this study, we investigate examples of potential scanning
-trajectories that would allow the acquisition of sufficient projection
-information for a clinically useful image while avoiding a potential
-patient collision with the gantry. As the gantry rotates, there are
-two components of the linac that are potential sources of patient
-collisions. These are the MV-treatment head, shown in Figure ([[ref:fig:barbie_collision][barbie
-collision]]), and the kV-CBCT detector.
+ In this study, we investigate examples of potential scanning
+ trajectories that would allow the acquisition of sufficient projection
+ information for a clinically useful image while avoiding a potential
+ patient collision with the gantry. As the gantry rotates, there are
+ two components of the linac that are potential sources of patient
+ collisions. These are the MV-treatment head, shown in Figure ([[ref:fig:barbie_collision][barbie
+ collision]]), and the kV-CBCT detector.
 
-One trajectory that would avoid a patient collision with the
-MV-treatment head is a virtual isocenter trajectory. This trajectory
-resolves such a collision by increasing the effective source-to-axis
-distance (SAD). By using this increased SAD for an imaging trajectory,
-the clearance between the patient and the MV-treatment head as the
-gantry rotates is increased and the collision is avoided.
+ One trajectory that would avoid a patient collision with the
+ MV-treatment head is a virtual isocenter trajectory. This trajectory
+ avoids such a collision by increasing the effective source-to-axis
+ distance (SAD). By using this increased SAD for an imaging trajectory,
+ the clearance between the patient and the MV-treatment head as the
+ gantry rotates is increased and the collision is avoided.
 
-The virtual isocenter trajectory utilizes synchronized gantry rotation
-and couch translation to maintain a fixed distance (``virtual SAD'')
-between the MV source and a chosen center of rotation (``virtual
-isocenter'') in the patient. At the beginning of the scan, the patient
-is moved away from the linac head along the MV beam direction. As the
-gantry rotates, the couch continuously moves away from the linac head
-to maintain the specified separation as shown in Figure
-([[ref:fig:col_virtiso]]). The virtual SAD can be chosen large enough so
-that collisions as shown in Figure ([[ref:fig:col_barbie]]) are
-avoided; at this point in the trajectory, the couch would have moved
-far enough to the left to avoid the collision.
+ The virtual isocenter trajectory utilizes synchronized gantry rotation
+ and couch translation to maintain a fixed distance (``virtual SAD'')
+ between the MV source and a chosen center of rotation (``virtual
+ isocenter'') in the patient. At the beginning of the scan, the patient
+ is moved away from the linac head along the MV beam direction. As the
+ gantry rotates, the couch moves continuously to maintain the specified
+ separation as shown in Figure ([[ref:fig:virtual_iso]]). The virtual SAD
+ can be chosen large enough so that collisions as shown in Figure
+ ([[ref:fig:barbie_mv]]) are avoided; at this point in the trajectory, the
+ couch would have moved far enough to the left to avoid the collision.
+ Note that it is only the distance to the linac head that is increased
+ in the plain virtual SAD technique; the distance from the kV source
+ and detector to the patient and to each other are unchanged.
 
-#+BEGIN_EXPORT latex
-\begin{figure*}[htb]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/col/gantry_6angles_a.pdf}
-  \caption{
-    Patient, kV and MV beams and kV detector at several angles during a virtual isocenter rotation.  Room coordinate system (dotted axes) has its origin at mechanical isocenter, also the intersection of the MV (red) and kV (green) beam axes.  As the gantry rotates, the patient (filled contour) is continually shifted to maintain a specified distance along the MV beam direction between the mechanical isocenter and the chosen virtual isocenter (circle symbol within the patient).  The path of the virtual isocenter is a circle about the mechanical isocenter, with radius equal to the chosen shift (12 cm from the isocenter in this example).  Detector may or may not be shifted as shown, depending on virtual isocenter position and patient geometry.
-    \label{fig:col_virtiso}}
-\end{figure*}
-#+END_EXPORT
+ #+BEGIN_EXPORT latex
+ \begin{figure*}
+ \centering
+ \includegraphics[width=\textwidth]{figures/gantry_3angles.eps}
+ \caption{Patient, kV and MV beams and kV detector at several angles
+   during a virtual isocenter rotation. Room coordinate system (dotted
+   axes) has its origin at mechanical isocenter, also the intersection
+   of the MV (red) and kV (green) beam axes. As the gantry rotates, the
+   patient (filled contour) is continually shifted to maintain a
+   specified distance along the MV beam direction between the
+   mechanical isocenter and the chosen virtual isocenter (circle symbol
+   within the patient). The path of the virtual isocenter is a circle
+   about the mechanical isocenter, with radius equal to the chosen
+   shift (12 cm from the isocenter in this example). Detector may or
+   may not be shifted as shown, depending on virtual isocenter position
+   and patient geometry.
+ \label{fig:virtual_iso}}
+ \end{figure*}
+ #+END_EXPORT
 
-Another trajectory that could avoid a patient collision with the kV
-detector would be one during which either the patient of the detector
-is moved during the scan in the angular range of a collision. Either
-solution leads to dynamic magnification scan where the kV-CBCT imaging
-magnification changes during the acquisition. Again,
-optimization-based reconstruction methods can easily handle such a
-change in magnification provided the projection information is
-correctly incorporated into the system matrix.
+ Another trajectory that could avoid a patient collision with the kV
+ detector would be one during which either the patient or the detector
+ is moved during the scan in the angular range of a collision. Either
+ solution leads to changing kV-CBCT imaging magnification during the
+ acquisition. Again, optimization-based reconstruction methods can
+ readily handle such a change in magnification provided the projection
+ information is correctly incorporated into the system matrix.
 
-Finally, we study a trajectory that combines both the virtual
-isocenter and the dynamic magnification trajectories to create a
-hybrid scanning acquisition that would alleviate collisions with both
-the MV-treatment head and the kV-CBCT detector (note that it is only
-the distance to the linac head that is increased in the plain virtual
-SAD technique; the distance from the kV source and detector to the
-patient and to each other are unchanged). We use such a trajectory as
-an example of a patient-specific scanning trajectory designed to avoid
-a particular collision that arises with a particular treatment
-position.
+ Finally, we study a trajectory that combines both virtual isocenter
+ and dynamic magnification trajectories to create a hybrid scanning
+ acquisition that would alleviate collisions with both the MV-treatment
+ head and the kV-CBCT detector. We use such a trajectory as an example
+ of a patient-specific scanning trajectory designed to avoid a
+ collision that would arise with a particular treatment position.
 
-** Methods
+** Methods and Materials
    :PROPERTIES:
-   :ID:       9d2ba9ad-7739-46ab-9983-754fa6adac28
+   :ID:       973b1793-b733-43ce-a7aa-dd31af58c680
    :END:
-*** Virtual isocenter trajectory
-The virtual isocenter trajectory utilizes synchronized gantry rotation
-and couch translation to maintain a fixed distance (``virtual SAD'')
-between the MV source and a chosen center of rotation (``virtual
-isocenter'') in the patient. At the beginning of the scan, the patient
-is moved away from the linac head along the MV beam direction. As the
-gantry rotates, the couch continuously moves away from the linac head
-to maintain the specified separation as shown in Figure
-([[ref:fig:col_virtiso]]).
+*** CBCT System
+    :PROPERTIES:
+    :ID:       85ce12ce-235b-46da-873d-0ad54468893e
+    :END:
+ We used Varian's TrueBeam kV imaging system (Varian Medical Systems,
+ Palo Alto, CA) to acquire the projection data used in this study. This
+ is a linac-mounted CBCT c-arm system consisting of a Varian kV x-ray
+ source (GS-1542) and a 39.7 cm x 29.8 cm amorphous silicon flat-panel
+ detector (PaxScan 4030CB). The source and detector are mounted on
+ robotic arms with the kV beam direction orthogonal to the MV treatment
+ beam.
 
-*** Dynamic magnification trajectory
+ To implement the different collision-avoiding scanning trajectories,
+ we used Varian's TrueBeam 2.0 Developer Mode. This is a research mode
+ of the TrueBeam system that allows us to implement scanning
+ configurations that are unavailable in clinical modes by programming
+ the motions of the gantry, couch and kV imaging arms. As in the case
+ of this virtual isocenter study, it is possible to acquire projection
+ images while both the treatment table and the gantry are in motion. At
+ present, simultaneous motion of the gantry and kV imaging arms is not
+ possible. We have worked around this limitation in our variable
+ magnification imaging as described in [[id:dd0b68a5-c0eb-4c57-a28f-c27e2c57c8d8][II.C]] below.
 
-*** Moving toward generalized trajecotries
+*** Phantoms
+    :PROPERTIES:
+    :ID:       501e0d09-ed7c-4c78-a997-477e6414df18
+    :END:
+ The abdominal region of the CIRS (Computerized Imaging Reference
+ Systems, Norfolk, VA) model 600 torso phantom was scanned. This
+ phantom contains both high-contrast (bone) and low-contrast (soft
+ tissue) structures in an anthropomorphic form. These features provide
+ an indication of imaging performance in more clinically relevant
+ conditions.
+
+ To quantify image quality metrics for the different scanning
+ trajectories, we used a Catphan 504 (The Phantom Laboratory, Salem,
+ NY). This is a standard quality assessment (QA) phantom for clinical
+ CT devices that provides a series of sections with different objects
+ for calculating image quality metrics. We used the CTP 404 module for
+ evaluating low-contrast resolution, and the CTP 404 and 528 modules
+ for evaluating spatial resolution.
+
+*** Scans
+    :PROPERTIES:
+    :ID:       dd0b68a5-c0eb-4c57-a28f-c27e2c57c8d8
+    :END:
+ For the circular scans, the gantry made a full rotation about the
+ patient with the treatment volume at a fixed mechanical SAD of 100 cm.
+ For the virtual isocenter scans, the patient couch was translated
+ continuously in the gantry rotation plane during gantry rotation to
+ maintain a distance of 112 cm between the MV source and the chosen
+ target point within the treatment volume (the "virtual isocenter"),
+ rather than the mechanical SAD of 100 cm as shown in Figure
+ ([[ref:fig:virtual_iso]]). We generated all of the scanning trajectories
+ in this study using the Developer Mode 2.0 XML schema to create
+ control points for the gantry, the kV imaging arms, and the patient
+ treatment table. Imaging control points were placed along the
+ trajectory to acquire kV-projection images during the scan. We used a
+ half-fan detector configuration with a 13 cm offset for the circular
+ acquisition, and an equivalent offset for the virtual isocenter to
+ obtain the same illumination.
+
+ To increase the clearance between the kV detector and the patient, we
+ increased the radius of the kV detector with accompanying increase in
+ magnification of the kV imaging system. To create projection datasets
+ where the detector distance changes during a scan, we acquired
+ multiple scans using different detector positions and subsequently
+ spliced these together to create the sinograms of interest with the
+ corresponding system matrix $\mathcal{H}$. This allowed us to create
+ different dynamic magnification scan datasets. We acquired both
+ circular and virtual isocenter trajectories with detector positions of
+ 50 cm, 60 cm and 70 cm away from the mechanical isocenter for
+ magnifications of 1.5X, 1.6X and 1.7X respectively. In each case, the
+ detector cover is 5 cm closer to the patient than the CsI layer,
+ potentially leading to collisions with the limits shown in the first
+ plot in Figure ([[ref:fig:collision_zones]]).
+
+ #+CAPTION: Collision zones in the patient image space for the kV detector cover and the MV treatment head accessory mount. The left figure shows the increasing radius of the kV-detector collision zone with an increase in magnification. The middle figure shows the increased radius of the kV-detector collision zone for the two dynamic magnification trajectories utilizing a $45^{\circ}$ bump at a higher magnification. The right figure shows the increased radius of the MV-treatment-head collision zone when using the virtual isocenter scanning trajectory.
+ #+ATTR_LaTeX: :width \textwidth :float multicolumn
+ #+LABEL: fig:collision_zones
+ [[file:figures/collision_zones.pdf]]
+
+ To create the combined sinogram of a hypothetical collision-avoiding
+ dynamic magnification scan, we replaced a $45^{\circ}$ region of the 1.5X
+ circular scan with the corresponding angular range from scans at
+ different magnifications. We chose this region to be centered on the
+ angular position where the mannequin's elbow is in Figure
+ ([[ref:fig:barbie_collision]]). Increasing the magnification in this
+ region corresponds to increasing the clearance between the kV-detector
+ and the patient. Increasing the magnification to 1.6X provides an
+ additional 10 cm of clearance, and to 1.7X an additional 20 cm of
+ clearance. We also created an additional $35^{\circ}$ 1.7X bump
+ magnification with $5^{\circ}$ transitions at a 1.6X magnification. The
+ kV-detector collision zones of these dynamic magnification
+ trajectories are shown in the middle plot shown in Figure
+ ([[ref:fig:collision_zones]]).
+
+ For the collision with the MV treatment head accessory mount shown in
+ Figure ([[ref:fig:barbie_collision]]), using the virtual isocenter imaging
+ trajectory would alleviate this problem. The radius of the accessory
+ mount from the mechanical isocenter is 41.7 cm. For the virtual
+ isocenter used in this study, there is a 12 cm increase in the radius
+ of this collision zone as shown in the last plot in Figure
+ ([[ref:fig:collision_zones]]). Utilizing a different virtual SAD would
+ allow for additional clearance if necessary.
+
+ The last set of trajectories we studied combines the dynamic
+ magnification with the virtual isocenter trajectory. As the collision
+ radius with the MV treatment head and the kV detector are similar for
+ the current clinical scan, collisions with both could arise. By
+ combining the change in magnification with the virtual isocenter
+ trajectory, both collision zones could be avoided. Table
+ ([[ref:tab:trajectories]]) shows the different scans investigated in this
+ study.
+
+ # +ATTR_LATEX: :environment longtable
+ #+CAPTION: Scanning trajectories
+ #+NAME: tab:trajectories
+ |-------------------+------------------------------------------|
+ | Trajectory        | Magnification                            |
+ |-------------------+------------------------------------------|
+ | Circle            | 1.5X                                     |
+ |                   | 1.5X & $45^{\circ}$ 1.6X bump                   |
+ |                   | 1.5X & $45^{\circ}$ 1.7X bump                   |
+ |                   | 1.5X & $35^{\circ}$ 1.7X bump, 1.6X transitions |
+ |-------------------+------------------------------------------|
+ | Virtual isocenter | 1.5X                                     |
+ |                   | 1.5X & $45^{\circ}$ 1.6X bump                   |
+ |                   | 1.5X & $45^{\circ}$ 1.7X bump                   |
+ |                   | 1.5X & $35^{\circ}$ 1.7X bump, 1.6X transitions |
+ |-------------------+------------------------------------------|
+**** figures                                 :noexport:
+***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb]]
+*** Reconstruction
+    :PROPERTIES:
+    :ID:       d0eac288-37d6-4cef-97c8-7896dcc67733
+    :END:
+ To find an estimate of the object $\mathbf{f^{*}}$ as an approximate
+ solution to Equation ([[ref:eq:linmodel]]), we choose a reconstruction
+ program that can be solved with the well-understood maximum-likelihood
+ expectation maximization (MLEM) algorithm cite:dempster_maximum_1977.
+ Here, our reconstruction program is formulated as
+ \begin{equation}
+   \mathbf{f^{*}} = \text{argmin}D_{KL} \left(\mathbf{f}\right)
+   \label{eq:kl}
+ \end{equation}
+ where $D_{KL}(\mathbf{f})$ is the KL divergence between $\mathbf{g}$ and
+ $\mathcal{H}\mathbf{f}$ cite:barrett_foundations_2003. The KL
+ divergence is minimized with the MLEM algorithm
+ \begin{equation}
+ f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}
+   \label{eq:mlem}
+ \end{equation}
+ where $f_{j}^{n}$ is $j-\text{th}$ voxel value at iteration $n$ and
+ $\mathcal{H}_{ij}$ is the element of the system matrix at the
+ $i-\text{th}$ row and $j-\text{th}$ column for $i=1,2,...,M$ and
+ $j=1,2,...,N$. The initial image estimate for the reconstructions was
+ $\mathbf{f}^{(0)}=1$. The $M\times M$ diagonal matrix $\mathcal{W}$ weights
+ the corresponding data entries as is typically done for a standard
+ half-fan detector configuration for a circular scan
+ cite:bian_optimization-based_2013.
+
+ In a traditional scanning configuration where the patient is
+ stationary, the system matrix $\mathcal{H}_{ij}$ projects the object
+ $\mathbf{f}$ from image space to the data space of $\mathbf{g}$. When
+ this is the case, it is sufficient that the coordinate basis of the
+ image space coincides with the room coordinate system, or is at least
+ stationary relative to it. From each projection view acquired from the
+ TrueBeam system, we extracted the position information of the CBCT
+ imaging arms and subsequently built $\mathcal{H}_{ij}$ as the projective
+ transform from image space in the IEC coordinate system to the data
+ space of the kV detector.
+
+ For a virtual isocenter-scanning trajectory, the image space
+ $(\mathbf{f}_{\text{patient}})$ is moving relative to the room coordinate
+ system for each projection view. As such, a change of basis for the
+ columns space of $\mathcal{H}$ is necessary so that the new system
+ matrix represents a transform from the image space of the patient to
+ the data space of the detector represented as $\mathcal{H'}$. As the
+ acquisition system also reports the couch position, we used this to
+ build the required transformation matrix
+ $\mathcal{T}_{\text{IEC,patient}$ for each projection view. The
+ imaging model in Equation ([[ref:eq:linmodel]]) then becomes
+ \begin{equation}
+   \label{eq:linmodel_patient}
+   \mathbf{g}=\mathcal{H'}\mathbf{f_{\text{patient}}},
+ \end{equation}
+ where
+ \begin{equation}
+   \label{eq:sys_patient}
+   \mathcal{H'}=\mathcal{H}\mathcal{T_{\text{IEC,patient}}}.
+ \end{equation}
+ Once the change of basis is accounted for, the reconstruction program
+ in Equation ([[ref:eq:kl]]) can be reformulated with $\mathbf{f_{\text{patient}}}$
+ instead of $\mathbf{f}$ and solved with the MLEM algorithm in Equation
+ ([[ref:eq:mlem]]) using $\mathcal{H'}$ instead of $\mathcal{H}$.
+
+ The addition of couch motion to the imaging trajectory does increase
+ the degrees of freedom for which proper geometric calibration must be
+ acquired. Using Varian's Isocal calibration phantom, we developed an
+ optimization-based calibration protocol that allows us to extract
+ calibration offsets for improving our estimate of the system matrix
+ $\mathcal{H'}$. Using same scanning trajectory to image the Isocal
+ phantom, the nominal scanning metadata from the TrueBeam projections
+ provided an initial estimate of the imaging geometry. We then used the
+ Nelder-Mead simplex program to search for the geometric offsets for
+ the source, detector, and treatment couch positions at each view, as
+ well as the phantom pose to account for possible setup errors. The
+ cost of this optimization used the $L_{2}-\text{norm}$ between the
+ projected fiducials in the real data sinogram and the simulated
+ projection of the fiducials using the current estimate of the system
+ geometry. We used the estimated offsets that minimized the cost
+ function to refine our system matrix $\mathcal{H'}$ that we
+ subsequently used in the MLEM reconstruction program.
+
+ We reconstructed all of these fixed magnification and dynamic
+ magnification scans from circular and virtual isocenter trajectories
+ into the patient image space described by the imaging model in
+ Equation ([[ref:eq:linmodel_patient]]). The Catphan scans were
+ reconstructed onto an isotropic voxel size of 0.473 mm. The CIRS torso
+ scans were reconstructed onto an isotropic voxel size of 0.836 mm. As
+ the circular acquisition with 1.5X magnification is the typical
+ clinical acquisition trajectory, this provides a clinical reference
+ volume for the reconstructions from the other scanning configurations.
+
+ #+CAPTION: Plot of the Catphan's edge-spread function MTF at 50% and 25% as well as the MTF AUC for the clinical circular 1.5X half-fan scan.
+ #+ATTR_LaTeX: :width \columnwidth
+ #+LABEL: fig:mtf_vs_iteration
+ [[./figures/edge_spread_mtf_iteration.pdf]]
+
+ Figure ([[ref:fig:mtf_vs_iteration]]) shows the 25% and 50% MTF crossing
+ spatial frequencies and the MTF AUC of the edge spread function from
+ the MLEM reconstruction of the Catphan phantom acquired with a
+ circular scan at 1.5X magnification, vs. iteration number. Based on
+ this result from a typical scanning configuration, we chose to use 200
+ iterations of the MLEM algorithm for all reconstructions, using
+ approximately 900 projection views for each scan.
+**** figs                                    :noexport:
+***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb")][truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb]]
+*** Metric Evaluation
+    :PROPERTIES:
+    :ID:       bbb809be-d901-4945-b045-bb886cf349bd
+    :END:
+ To evaluate the different magnifications of both the circular and
+ virtual isocenter trajectory, we used the sensitometry and spatial
+ resolution modules (CTP 404 and CTP 528 respectively) of the Catphan
+ phantom. Using metrics that quantify these image qualities, we
+ compared the different magnifications of both the circular and virtual
+ isocenter scans to the MLEM reconstruction of a standard circular
+ scan.
+**** Catphan spatial resolution metrics
+ There are a number of ways to evaluate the spatial resolution from
+ images of the Catphan phantom in a CT image. The CTP528 module
+ contains a circular array of bar patterns which we used to,
+ subjectively, determine the highest frequency set which is resolvable.
+ The same module also has two 0.28mm tungsten carbide beads simulating
+ an impulse source from which a point spread and then modulation
+ transfer function (MTF) can be determined. Furthermore, the MTF can be
+ calculated from the bar patterns themselves
+ cite:droege_practical_1982, as well as any suitably high contrast edge
+ in the image cite:rossmann_point_1969.
+
+ While the use of MTF in CT has its challenges, notably the assumption
+ of shift-invariance is not satisfied, it still can be useful when
+ treated with some care. Each of the methods above has some advantages
+ and disadvantages. The point source method can provide 3D directional
+ estimates of the point-spread function (PSF), however it can also be
+ sensitive to the location of the bead relative to the image grid with
+ significant difference between a bead located totally within a single
+ voxel or on the interface of many.
+
+ The bar pattern based evaluation is a clear complement to the visual
+ analysis, however the orientation of the bars relative to the grid
+ will affect some frequencies differently than others which can result
+ in atypical appearing MTF curves. Using an edge spread analysis on the
+ circular phantom boundary provides many samples, at varying directions
+ to the image grid which can be averaged out. It can be impacted by
+ scatter or saturation in the air region near the phantom boundary,
+ however this has not proven to be a significant factor in the images
+ we have analyzed.
+**** Edge spread calculation method          :noexport:
+ The image slice for analysis, the central slice here, is first
+ thresholded based on the image intensity, the connected component with
+ area of the appropriate size is isolated and any holes in the
+ thresholded region are filled. The center of this region is taken as
+ the phantom center and used as the origin of the coordinates for
+ analysis. The data are then resampled at high density, along radial
+ spokes at 8 angles chosen to avoid surface alignment marks, using a
+ linear interpolant from 5 mm inside to 5 mm outside the surface
+ boundary. The edge-spread function is then the mean $(\mu(X))$
+ subtracted profile over the standard deviation $(\sigma(X))$, or
+ \begin{equation}
+ \text{ESF} = \frac{X-\mu(X)}{\sigma(X)}.
+ \end{equation}
+ In standard form, the line-spread function (LSF) can be computed from
+ the derivate of the edge-spread function (ESF),
+ \begin{equation}
+ \text{LSF} = \frac{d}{dX}\text{ESF},
+ \end{equation}
+ and the MTF as the discrete fourier transform $(\mathcal{D})$ of the
+ LSF,
+ \begin{equation}
+ \text{MTF} = \mathcal{D}(\text{LSF})
+ \end{equation}
+**** Low-contrast resolution
+     :PROPERTIES:
+     :ID:       c91ac952-b03c-4bc2-b694-28040b955011
+     :END:
+ To characterize low-contrast resolution, we calculated the
+ contrast-to-noise ratio (CNR) using the polystyrene insert in the CTP
+ 404 sensitometry module. These inserts have CT numbers which are the
+ closest to the water-like polymer that surrounds them. The metric is
+ defined as
+ \begin{equation}
+ \label{eq:lcv}
+ \text{CNR} = \frac{2\left|\mu_{\text{roi}}-\mu_{\text{bkg}}\right|}{\sigma_\text{roi}+\sigma_\text{bkg}}
+ \end{equation}
+ where $\sigma$ represents the standard deviation and $\mu$ the mean of the of
+ the pixel values in the respective regions.
+**** CT-number comparison
+     :PROPERTIES:
+     :ID:       0494C872-381F-4CA6-BC91-2FAB4CDC0FC0
+     :END:
+ The last metric we evaluated was the reproducibility of the CT numbers
+ between the circular and virtual isocenter scan, and the different
+ combinations of magnification bumps. For this we used the mean and
+ standard deviations in ROIs for all the material insert the Catphan
+ CTP 404 sensitometry module in addition to the polystyrene and
+ background ROIs used for the low-contrast CNR calculations. We also
+ evaluated three additional ROIs of the water-like background for a
+ total of four background ROIs.
+
+ In addition to the catphan modules, we also analyzed ROIs
+ corresponding to aorta, liver and spleen in the abdomen of the CIRS
+ torso phantom. For each of the magnifications from both the circular
+ and virtual isocenter trajectories, the mean HU values and standard
+ deviations were calculated.
+*** analysis                                 :noexport:
+ - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"161213_virtiso_circ_half_dynmag_catphan_isocal/collision_avoidance.ipynb")][collisions figures]]
+ - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170126_virtiso_circ_half_dynmag_ed/ed_images.ipynb")][ed analysis]]
 ** Results
    :PROPERTIES:
-   :ID:       a59ef4e0-4966-4c76-b283-5aea6b92360e
+   :ID:       28832b04-7d26-4ef8-83f2-08db94493ab9
    :END:
-*** Virtual isocenter trajectory
-*** Dynamic magnification trajectory
-*** Moving toward generalized trajecotries
+ Figure ([[ref:fig:recons_catphan]]) shows slices of the CTP 528
+ spatial-resolution module from the $200^{\text{th}}$ iteration of the
+ MLEM reconstructions of the Catphan phantom for the different scanning
+ trajectories. The top row shows reconstructions from the circular
+ scanning trajectories, and the bottom row shows reconstructions from
+ the virtual isocenter trajectories. The left column is from a single
+ 1.5X magnification, and the remaining columns are different
+ synthesized trajectories with different magnifications as illustrated
+ in Figure ([[ref:fig:collision_zones]]). In all of these images, the
+ $8^{\text{th}}$ largest gauge is visually resolvable.
+
+ #+CAPTION: Images of the Catphan 528 spatial resolution module in a display window of [-100, 2000] HU. The top row shows all the circular scan permutations while the bottom row shows those of the virtual isocenter. The columns show different magnification combinations from left to right of 1.5X only, 1.5X with a 1.6X bump, 1.5X with a 1.7X bump, and a 1.5X with a 1.7X bump and a 1.6X transition on either side. For all of the reconstructions, the 8$^{\text{th}}$ largest gauge is resolvable (indicated by the red arrow).
+ #+ATTR_LaTeX: :width \textwidth :float multicolumn
+ #+LABEL: fig:recons_catphan
+ [[./figures/catphanDynmagQuarter.pdf]]
+
+ The visual similarity in the spatial resolution shown in Figure
+ ([[ref:fig:recons_catphan]]) is reflected in the MTF metrics for all of
+ the different scanning configurations. We compared MTF metrics derived
+ from the PSF using the Catphan beads, the bar pattern shown in Figure
+ ([[ref:fig:recons_catphan]]), and the edge-spread function (ESF) measure
+ along an ensemble of radial lines. When comparing these MTF-based
+ metrics between the circle and the virtual isocenter scans with
+ different magnifications, we found no clear trend distinguishing the
+ different trajectories.
+
+ #+CAPTION: Plot of low-contrast CNR and error bars corresponding to $\pm$ one standard deviation of the CNR from the Catphan scanned with both the circular and virtual isocenter trajectories.
+ #+ATTR_LaTeX: :width \columnwidth
+ #+LABEL: fig:catphan_cnr
+ [[./figures/catphanCNR_ps.pdf]]
+
+ Figure ([[ref:fig:catphan_cnr]]) shows the low-contrast CNR from the
+ Catphan with these different imaging configurations which are also in
+ good agreement with each other. In addition to using the material rods
+ in the CTP 404 sensitometry module to calculate the CNR, we also
+ compared mean values from each of the materials for the different
+ scanning trajectories and magnifications. Figure
+ ([[ref:fig:catphan_rois]]) shows the ROI means for these different
+ scanning configurations. The height of the bar represents the standard
+ deviation of the ROI. The first four bars for each material are from
+ the circular scans, and the remaining four from the virtual isocenter
+ scans.
+
+ #+BEGIN_EXPORT latex
+ \begin{figure*}
+   \centering
+   \begin{subfigure}[b]{\textwidth}
+     \includegraphics[width=\textwidth]{figures/sensRoiplot.pdf}
+     \caption{}
+     \label{fig:catphan_rois}
+   \end{subfigure}
+   ~%add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+   %(or a blank line to force the subfigure onto a new line)
+   \begin{subfigure}[b]{\textwidth}
+     \includegraphics[width=\textwidth]{figures/edROIplot.pdf}
+     \caption{}
+     \label{fig:ed_rois}
+   \end{subfigure}
+   \caption{ROI material comaprison results for the Catphan CTP 404
+     module and the CIRS torso phantom. The height of the bars are $\pm$
+     one standard deviation of the ROI mean. The first four bars for
+     each material ROI are from the circular scans, and the remaining four
+     bars for each material ROI are from the virtual isocenter scans. The
+     order of the scans for each material ROI are displayed in the order listed in the
+     legend in (a) from left to right.}
+   \label{fig:hu_results}
+ \end{figure*}
+ #+END_EXPORT
+
+ #+CAPTION: Images of the CIRS torso phantom's abdomen in a display window of display window of [-200, 500] HU. The top row shows all the circular scan permutations while the bottom row shows those of the virtual isocenter. The columns show different magnification combinations from left to right of 1.5X only, 1.5X with a 1.6X bump, 1.5X with a 1.7X bump, and a 1.5X with a 1.7X bump and a 1.6X transition on either side.
+ #+ATTR_LaTeX: :width \textwidth :float multicolumn :placement
+ #+LABEL: fig:recons_ed
+ [[./figures/edDynmag.pdf]]
+
+ Figure ([[ref:fig:recons_ed]]) shows an abdominal slice from the
+ $200^{\text{th}}$ iteration MLEM reconstruction of the CIRS torso phantom
+ scanned with a 13 cm offset half-fan configuration. The layout of
+ these images is the same as that in Figure ([[ref:fig:recons_catphan]])
+ with the top row showing magnification variations from the circular
+ trajectory. The bottom row shows the corresponding magnifications from
+ the virtual isocenter trajectory. The slice is the same as that in
+ Figure ([[ref:fig:ed_rois]]) which we used to calculate values for three
+ organ ROIs.
+
+ For the different organ ROIs, we recorded the means and standard
+ deviations for the different scanning trajectories and magnifications.
+ Figure ([[ref:fig:ed_rois]]) shows these mean values and the
+ associated standard deviations. Though the circular scan variations
+ fluctuate more than the virtual isocenter scans, the values are in
+ agreement for the different organs of interest. As with Figure
+ ([[ref:fig:catphan_rois]]), the first four points for each organ are
+ from the circular scan, and the remaining four are from the virtual
+ isocenter trajectory.
+*** fixed illumination analysis              :noexport:
+**** [[file:/ssh:remus:/data/amdavis/truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/figs/][figs]]
+**** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/catphan_images.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/catphan_images.ipynb]]
+**** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/metric_analysis.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/metric_analysis.ipynb]]
+*** new analysis                             :noexport:
+**** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/catphan_images.ipynb")][161213_virtiso_circ_half_dynmag_catphan_isocal/catphan_images.ipynb]]
+**** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/metrics.ipynb")][161213_virtiso_circ_half_dynmag_catphan_isocal/metrics.ipynb]]
+**** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170126_virtiso_circ_half_dynmag_ed/ed_images.ipynb")][170126_virtiso_circ_half_dynmag_ed/ed_images.ipynb]]
+*** old analysis                             :noexport:
+    :PROPERTIES:
+    :var:      iter=75
+    :ID:       c2336149-1ac8-4474-ae0a-ed1b97efcdf8
+    :END:
+**** catphan
+     :PROPERTIES:
+     :ID:       066a0563-0e56-4ae2-ba5d-66c120f05c92
+     :END:
+***** contrast
+      :PROPERTIES:
+      :ID:       12232f76-bd36-4c93-abc4-3d14828dbbc5
+      :END:
+****** images
+       :PROPERTIES:
+       :ID:       9694ff06-d9cc-40f0-aaa1-7e5b3f937bf5
+       :END:
+ #+BEGIN_SRC python :results file
+import dicom
+import glob
+import numpy as np
+import matplotlib.pyplot as plt
+
+from IPython.core.debugger import Tracer
+debug_here = Tracer()
+
+def crop(center, width, res):
+    """Crop image
+
+    Keyword Arguments:
+    center -- [x, y] of center
+    width  -- deisred width (mm)
+    res    -- res (mm/px)
+    """
+    px_width = np.int(width*0.5/res)
+
+    xbox = [center[0]-px_width, center[0]+px_width]
+    ybox = [center[1]-px_width, center[1]+px_width]
+
+    return(xbox, ybox)
+
+# window
+window_hu = [-160, 240]         # HU
+window_em = [0.015, 0.026]      # mm^1
+
+# itools
+catphan_dcm = dicom.read_file(('itools/161213_catphan_circ_1p5x_ringrem/IMG_0043.dcm'))
+catphan_hu = catphan_dcm.pixel_array*catphan_dcm.RescaleSlope+catphan_dcm.RescaleIntercept
+
+# crop
+width = 230.                 # mm each way
+
+res_hu = 0.473                 # mm/px
+center_hu = [np.int(catphan_hu.shape[0]*0.5), np.int(catphan_hu.shape[1]*0.5)]
+
+winx, winy = crop(center_hu, width, res_hu)
+
+catphan_hu = catphan_hu[winx[0]:winx[1], winy[0]:winy[1]]
+
+plt.imsave('figures/catphan_itools_lcr.png', catphan_hu, vmin=window_hu[0], vmax=window_hu[1])
+
+# recon
+dir = "/home/amdavis/research/truebeam/150902_virtiso_cbct_catphan_ed/itools/img/"
+
+files = sorted(glob.glob(dir+"*catphan*itools*{0:04d}*.raw".format(iter)))
+
+catphan_circular = np.fromfile(files[0], 'f').reshape(125, 528, 528).swapaxes(1, 2).T
+catphan_virtiso = np.fromfile(files[1], 'f').reshape(125, 528, 528).swapaxes(1, 2).T
+
+catphan_circular = catphan_circular[...,
+                                    int(catphan_circular.shape[2]/2)]
+catphan_virtiso = catphan_virtiso[...,
+                                  int(catphan_virtiso.shape[2]/2)]
+
+# crop
+res_hu = 0.473                 # mm/px
+center_circular = [np.int(catphan_circular.shape[0]*0.5), np.int(catphan_circular.shape[1]*0.5)]
+
+winx, winy = crop(center_hu, width, res_hu)
+
+catphan_circular = catphan_circular[winx[0]:winx[1], winy[0]:winy[1]]
+catphan_virtiso = catphan_virtiso[winx[0]:winx[1], winy[0]:winy[1]]
+
+plt.imsave('figures/catphan_circular_lcr_mlem_iter_{0:03d}.png'.format(iter), catphan_circular, vmin=window_em[0], vmax=window_em[1])
+plt.imsave('figures/catphan_virtiso_lcr_mlem_iter_{0:03d}.png'.format(iter), catphan_virtiso, vmin=window_em[0], vmax=window_em[1])
+
+# return('figures/catphan_itools_lcr.png')
+# return('figures/catphan_circular_lcr_mlem.png')
+# return('figures/catphan_virtiso_lcr_mlem.png')
+
+fig = plt.figure()
+ax1 = fig.add_subplot(131)
+ax2 = fig.add_subplot(132)
+ax3 = fig.add_subplot(133)
+
+ax1.imshow(catphan_hu, vmin=window_hu[0], vmax=window_hu[1])
+ax1.set_title('Circular iTools FDK')
+ax1.axis('off')
+
+ax2.imshow(catphan_circular, vmin=window_em[0], vmax=window_em[1])
+ax2.set_title('Circular MLEM')
+ax2.axis('off')
+
+ax3.imshow(catphan_virtiso, vmin=window_em[0], vmax=window_em[1])
+ax3.set_title('Virtual Isocenter MLEM')
+ax3.axis('off')
+
+fig.savefig('figures/catphan_comparison_iter_{0:03d}.png'.format(iter), bbox_inches="tight")
+return('figures/catphan_comparison_iter_{0:03d}.png'.format(iter))
+ #+END_SRC
+
+ #+RESULTS:
+ [[file:figures/catphan_comparison_iter_075.png]]
+****** itools analyis
+       :PROPERTIES:
+       :ID:       bc6df6dd-13e6-4bc5-826c-2002d54ab552
+       :END:
+  Contrast analysis for catphan
+
+ #+BEGIN_SRC python :results output
+import dicom
+import numpy as np
+import matplotlib.pyplot as plt
+
+from phantoms import lcr
+
+from IPython.core.debugger import Tracer
+debug_here = Tracer()
+
+catphan_dcm = dicom.read_file(('itools/161213_catphan_circ_1p5x_ringrem/IMG_0042.dcm'))
+catphan_hu = catphan_dcm.pixel_array*catphan_dcm.RescaleSlope+catphan_dcm.RescaleIntercept
+
+itools_lcr = lcr.CatphanLowContrast(catphan_hu, xres=0.473, x0=121.8/0.473,
+                                    y0=121.6/0.473, z=0, rot=-3.48, hu=True)
+
+itools_lcr.save_contrast_calcs('data/', 'catphan_circular_itools')
+
+# itools_lcr.show_rod_locs(vmin=-60, vmax=60)
+# plt.savefig('figures/catphan_itools_lcr_locs.png')
+# return('figures/catphan_itools_lcr_locs.png')
+print(itools_lcr.contrast_1_0)
+print(itools_lcr.contrast_0_5)
+print(itools_lcr.contrast_0_3)
+ #+END_SRC
+
+ #+RESULTS:
+ #+begin_example
+              % contrast  % contrast sigma       cnr  cnr sigma
+rod diameter
+15.0            1.273217          1.022240  1.236393   1.414493
+9.0             1.157174          1.021059  1.100177   1.415368
+8.0             0.767365          1.017061  0.898154   1.437275
+7.0             1.198443          1.021447  1.296850   1.420209
+6.0             0.486577          1.014224  0.484239   1.414228
+5.0             0.860374          1.018018  0.881201   1.415018
+4.0             0.763490          1.017019  0.933650   1.452495
+3.0             0.356576          1.012901  0.589711   1.701662
+2.0             1.844718          1.027938  2.757142   1.586562
+              % contrast  % contrast sigma       cnr  cnr sigma
+rod diameter
+15.0            0.501931          1.033669  0.492042   1.414261
+9.0             0.094065          1.029462  0.093504   1.414567
+8.0             0.392379          1.032535  0.429770   1.425485
+7.0            -0.057559          1.027902  0.061673   1.421552
+6.0             0.466486          1.033301  0.477422   1.416169
+5.0             0.405244          1.032665  0.482771   1.449648
+4.0            -0.082372          1.027647  0.091132   1.427591
+3.0            -0.630458          1.022024  0.675272   1.421494
+2.0            -0.591860          1.022407  0.984642   1.735271
+              % contrast  % contrast sigma       cnr  cnr sigma
+rod diameter
+15.0            0.162203          0.979250  0.181559   1.420491
+9.0            -0.001550          0.977648  0.001615   1.414454
+8.0             0.488048          0.982444  0.519364   1.415367
+7.0             0.614937          0.983694  0.624087   1.414256
+6.0             0.189741          0.979519  0.207107   1.417398
+5.0             1.030511          0.987745  1.524829   1.548857
+4.0             0.985444          0.987344  1.008152   1.414214
+3.0             0.322520          0.980822  0.318188   1.415103
+2.0            -0.096169          0.976723  0.107345   1.420092
+ #+end_example
+****** recon em analysis
+       :PROPERTIES:
+       :ID:       73598a41-2659-4be4-8473-9086ba73c896
+       :END:
+ Results from my reconstructions
+
+ #+BEGIN_SRC python :results output
+import glob
+import numpy as np
+import matplotlib.pyplot as plt
+
+from phantoms import lcr
+
+from IPython.core.debugger import Tracer
+debug_here = Tracer()
+
+# get files we have
+dir = "/home/amdavis/research/truebeam/150902_virtiso_cbct_catphan_ed/itools/img/"
+files = sorted(glob.glob(dir+"*catphan*itools*{0:04d}*.raw".format(iter)))
+
+catphan_circular = np.fromfile(files[0], 'f').reshape(125, 528, 528).swapaxes(1, 2).T
+catphan_virtiso = np.fromfile(files[1], 'f').reshape(125, 528, 528).swapaxes(1, 2).T
+
+catphan_circular = catphan_circular[...,
+                                    int(catphan_circular.shape[2]/2)]
+catphan_virtiso = catphan_virtiso[...,
+                                  int(catphan_virtiso.shape[2]/2)]
+
+circular_lcr = lcr.CatphanLowContrast(catphan_circular, xres=0.473,
+                                      x0=263.5, y0=261.5, z=0, rot=-3.,
+                                      hu=False)
+
+virtiso_lcr = lcr.CatphanLowContrast(catphan_virtiso, xres=0.473,
+                                     x0=272, y0=259.5, z=0, rot=-3.,
+                                     hu=False)
+
+circular_lcr.save_contrast_calcs('data/', 'catphan_circular_mlem_iter_{0:03d}'.format(iter))
+virtiso_lcr.save_contrast_calcs('data/', 'catphan_virtiso_mlem_iter_{0:03d}'.format(iter))
+
+# circ_fig = circular_lcr.show_rod_locs(vmin=0.02, vmax=0.021)
+# virt_fig = virtiso_lcr.show_rod_locs(vmin=0.019, vmax=0.021)
+
+# circ_fig.savefig('figures/catphan_circular_mlem_lcr_locs.png')
+# virt_fig.savefig('figures/catphan_virtiso_mlem_lcr_locs.png')
+# return('figures/catphan_circular_mlem_lcr_locs.png')
+# return('figures/virtiso_circular_mlem_lcr_locs.png')
+
+print("\n0.3% circular")
+print(circular_lcr.contrast_0_3)
+print("\n0.3% virtiso")
+print(virtiso_lcr.contrast_0_3)
+
+print("\n0.5% circular")
+print(circular_lcr.contrast_0_5)
+print("\n0.5% virtiso")
+print(virtiso_lcr.contrast_0_5)
+
+print("\n1.0% circular")
+print(circular_lcr.contrast_1_0)
+print("\n1.0% virtiso")
+print(virtiso_lcr.contrast_1_0)
+ #+END_SRC
+
+ #+RESULTS:
+ #+begin_example
+
+0.3% circular
+      % contrast  % contrast sigma       cnr  cnr sigma
+15.0    0.336178          0.632722  0.757847   1.423412
+9.0     0.292402          0.669551  0.619270   1.415762
+8.0     0.131968          0.623152  0.302362   1.426568
+7.0     0.431134          0.613007  1.009752   1.431675
+6.0     0.290603          0.656327  0.628716   1.417611
+5.0     0.422215          0.665411  0.900781   1.416314
+4.0     0.155166          0.543975  0.431161   1.509609
+3.0    -0.297085          0.688549  0.609311   1.414347
+2.0     0.472236          0.741477  0.903903   1.416268
+
+0.3% virtiso
+      % contrast  % contrast sigma       cnr  cnr sigma
+15.0    0.382718          0.830310  0.658319   1.424841
+9.0     0.092026          0.799518  0.165280   1.435069
+8.0    -0.107992          0.868174  0.176177   1.417189
+7.0    -0.103785          0.786340  0.190046   1.440932
+6.0    -0.309173          0.774152  0.576760   1.447345
+5.0    -0.309976          0.759113  0.594024   1.458054
+4.0    -0.223083          1.130837  0.282885   1.435041
+3.0    -0.471983          0.698019  1.039611   1.543806
+2.0    -1.038081          0.691397  2.308892   1.551891
+
+0.5% circular
+      % contrast  % contrast sigma       cnr  cnr sigma
+15.0    0.335700          0.647368  0.735412   1.415590
+9.0     0.015566          0.591873  0.037623   1.430468
+8.0     0.560906          0.624661  1.278832   1.419516
+7.0     0.200324          0.689673  0.411264   1.414540
+6.0    -0.258247          0.630936  0.579385   1.417608
+5.0     0.550274          0.624253  1.255414   1.419604
+4.0     0.465531          0.577228  1.165342   1.440343
+3.0     0.078896          0.601583  0.187137   1.426210
+2.0    -0.371316          0.476344  1.444140   1.859480
+
+0.5% virtiso
+      % contrast  % contrast sigma       cnr  cnr sigma
+15.0   -0.323800          0.992989  0.467154   1.435720
+9.0    -0.265211          0.949907  0.405867   1.456524
+8.0     0.103588          0.939622  0.161663   1.465258
+7.0     0.500131          0.977952  0.741149   1.444188
+6.0     0.876336          0.922225  1.421072   1.485184
+5.0     0.751536          0.897809  1.275159   1.513860
+4.0     0.118879          0.984507  0.174040   1.440150
+3.0     1.058663          1.008137  1.516077   1.433655
+2.0     0.703962          0.820208  1.728628   2.000000
+
+1.0% circular
+      % contrast  % contrast sigma       cnr  cnr sigma
+15.0    0.891881          0.658649  1.933036   1.420049
+9.0     0.723097          0.732432  1.401420   1.414637
+8.0     0.697721          0.628473  1.594919   1.430160
+7.0     0.958346          0.679275  2.008902   1.416360
+6.0     0.700465          0.639470  1.568403   1.425579
+5.0     0.878039          0.685795  1.821070   1.415579
+4.0     0.613320          0.672501  1.296906   1.417139
+3.0     0.315199          0.567085  0.827869   1.485735
+2.0     0.664848          0.506692  2.641720   2.000000
+
+1.0% virtiso
+      % contrast  % contrast sigma       cnr  cnr sigma
+15.0    1.216002          0.926873  1.869765   1.415754
+9.0     0.418370          0.884876  0.673363   1.420661
+8.0     1.236294          0.892132  1.982379   1.420123
+7.0     0.963466          0.803941  1.755233   1.454411
+6.0     1.147464          0.792635  2.137994   1.464240
+5.0     0.164518          0.983530  0.236795   1.414503
+4.0    -0.124803          0.796152  0.227947   1.455467
+3.0    -0.180899          0.874025  0.294034   1.422201
+2.0    -1.164900          0.681244  2.957545   1.749484
+ #+end_example
+****** plots
+       :PROPERTIES:
+       :ID:       229ce930-658c-447c-9cbc-d1958f97022b
+       :END:
+******* CNR
+        :PROPERTIES:
+        :ID:       184b9d1e-9b95-4aa3-a7f9-127053b3246e
+        :END:
+ #+BEGIN_SRC python :results file
+import glob
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas
+import seaborn as sns
+
+sns.set(font='serif', font_scale=0.8)
+
+from itertools import cycle
+lines = ["-","--","-."]
+linecycler = cycle(lines)
+
+from matplotlib.ticker import FormatStrFormatter
+
+# setup plot params
+sns.set_context("paper")
+
+from phantoms import lcr
+
+from IPython.core.debugger import Tracer
+debug_here = Tracer()
+
+# load previous calculations
+circ_fdk = sorted(glob.glob("data/*itools*rods.pkl"))
+circ_em = sorted(glob.glob("data/*circular_mlem*_iter_{0:03d}*rods.pkl".format(iter)))
+virt_em = sorted(glob.glob("data/*virtiso*_iter_{0:03d}*rods.pkl".format(iter)))
+
+# load 0.3%, 0.5%, 1.0% rod contrast
+circ_fdk = [pandas.read_pickle(f) for f in circ_fdk]
+circ_em = [pandas.read_pickle(f) for f in circ_em]
+virt_em = [pandas.read_pickle(f) for f in virt_em]
+
+# data sets
+titles = ['0.3% contrast rods', '0.5% contrast rods', '1.0% contrast rods']
+
+fig, axs = plt.subplots(3, 1, True)
+
+for j, ax in enumerate(axs):
+    ax.errorbar(circ_fdk[j].index, 'cnr', yerr='cnr sigma', data=circ_fdk[j], label='FDK Circular', ls=next(linecycler))
+    ax.errorbar(circ_em[j].index, 'cnr', yerr='cnr sigma', data=circ_em[j], label='MLEM Circular', ls=next(linecycler))
+    ax.errorbar(virt_em[j].index, 'cnr', yerr='cnr sigma', data=virt_em[j], label='MLEM Virtual Isocenter', ls=next(linecycler))
+
+    ax.set_xlim([1, 16])
+    # ax.set_ylim([-3, 3])
+    ax.set_ylabel('CNR')
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+    ax.set_title(titles[j])
+
+ax.legend(loc='best', fancybox=True, framealpha=0.5)
+ax.set_xlabel('Rod diameter [mm]')
+
+fig.savefig('figures/cnr_iter_{0:03d}.pdf'.format(iter))
+
+fig.savefig('figures/cnr_iter_{0:03d}.png'.format(iter))
+return('figures/cnr_iter_{0:03d}.png'.format(iter))
+ #+END_SRC
+
+ #+RESULTS:
+ [[file:figures/cnr_iter_075.png]]
+
+******* % contrast
+        :PROPERTIES:
+        :ID:       03ee4467-a1d4-4d7e-8c12-b8e767bf43a3
+        :END:
+ #+BEGIN_SRC python :results file
+import glob
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas
+import seaborn as sns
+
+sns.set(font='serif', font_scale=0.8)
+
+from itertools import cycle
+lines = ["-","--","-."]
+linecycler = cycle(lines)
+
+from matplotlib.ticker import FormatStrFormatter
+
+# setup plot params
+sns.set_context("paper")
+
+from phantoms import lcr
+
+from IPython.core.debugger import Tracer
+debug_here = Tracer()
+
+# load previous calculations
+circ_fdk = sorted(glob.glob("data/*itools*rods.pkl"))
+circ_em = sorted(glob.glob("data/*circular_mlem*_iter_{0:03d}*rods.pkl".format(iter)))
+virt_em = sorted(glob.glob("data/*virtiso*_iter_{0:03d}*rods.pkl".format(iter)))
+
+# load 0.3%, 0.5%, 1.0% rod contrast
+circ_fdk = [pandas.read_pickle(f) for f in circ_fdk]
+circ_em = [pandas.read_pickle(f) for f in circ_em]
+virt_em = [pandas.read_pickle(f) for f in virt_em]
+
+# data sets
+titles = ['0.3% contrast rods', '0.5% contrast rods', '1.0% contrast rods']
+
+fig, axs = plt.subplots(3, 1, True)
+
+for j, ax in enumerate(axs):
+    ax.errorbar(circ_fdk[j].index, '% contrast', yerr='% contrast sigma', data=circ_fdk[j], label='FDK Circular', ls=next(linecycler))
+    ax.errorbar(circ_em[j].index, '% contrast', yerr='% contrast sigma', data=circ_em[j], label='MLEM Circular', ls=next(linecycler))
+    ax.errorbar(virt_em[j].index, '% contrast', yerr='% contrast sigma', data=virt_em[j], label='MLEM Virtual Isocenter', ls=next(linecycler))
+
+    ax.set_xlim([1, 16])
+    ax.set_ylim([-3, 3])
+    ax.set_ylabel('% contrast')
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+    ax.set_title(titles[j])
+
+ax.legend(loc='best', fancybox=True, framealpha=0.5)
+ax.set_xlabel('Rod diameter [mm]')
+
+fig.savefig('figures/percent_contrast_iter_{0:03d}.pdf'.format(iter))
+
+fig.savefig('figures/percent_contrast_iter_{0:03d}.png'.format(iter))
+return('figures/percent_contrast_iter_{0:03d}.png'.format(iter))
+ #+END_SRC
+
+ #+RESULTS:
+ [[file:figures/percent_contrast_iter_075.png]]
+
+***** spatial res
+      :PROPERTIES:
+      :ID:       b755dc97-c01c-461c-99d3-7f116bfc4f5f
+      :END:
+****** images
+       :PROPERTIES:
+       :ID:       1a7be01c-fc76-42bf-a09d-7e7556456fd8
+       :END:
+  #+BEGIN_SRC python :results file
+import dicom
+import glob
+import numpy as np
+import matplotlib.pyplot as plt
+
+from IPython.core.debugger import Tracer
+debug_here = Tracer()
+
+
+def crop(center, width, res):
+    """Crop image
+
+    Keyword Arguments:
+    center -- [x, y] of center
+    width  -- deisred width (mm)
+    res    -- res (mm/px)
+    """
+    px_width = np.int(width*0.5/res)
+
+    xbox = [center[0]-px_width, center[0]+px_width]
+    ybox = [center[1]-px_width, center[1]+px_width]
+
+    return(xbox, ybox)
+
+# window
+window_hu = [150, 1000]         # HU
+window_em = [0.022, 0.032]      # mm^1
+
+# itools
+catphan_dcm = dicom.read_file(('itools/150902_catphan_full_low_contrast/hu/IMG_0075.dcm'))
+catphan_hu = catphan_dcm.pixel_array*catphan_dcm.RescaleSlope+catphan_dcm.RescaleIntercept
+
+# crop
+width = 130.                 # mm each way
+
+res_hu = 0.473                 # mm/px
+center_hu = [np.int(catphan_hu.shape[0]*0.5), np.int(catphan_hu.shape[1]*0.5)]
+
+winx, winy = crop(center_hu, width, res_hu)
+
+catphan_hu = catphan_hu[winx[0]:center_hu[0], winy[0]:winy[1]]
+
+plt.imsave('figures/catphan_itools_sr.png', catphan_hu, vmin=window_hu[0], vmax=window_hu[1])
+
+# recon
+dir = "/home/amdavis/research/truebeam/150902_virtiso_cbct_catphan_ed/itools/img/"
+files = sorted(glob.glob(dir+"*catphan*itools*{0:04d}*.raw".format(iter)))
+
+catphan_circular = np.fromfile(files[0], 'f').reshape(125, 528, 528).swapaxes(1, 2).T
+catphan_virtiso = np.fromfile(files[1], 'f').reshape(125, 528, 528).swapaxes(1, 2).T
+
+sr_slice = 93
+catphan_circular = catphan_circular[..., sr_slice]
+catphan_virtiso = catphan_virtiso[..., sr_slice]
+
+# crop
+res_em = 0.5                 # mm/px
+center_circular = [np.int(catphan_circular.shape[0]*0.5), np.int(catphan_circular.shape[1]*0.5)]
+
+winx, winy = crop(center_circular, width, res_em)
+
+catphan_circular = catphan_circular[winx[0]:center_circular[0], winy[0]:winy[1]]
+catphan_virtiso = catphan_virtiso[winx[0]:center_circular[0], winy[0]:winy[1]]
+
+plt.imsave('figures/catphan_circular_sr_mlem_iter_{0:03d}.png'.format(iter), catphan_circular, vmin=window_em[0], vmax=window_em[1])
+plt.imsave('figures/catphan_virtiso_sr_mlem_iter_{0:03d}.png'.format(iter), catphan_virtiso, vmin=window_em[0], vmax=window_em[1])
+
+# return('figures/catphan_itools_sr.png')
+# return('figures/catphan_circular_sr_mlem.png')
+# return('figures/catphan_virtiso_sr_mlem.png')
+
+fig = plt.figure()
+ax1 = fig.add_subplot(131)
+ax2 = fig.add_subplot(132)
+ax3 = fig.add_subplot(133)
+
+ax1.imshow(catphan_hu, vmin=window_hu[0], vmax=window_hu[1])
+ax1.set_title('Circular iTools FDK')
+ax1.axis('off')
+
+ax2.imshow(catphan_circular, vmin=window_em[0], vmax=window_em[1])
+ax2.set_title('Circular MLEM')
+ax2.axis('off')
+
+ax3.imshow(catphan_virtiso, vmin=window_em[0], vmax=window_em[1])
+ax3.set_title('Virtual Isocenter MLEM')
+ax3.axis('off')
+
+fig.savefig('figures/catphan_comparison_sr_iter_{0:03d}.png'.format(iter), bbox_inches="tight")
+return('figures/catphan_comparison_sr_iter_{0:03d}.png'.format(iter))
+ #+END_SRC
+
+ #+RESULTS:
+ [[file:figures/catphan_comparison_sr_iter_075.png]]
+**** ed
+     :PROPERTIES:
+     :ID:       fc37283b-966f-4f98-8693-4c885b4c516d
+     :END:
+  Generate slices for Ed
+  #+BEGIN_SRC python :results file
+import glob
+import numpy as np
+import matplotlib.pyplot as plt
+import dicom
+# import pickle
+
+# window
+window_hu = [-200, 240]         # HU
+window_em = [0.015, 0.025]      # mm^1
+
+from IPython.core.debugger import Tracer
+debug_here = Tracer()
+
+
+def crop(center, width, res):
+    """Crop image
+
+    Keyword Arguments:
+    center -- [x, y] of center
+    width  -- deisred width (mm)
+    res    -- res (mm/px)
+    """
+    px_width = np.int(width*0.5/res)
+
+    xbox = [center[0]-px_width, center[0]+px_width]
+    ybox = [center[1]-px_width, center[1]+px_width]
+
+    return(xbox, ybox)
+
+# itools
+ed_dcm = dicom.read_file(('itools/150902_ed_circular_half_13cm_offset/hu/IMG_0042.dcm'))
+ed_hu = ed_dcm.pixel_array*ed_dcm.RescaleSlope+ed_dcm.RescaleIntercept
+
+# crop
+width = 300.                 # mm each way
+
+res_hu = 0.836                 # mm/px
+center_hu = [np.int(ed_hu.shape[0]*0.5), np.int(ed_hu.shape[1]*0.5)]
+
+winx, winy = crop(center_hu, width, res_hu)
+
+ed_hu = ed_hu[winx[0]:winx[1], winy[0]:winy[1]]
+
+# recon
+dir = "/home/amdavis/research/truebeam/150902_virtiso_cbct_catphan_ed/itools/img/"
+files = sorted(glob.glob(dir+"*ed*itools*{0:04d}*.raw".format(iter)))
+
+ed_circular = np.fromfile(files[0], 'f').reshape(126, 418, 418).swapaxes(1, 2).T
+ed_virtiso = np.fromfile(files[1], 'f').reshape(126, 418, 418).swapaxes(1, 2).T
+
+ed_circular = ed_circular[..., int(ed_circular.shape[2]/2+1)]
+ed_virtiso = ed_virtiso[..., int(ed_virtiso.shape[2]/2+1)]
+
+# crop
+res_em = 0.836                    # mm/px
+center_em = [int(ed_circular.shape[0]*0.5), int(ed_circular.shape[1]*0.5)]
+
+winx, winy = crop(center_em, width, res_em)
+
+ed_circular = ed_circular[winx[0]:winx[1], winy[0]:winy[1]]
+ed_virtiso = ed_virtiso[winx[0]:winx[1], winy[0]:winy[1]]
+
+# save img slice
+plt.imsave('figures/ed_itools_fdk.png', ed_hu, vmin=window_hu[0], vmax=window_hu[1])
+plt.imsave('figures/ed_circular_mlem_iter_{0:03d}.png'.format(iter), ed_circular, vmin=window_em[0], vmax=window_em[1])
+plt.imsave('figures/ed_virtiso_mlem_iter_{0:03d}.png'.format(iter), ed_virtiso, vmin=window_em[0], vmax=window_em[1])
+
+# return('figures/ed_itools_fdk.png')
+# return('figures/catphan_circular_lcr_mlem.png')
+# return('figures/catphan_virtiso_lcr_mlem.png')
+
+# display all three
+fig = plt.figure()
+ax1 = fig.add_subplot(131)
+ax2 = fig.add_subplot(132)
+ax3 = fig.add_subplot(133)
+
+ax1.imshow(ed_hu, vmin=window_hu[0], vmax=window_hu[1])
+ax1.set_title('Circular iTools FDK')
+ax1.axis('off')
+
+ax2.imshow(ed_circular, vmin=window_em[0], vmax=window_em[1])
+ax2.set_title('Circular MLEM')
+ax2.axis('off')
+
+ax3.imshow(ed_virtiso, vmin=window_em[0], vmax=window_em[1])
+ax3.set_title('Virtual Isocenter MLEM')
+ax3.axis('off')
+
+fig.savefig('figures/ed_comparison_iter_{0:03d}.png'.format(iter), bbox_inches="tight")
+return('figures/ed_comparison_iter_{0:03d}.png'.format(iter))
+ #+END_SRC
+
+ #+RESULTS:
+ [[file:figures/ed_comparison_iter_075.png]]
+
+** Discussion
+   :PROPERTIES:
+   :ID:       5d03aa38-f620-4ad1-a60d-f02d5000ea97
+   :END:
+ As mentioned earlier, the virtual isocenter trajectory is designed to
+ increase the distance between the gantry head and the patient by
+ synchronized table translation and gantry motion. The geometry of the
+ imaging arms remains unchanged, though the center of the image space
+ is moved from the mechanical isocenter to the virtual isocenter. As
+ shown in the previous section, this results in CBCT image quality that
+ is comparable to a normal circular scan.
+
+ It is certainly possible to envision situations in which collisions
+ with the kV imaging source or (more likely) the detector also occur.
+ The system matrix in our optimization-based reconstruction method can
+ incorporate changes in the position of the imaging arms as well as the
+ patient position. Thus a trajectory with variable source-detector
+ distance, caused by the detector moving to avoid a patient collision,
+ can also be reconstructed. Such a variable magnification scan may be
+ performed with the patient couch moving in a virtual isocenter
+ trajectory, or with the patient couch fixed and rotation about the
+ physical machine isocenter.
+
+ All virtual isocenter scanning in the present work was done in
+ TrueBeam Developer Mode, which is a strictly nonclinical mode of
+ operation. Simultaneous motion of couch, gantry and imaging arms is
+ not fully supported by the TrueBeam; however, the motions required for
+ the virtual isocenter scan, which involve only coupled gantry rotation
+ and couch translation, are feasible in Developer Mode. Although the
+ linac can clearly execute the required motions and acquire the images,
+ virtual isocenter scanning is as yet not available as a clinical
+ capability. In addition, these scans must be reconstructed using
+ iterative optimization-based methods, rather than the current
+ clinically available filtered back-projection method. A historic
+ concern about optimization-based methods has been reconstruction
+ speed. These are very computationally intensive programs, but with the
+ recent availability of GPU-based processing, reconstruction times are
+ more manageable.
 
 ** Conclusion
    :PROPERTIES:
-   :ID:       8784656f-c169-410a-9a76-0454c6ab5dde
+   :ID:       016dd868-817a-44fc-8717-e64fdc5bc0d3
    :END:
-
+ Virtual isocenter trajectories and dynamic magnification are
+ potentially useful as collision-avoiding alternatives to standard
+ isocentric rotation, both in cases where arc treatments are being
+ delivered and in cases where CBCT scanning is desirable, but a normal
+ isocentric scan would cause gantry-patient collisions. Using
+ optimization-based reconstruction methods, patient-specific, collision
+ avoiding imaging trajectories that utilize virtual isocenter CBCT
+ scans and different kV-detector magnifications can be reconstructed by
+ incorporating the view-by-view imaging and patient geometry into the
+ system matrix. Image quality, as characterized by spatial resolution
+ and low contrast object detectability, is comparable for virtual
+ isocenter scans and for standard isocentric scans using different
+ magnification bumps to avoid kV-detector collisions. Thus, virtual
+ isocenter CBCT scans and kV-detector magnification changes could be
+ combined with optimization-based reconstruction as a useful clinical
+ approach in collision-plagued situations.
 * Summary and conclusions                    :conc:
   :PROPERTIES:
   :ID:       1bade25b-80d6-4650-b8a3-baf370fa657c
