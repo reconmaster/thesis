@@ -111,6 +111,9 @@ However, this is fundamentally a question that must address the
 requirements of the computational reconstruction algorithm used to
 assemble the image from the x-ray projections.
 
+*Discussion of generations and evolution of algorithms w/ design and
+functionality*
+
 ** Organization
 In this work, we will discuss the optimization-based,
 image-reconstruction framework that enables the use of these new
@@ -137,9 +140,38 @@ conclusions]].
   :PROPERTIES:
   :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
   :END:
-CT image reconstruction using a linearized imaging model of the x-ray
-transform has existed since the first CT system built by Cormack and
-Hounsfield.
+Optimization-based image reconstruction provides robust framework for
+developing the task-specific imaging trajectories we study in this
+work. Unlike the analytic-based methods, such as FDK algorithm
+cite:feldkamp_practical_1984, optimization-based methods require no
+assumptions of the initial scanning trajectory. As such, there is
+greater flexibility in choosing a scanning trajectory for a given task
+for which an analytic inverse has yet to be derived. In this work, we
+investigate some of the task-specific scanning trajectories enabled by
+optimization-based methods.
+
+The use of optimization-based methods for tomographic image
+reconstruction is a natural extension of linearizing the x-ray
+transform imaging model of tomographic scan. Approaching the image
+reconstruction problem using a linearized imaging model has existed
+since the first CT system built by Cormack and Hounsfield. For their
+initial image reconstructions, they utilized the algebraic
+reconstruction technique (ART) to solve a system of equations created
+by the summation of the rays through the image pixel grid at each
+projection angle cite:herman_art:_1973.
+
+Though the initial optimization-based image reconstruction with ART
+was successful in providing a solution to the inverse problem, the
+limited computation power available at the time proved to be an
+intractable limitation. This computational complexity that arises when
+extending to the volumetric image reconstruction used in the clinic
+today has been one of the biggest hurdles preventing the widespread
+use of optimization-based today cite:pan_why_2009. However, a recent
+renaissance of utilizing graphics processing units (GPUs) --
+technology once solely in the purvieqw of video games -- for
+scientific computation have made these optimization-based methods
+temporally competitive with analytic-based methods
+cite:xu_accelerating_2005,sharp_gpu-based_2007.
 
 ** Background: Computed tomography
    :PROPERTIES:
@@ -377,32 +409,15 @@ the kV detector, it is not possible to change the position of the
 treatment head. In this case, moving the patient would be the only
 viable trajectory to avoid a collision.
 
-* Optimization-based algorithms              :opt:
-  :PROPERTIES:
-  :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
-  :END:
-** notes                                     :noexport:
-- General approach seems to be to make the chapters presentations of
-  different studies (papers/proceedings) and the subsequent results
-  and conclusions that can be made.
-- Chuck said to use this as this is enabling the trajectory work
-** Introduction
-   :PROPERTIES:
-   :ID:       8736adf3-2606-43c1-ba5d-d3f92a74f9f8
-   :END:
-** Methods
-   :PROPERTIES:
-   :ID:       f9ebfd7f-108b-4dd3-a24c-dab617ab99dd
-   :END:
-*** Algorithms
-**** MLEM
-     :PROPERTIES:
-     :ID:       e0a24b69-d136-4f9a-9e85-dc42e1d114a9
-     :END:
-*** Detector weighting
+** Algorithms
+*** MLEM
     :PROPERTIES:
-    :ID:       cc6bcac6-a445-4dfb-8815-a95e31f517ed
+    :ID:       e0a24b69-d136-4f9a-9e85-dc42e1d114a9
     :END:
+** Detector weighting
+   :PROPERTIES:
+   :ID:       cc6bcac6-a445-4dfb-8815-a95e31f517ed
+   :END:
 #+LABEL: fig:opt_weighting
 #+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results :tangle no
 settings.render = 0;
@@ -517,14 +532,11 @@ addMargins(0.5cm, 0.5cm);
 #+ATTR_LaTeX: :width \textwidth
 #+RESULTS: fig:opt_weighting
 [[file:figures/opt/weighting.pdf]]
-*** Stopping criteria
-    :PROPERTIES:
-    :ID:       03857328-5d45-4133-b4a0-eff3fd941eaa
-    :END:
-** Conclusion
+** Stopping criteria
    :PROPERTIES:
-   :ID:       0b2ab8ae-fd94-4d01-a7e0-8bef4db30078
+   :ID:       03857328-5d45-4133-b4a0-eff3fd941eaa
    :END:
+
 * Geometric calibration                      :geo:
   :PROPERTIES:
   :ID:       652970b8-4916-4190-b83b-2d6ae117c8b3
