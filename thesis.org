@@ -141,46 +141,274 @@ conclusions]].
   :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
   :END:
 Optimization-based image reconstruction provides robust framework for
-developing the task-specific imaging trajectories we study in this
-work. Unlike the analytic-based methods, such as FDK algorithm
-cite:feldkamp_practical_1984, optimization-based methods require no
-assumptions of the initial scanning trajectory. As such, there is
-greater flexibility in choosing a scanning trajectory for a given task
-for which an analytic inverse has yet to be derived. In this work, we
-investigate some of the task-specific scanning trajectories enabled by
-optimization-based methods.
+reconstructing from projections acquired with the task-specific
+imaging trajectories we studied . Unlike the analytic-based methods,
+such as FDK algorithm cite:feldkamp_practical_1984, optimization-based
+methods require no assumptions of the initial scanning trajectory. As
+such, there is greater flexibility in choosing a scanning trajectory
+for a given task for which an analytic inverse has yet to be derived.
+In this work, we investigate some of the task-specific scanning
+trajectories enabled by optimization-based methods.
 
 The use of optimization-based methods for tomographic image
 reconstruction is a natural extension of linearizing the x-ray
 transform imaging model of tomographic scan. Approaching the image
-reconstruction problem using a linearized imaging model has existed
-since the first CT system built by Cormack and Hounsfield. For their
-initial image reconstructions, they utilized the algebraic
-reconstruction technique (ART) to solve a system of equations created
-by the summation of the rays through the image pixel grid at each
-projection angle cite:herman_art:_1973.
+reconstruction problem as a linearized imaging model has existed since
+the first CT system built by Cormack and Hounsfield. For their initial
+image reconstructions, they utilized the algebraic reconstruction
+technique (ART) to solve a system of equations created by the
+summation of the rays through the image pixel grid at each projection
+angle cite:herman_art:_1973.
 
 Though the initial optimization-based image reconstruction with ART
 was successful in providing a solution to the inverse problem, the
 limited computation power available at the time proved to be an
-intractable limitation. This computational complexity that arises when
-extending to the volumetric image reconstruction used in the clinic
-today has been one of the biggest hurdles preventing the widespread
-use of optimization-based today cite:pan_why_2009. However, a recent
-renaissance of utilizing graphics processing units (GPUs) --
-technology once solely in the purvieqw of video games -- for
-scientific computation have made these optimization-based methods
-temporally competitive with analytic-based methods
-cite:xu_accelerating_2005,sharp_gpu-based_2007.
+intractable limitation. This computational complexity was further
+increased when moving from two-dimension (2D), single-slice images to
+the three-dimensional (3D), volumetric images reconstruction which
+introduce a greater number of unknowns. The computationally-intensive
+nature optimization-based reconstructions has been one of the biggest
+barriers preventing the widespread use of these reconstruction methods
+today cite:pan_why_2009. However, a recent renaissance of utilizing
+graphics processing units (GPUs) -- technology once solely in the
+purview of video games -- for scientific computation has made these
+optimization-based methods temporally competitive with analytic-based
+methods cite:xu_accelerating_2005,sharp_gpu-based_2007.
 
-** Background: Computed tomography
+** Background: Cone-beam computed tomography
    :PROPERTIES:
    :ID:       898c8a79-a3b0-4cb2-b1be-2838c8b86426
    :END:
-*** Analytic-Based Reconstruction
+*** Analytic-based reconstruction
     :PROPERTIES:
     :ID:       20c14d08-7649-4644-b616-e86e0b7cc515
     :END:
+Analytic-based reconstruction algorithms are formulated by explicitly
+finding an inverse to the X-ray transform
+\begin{equation}
+  \label{eq:xray}
+  g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
+\end{equation}
+where the data function $g$ is acquired by integrating along the ray
+from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
+the object function $f$. A fundamental problem with these
+reconstruction algorithms when practically reconstructing $f$ is the
+assumption of a continuous-to-continuous (CC) model. These
+analytic-based reconstruction algorithms impose dense sampling
+requirements for both the detector and number of views to approximate
+a continuous data function. Given that the data function from the
+digital detector and the numerical array for storing the reconstructed
+image are both discrete, a more natural approach to the inverse
+problem would be a discrete-to-discrete (DD) imaging model
+cite:barrett_foundations_2003.
+
+#+LABEL: fig:opt_analytic
+#+BEGIN_SRC asymptote :file figures/opt/analytic.pdf :exports results :tangle no
+settings.multisample=0;
+settings.outformat="pdf";
+settings.prc = false;
+settings.render = 0;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+// view configuration
+size(10cm);
+currentprojection=orthographic(-15,10,20,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// Draw axis
+real ax_scale=15;
+draw(Label("$z$",position=EndPoint,align=N),(0,0,0)--(0,ax_scale,0),black,Arrow3);
+draw(Label("$x$",position=EndPoint,align=S),(0,0,0)--(ax_scale,0,0),black,Arrow3);
+draw(Label("$y$",position=EndPoint,align=SW),(0,0,0)--(0,0,-ax_scale),black,Arrow3);
+
+// show gantry angle
+draw(Label("$\theta_{g}$", (2, -0.5, 0)), arc((0, 0, 0), (ax_scale/3, 0, 0), (0, -ax_scale/3, 0)), red, arrow=Arrow3);
+
+// kV schematic
+real dlat=0, dlng=0, dvrt=50;
+triple det_cent=(dvrt,dlat,dlng);
+real ulen=40.0, vlen=30.0;
+
+path3 detector=plane((0,ulen,0), (0,0,vlen), det_cent-(0,ulen/2,vlen/2));
+
+triple det0 = det_cent-(0,ulen/2,vlen/2);
+triple u = (det0+ax_scale/2*(0,1,0));
+triple v = (det0+ax_scale/2*(0,0,1));
+triple w = (det0+ax_scale/2*(-1,0,0));
+
+// detector norm
+triple dnorm = (det_cent+ax_scale*(-1,0,0));
+
+// detector coordinate system
+draw(det0--u,black,Arrow3,L=Label("$u$", position=EndPoint, align=W));
+draw(det0--v,black,Arrow3,L=Label("$v$", position=EndPoint, align=N));
+draw(det0--w,black,Arrow3,L=Label("$w$", position=EndPoint, align=N));
+
+draw(detector, black);
+
+// labels
+//From Charles Staats's tutorial
+//Direction of a point toward the camera.
+triple cameradirection(triple pt, projection P=currentprojection) {
+  if (P.infinity) {
+    return unit(P.camera);
+  } else {
+    return unit(P.camera - pt);
+  }
+}
+
+//Move a point closer to the camera.
+triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
+  return pt + distance * cameradirection(pt, P);
+}
+
+// source
+real slat=0, slng=0, svrt=-100;
+triple src=(svrt,slat, slng);
+
+// lines from source to detector edges
+draw(src..det_cent-(0,-ulen/2,-vlen/2),black+opacity(0.15));
+draw(src..det_cent-(0,-ulen/2,vlen/2),black+opacity(0.15));
+draw(src..det_cent-(0,ulen/2,vlen/2),black+opacity(0.15));
+draw(src..det_cent-(0,ulen/2,-vlen/2),black+opacity(0.15));
+
+// ray connecting the source to the detector
+triple ray_sd = det_cent-src;
+draw(L=Label("$\vec{r}_{sd}$", position=EndPoint, align=E), src--det_cent, blue, Arrow3);
+
+// dot product of ray onto normal vecotr
+real along = dot(ray_sd, dnorm);
+
+// detector projection operator
+transform3 proj=planeproject(detector);
+
+// show pierecing point
+triple pierce = proj*src;
+
+draw(L=Label("$\vec{p}$", position=EndPoint, align=NW),src--pierce,blue+dashed,arrow=Arrow3);
+draw(L=Label("$\vec{p}_{uv}$", position=EndPoint, align=SE),det0--pierce,red+dashed,arrow=Arrow3);
+// draw(src--pierce,red+dotted, arrow=Arrow3);
+
+///////////////////////////////////
+
+settings.render = 0;
+import geometry;
+// size(8cm,0);
+// unitsize(1cm)
+
+// Affichage du repère par défaut (O,vec{i},vec_{j})
+// show(defaultcoordsys);
+// show(currentcoordsys);
+
+// detector
+real dlat=0, dlng=0, dvrt=50;
+point det=(dvrt,dlat);
+
+real ulen=40.0, vlen=30.0;
+
+draw((dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat),black);
+
+// source
+real slat=0, slng=0, svrt=-100;
+point src=(svrt,slat);
+
+draw(src--(dvrt, 0), dashed+red);
+draw(src--(dvrt, -ulen/2+dlat), dashed+black);
+draw(src--(dvrt, ulen/2+dlat), dashed+black);
+dot("Source", src, N, red);
+
+addMargins(0.5cm, 0.5cm);
+
+// dot("Detector",det,N,5bp+.5blue);
+// dot("Source",src,N,5bp+.5red);
+
+// dot("Source", src)
+
+// real a=5, b=4, theta=-70, poids=3;
+// ellipse el = ellipse(origin, a, b);
+// arc     ar = arc(el,(0,-b),(a,0),CCW);
+// path p = (0,-b-1)--ar--(a+1,0)--(a+1,-b-1)--cycle;
+// point pO = (0,0), pM=angpoint(ar,90+theta);
+// abscissa abscM = nodabscissa(el,pM);
+// real     timeM = abscM.x;
+// vector utangM = -dir(el,timeM),
+//        unormM = rotate(90)*utangM,
+//        vpoids=(0,-poids),
+//        vreactionN = -dot(vpoids,unormM)*unormM,
+//        vfrottement = -dot(vpoids,utangM)*utangM;
+
+// filldraw(p,lightgray,blue);
+// draw(pO--pM,dashed);
+// markangle("$\theta$",1.5cm,pM,origin,(1,0));
+
+// coordsys R=cartesiansystem(pM,i=utangM,j=unormM);
+// show("$M$", "$\vec{u_{\theta}}$", "$\vec{u_{r}}$", R, xpen=invisible);
+
+// point RpM=changecoordsys(R, pM);
+// show(Label("$\vec{f}$",EndPoint),RpM+vfrottement);
+// show(Label("$\vec{R}$",EndPoint),RpM+vreactionN);
+// show(Label("$\vec{P}$",EndPoint),RpM+vpoids);
+
+// // size3(140,80,15);
+// currentprojection=perspective(1,-1,1,up=Z);
+// currentlight=White;
+
+// // detector surface
+// // path3 g=(1,0,0)..(0,1,0)..(-1,0,0)..(0,-1,0)..cycle;
+// // draw(g);
+
+// draw(O--X,red+dashed,Arrow3);
+// draw(O--Y,red+dashed,Arrow3);
+// draw(O--Z,red+dashed,Arrow3);
+
+// // draw detector
+// draw(((-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle));
+
+// real a=-0.4;
+// real b=0.95;
+// real y1=-5;
+// real y2=-3y1/2;
+// path A=(a,0){dir(10)}::{dir(89.5)}(0,y2);
+// path B=(0,y1){dir(88.3)}::{dir(20)}(b,0);
+// real c=0.5*a;
+// pair z=(0,2.5);
+// transform t=scale(1,15);
+// transform T=inverse(scale(t.yy,t.xx));
+// path[] g=shift(0,1.979)*scale(0.01)*t*
+//   texpath(Label("{\it symptote}",z,0.25*E+0.169S,fontsize(24pt)));
+// pair w=(0,1.7);
+// pair u=intersectionpoint(A,w-1--w);
+
+// real h=0.25*linewidth();
+// real hy=(T*(h,h)).x;
+// g.push(t*((a,hy)--(b,hy)..(b+hy,0)..(b,-hy)--(a,-hy)..(a-hy,0)..cycle));
+// g.push(T*((h,y1)--(h,y2)..(0,y2+h)..(-h,y2)--(-h,y1)..(0,y1-h)..cycle));
+// g.push(shift(0,w.y)*t*((u.x,hy)--(w.x,hy)..(w.x+hy,0)..(w.x,-hy)--(u.x,-hy)..(u.x-hy,0)..cycle));
+// real f=0.75;
+// g.push(point(A,0)--shift(-f*hy,f*h)*A--point(A,1)--shift(f*hy,-f*h)*reverse(A)--cycle);
+// g.push(point(B,0)--shift(f*hy,-f*h)*B--point(B,1)--shift(-f*hy,f*h)*reverse(B)--cycle);
+
+// triple H=-0.1Z;
+// material m=material(lightgray,shininess=1.0);
+
+// for(path p : g)
+//   draw(extrude(p,H),m);
+
+// surface s=surface(g);
+// draw(s,red,nolight);
+// draw(shift(H)*s,m);
+#+END_SRC
+
+#+CAPTION: Schematic representation of weighting factor
+#+ATTR_LaTeX: :width \textwidth
+#+RESULTS: fig:opt_analytic
+[[file:figures/opt/analytic.pdf]]
+
 In the 1980s, a lot of work was done to directly solve the inverse
 problem for the cone-beam geometry. By modeling the projection
 formation process as a Radon transform or an X-ray transform,
@@ -217,33 +445,13 @@ artifacts and numerical errors were found in the reconstructions due
 to factors such as truncation introducing high-frequency components
 that are amplified in the filtration process.
 
-*** Optimization-Based Reconstruction
+*** Optimization-based reconstruction
     :PROPERTIES:
     :ID:       07e91084-61be-43d3-a905-65ef0ab997a4
     :END:
-Analytic-based reconstruction algorithms are formulated by explicitly
-finding an inverse to the X-ray transform
-\begin{equation}
-  \label{eq:xray}
-  g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
-\end{equation}
-where the data function $g$ is acquired by integrating along the ray
-from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
-the object function $f$. A fundamental problem with these
-reconstruction algorithms when practically reconstructing $f$ is the
-assumption of a continuous-to-continuous (CC) model. These
-analytic-based reconstruction algorithms impose dense sampling
-requirements for both the detector and number of views to approximate
-a continuous data function. Given that the data function from the
-digital detector and the numerical array for storing the reconstructed
-image are both discrete, a more natural approach to the inverse
-problem would be a discrete-to-discrete (DD) imaging model
-cite:barrett_foundations_2003.
-
-Iterative reconstruction algorithms are more robust because they do
-implement a more accurate DD model of the imaging system. The X-ray
-transform of the object function can be represented as the linear
-system
+Iterative reconstruction algorithms are more robust as they more
+accurately model this DD imaging system. The X-ray transform of the
+object function can be represented as the linear system
 \begin{equation}
   \label{eq:ddsys}
   \mathbf{g}=\mathcal{H}\mathbf{f},
@@ -414,12 +622,18 @@ viable trajectory to avoid a collision.
     :PROPERTIES:
     :ID:       e0a24b69-d136-4f9a-9e85-dc42e1d114a9
     :END:
-** Detector weighting
-   :PROPERTIES:
-   :ID:       cc6bcac6-a445-4dfb-8815-a95e31f517ed
-   :END:
-#+LABEL: fig:opt_weighting
-#+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results :tangle no
+** Additional reconstruction parameters
+*** Iterations and stopping criteria
+    :PROPERTIES:
+    :ID:       03857328-5d45-4133-b4a0-eff3fd941eaa
+    :END:
+*** Resolution
+*** Detector weighting
+    :PROPERTIES:
+    :ID:       cc6bcac6-a445-4dfb-8815-a95e31f517ed
+    :END:
+ #+LABEL: fig:opt_weighting
+ #+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results :tangle no
 settings.render = 0;
 import geometry;
 // size(8cm,0);
@@ -526,17 +740,18 @@ addMargins(0.5cm, 0.5cm);
 // surface s=surface(g);
 // draw(s,red,nolight);
 // draw(shift(H)*s,m);
-#+END_SRC
+ #+END_SRC
 
-#+CAPTION: Schematic representation of weighting factor
-#+ATTR_LaTeX: :width \textwidth
-#+RESULTS: fig:opt_weighting
-[[file:figures/opt/weighting.pdf]]
-** Stopping criteria
-   :PROPERTIES:
-   :ID:       03857328-5d45-4133-b4a0-eff3fd941eaa
-   :END:
-
+ #+CAPTION: Schematic representation of weighting factor
+ #+ATTR_LaTeX: :width \textwidth
+ #+RESULTS: fig:opt_weighting
+ [[file:figures/opt/weighting.pdf]]
+** Generalized trajectory framework
+*** Varian coordinates
+    :PROPERTIES:
+    :ID:       9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1
+    :END:
+*table of header parameters hnd/xim*
 * Geometric calibration                      :geo:
   :PROPERTIES:
   :ID:       652970b8-4916-4190-b83b-2d6ae117c8b3
@@ -550,41 +765,70 @@ addMargins(0.5cm, 0.5cm);
    :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
    :END:
 Correctly modeling the geometric parameters of the image acquisition
-is a critical tomographic image reconstruction. This is true
+is a critical component tomographic image reconstruction. This is true
 regardless of whether reconstruction is done with analytic-based or
 optimization-based methods. Any inconsistency between the real
-projection geometry and that used for image reconstruction will appear
-as artifacts in the reconstructed image.
+projection geometry and that used for image reconstruction will cause
+artifacts in the reconstructed image. An example of such an artifact
+is shown in Figure ([[ref:fig:geo_cal_catphan_example]]).
+
+#+BEGIN_EXPORT latex
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/geo/catphan_virt_1p5x_nocal.png}
+    \caption{}
+    \label{fig:geo_virt_catphan_nocal}
+  \end{subfigure}
+  ~ %add desired spacing between images, e. g. ~, \quad, \qquad,
+  % \hfill etc.
+  % (or a blank line to force the subfigure onto a new line)
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/geo/catphan_virt_1p5x_cal.jpg}
+    \caption{}
+    \label{fig:geo_virt_catphan_cal}
+  \end{subfigure}
+  \caption{Transverse slice of the Catphan 504 phantom. The image on
+    the left is reconstructed without geometric calibration, and the
+    image on the right is constructed with geometric calibration. The
+    arrow in red indicates one example of the geometric distortion
+    incurred by incorrectly modeling the scanning geometry. This
+    blurring and subsequent loss of spatial resolution is a typical
+    consequence of poor geometric calibration.}
+  \label{fig:geo_cal_catphan_example}
+\end{figure}
+#+END_EXPORT
 
 While investigating different non-standard scanning trajectories, we
 found that correct geometric calibration must be performed to avoid
 geometric imaging artifacts. As with the optimization-based image
-reconstruction, we needed a calibration procedure that would provide a
-robust calibration protocol for the different scanning configurations
-we wanted to scan. This is especially true when working with
-trajectories where the object is moving in addition to the source and
-detector during the scan.
+reconstruction, we needed a calibration procedure that would
+accommodate the different scanning configurations we wanted to scan.
+This is especially true when working with trajectories where the
+object is moving in addition to the source and detector during the
+scan.
 
 Previous work on geometric calibration for tomographic image
 reconstruction has approached the calibration problem via analytic
 cite:noo_analytic_2000,smekal_geometric_2004,cho_accurate_2005,yang_geometric_2006,daly_geometric_2008
 and estimation
 cite:gullberg_estimation_1990,rougee_geometrical_1993,mitschke_optimal_2000,silver_determination_2000,panetta_optimization-based_2008
-frameworks. As with CT, the initial calibration efforts utilized
-optimization-based methods to determine the geometric offsets from
-projections of a known phantom geometry and nominal system setup. By
-framing the calibration as an optimization problem, the acquisition
-parameters were estimated in a way that minimized a cost function
-associated with improper modeling of the acquisition geometry.
+frameworks. Initial calibration efforts utilized optimization-based
+methods to determine the geometric offsets from projections of a known
+phantom geometry and nominal system setup. By framing the calibration
+as an optimization problem, the acquisition parameters were estimated
+in a way that minimized a cost function associated with improper
+modeling of the acquisition geometry.
 
 These calibration methods (analytic-based methods included) usually
 rely on a known calibration phantom. This is typically a set of highly
 attenuating fiducials arranged in a specific pattern. After scanning
 the phantom with the system of interest, the detected fiducials are
-then compared to the known geometry of the phantom. In the
-analytic-based approach, the offsets are determined by solving for
-parameters that would transform the projection of the phantom to match
-the observed projection. In the optimization-based approach, geometric
+then compared to predicted positions based on the known geometry of
+the phantom and the nominal projection geometry In the analytic-based
+approach, the view parameters are determined by solving for parameters
+that would transform the projection of the phantom to match the
+observed projection. In the optimization-based approach, geometric
 parameters are varied to improve the match between the projection of
 the modeled fiducials an the detected fiducials in the sinogram.
 
@@ -606,7 +850,7 @@ and comparing the the projections to the modeled forward-projection of
 a mathematical model of the phantom, we can more accurately determine
 the system matrix $(\mathcal{H})$ in Equation ([[ref:eq:ddsys]]) for
 reconstructing from a non-circular scanning trajectory with
-optimization-based methods.
+optimization-based methods resulting in reduced image artifacts.
 
 ** Methods
    :PROPERTIES:
@@ -616,20 +860,21 @@ Where analytic-based methods, such as FDK, require a certain
 acquisition trajectory such a as a fixed scanning radius of the source
 and detector and the angular position of each projection, the
 optimization-based system matrix makes no assumptions of the geometry
-in other views. As such, we created a framework that incorporates the
-best geometric estimate of the projection geometry of each view. The
-flexibility to incorporate geometric corrections in this way is
-another useful aspect in using optimization-based methods for image
-reconstruction.
+in other views. As such, we created a reconstruction framework that
+incorporates the best geometric estimate of the projection geometry of
+each view. The flexibility to incorporate geometric corrections in
+this way is another useful aspect in using optimization-based methods
+for image reconstruction.
 
 Before attempting to determine any geometric errors in our scanning
 acquisition, we first modified the calculation of our system matrix to
-incorporate the geometry information provided by the TrueBeam system.
-In doing this, we took advantage of all the existing calibration
-information that is provided with the current clinical system. Any
-additional calibration information we could extract in addition to
-this would then be the result of imaging with scanning configurations
-that are not currently in clinical use.
+incorporate the geometry information provided by the TrueBeam system
+as discussed in [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates]]. In doing this, we took advantage
+of all the inherent geometry information that is provided with the
+current clinical system. This information then provided an initial
+estimate of the scanning geometry which we could then refine with the
+calibration information we extracted with our calibration protocol.
+
 *** Phantoms
     :PROPERTIES:
     :ID:       F5BECB45-8652-47A3-915C-1E96DA6110E7
@@ -637,16 +882,22 @@ that are not currently in clinical use.
 Our first calibration phantom for determining geometric offsets is
 shown in Figure (\ref{fig:geo_geocal}). The phantom is a 15.2 cm outer
 diameter acrylic tube with a spiral pattern of CT-spot fiducials
-placed 2.5 cm apart every $45^{\circ}$. When scanned, the CT spots are
-clearly visible in the projection images which is ideal for automating
-the fiducial detection in the data domain.
+placed 2.5 cm along the axial direction every $45^{\circ}$. When scanned,
+the CT spots are clearly visible in the projection images which is
+ideal for automating the fiducial detection in the data domain.
 
 However, we realized that using such a spiral calibration phantom
 creates a degree of ambiguity in the geometry of the projected
 fiducials. With both this phantom and additional calibration phantoms
 we created, too much symmetry in the phantom design leads to a rather
-challenging objective function. To avoid such complexity, a
-calibration phantom with intentional asymmetry is desirable.
+challenging objective function. Given that only a small portion of the
+phantom is visible in any one projection view, excessive symmetry
+produces multiple minima in the objective function where a simple
+axial shift and rotation offset allows for multiple matches of the
+modeled fiducials and those in the real data. To avoid such
+complexity, a calibration phantom with intentional asymmetry is
+desirable so that the projected fiducials can be indentified and
+matched without ambiguity.
 
 In addition to the necessary complexity created by this phantom,
 another concern for a calibration phantom is the uncertainty in the
@@ -683,10 +934,10 @@ scanning trajectories we implemented on the TrueBeam system with
 Developer Mode. As such, the nominal trajectory we used to initialize
 our calibration method was self-reported, view-by-view geometry
 provided by the TrueBeam system for each projection. Starting with
-this initial guess with which we calculated our reconstruction system
-matrix $\mathcal{H}$, the additional calibration information we were
-able to extract with our calibration improved our estimate of both the
-system matrix and subsequently the estimated image from the
+this initial estimate with which we calculated our reconstruction
+system matrix $\mathcal{H}$, the additional calibration information we
+were able to extract with our calibration improved our estimate of
+both the system matrix and subsequently the estimated image from the
 reconstruction.
 
 Figure ([[ref:fig:geo_cal_schematic]]) provides a schematic illustration
@@ -702,10 +953,10 @@ occur in both the phantom's setup (translation and rotation in all
 three dimensions) as well as that of the source and detector positions
 (due to translation and rotation deviations in the gantry, source, and
 detector). The collective impact of these various discrepancies will
-subsequently produce projection views for which the projected
-fiducials in the data domain do not match the simulated projections
-from the nominal geometry as shown by the red projected fiducials in
-Figure ([[ref:fig:geo_cal_schematic]]).
+produce projection views for which the projected fiducials in the data
+domain do not match the simulated projections from the nominal
+geometry as shown by the red projected fiducials in Figure
+([[ref:fig:geo_cal_schematic]]).
 
 #+NAME: fig:geo_cal_schematic
 #+BEGIN_SRC asymptote :file figures/geo/cal_schematic.pdf :exports results
@@ -713,11 +964,6 @@ settings.multisample=0;
 settings.outformat="pdf";
 settings.prc = false;
 settings.render = 0;
-
-import graph3;
-import geometry;
-import solids;
-import three;
 
 import graph3;
 import geometry;
@@ -884,7 +1130,7 @@ dot(proj_uncal*isocal,red+opacity(op_uncal));
 // dot(proj270*isocal,red);
 #+END_SRC
 
-#+CAPTION: Schematic represenation of a single projection view for the isocal phantom with the TrueBeam kV-CBCT scanning geometry shown using an orthographic projection. The blue detector and projected isocal fiducials correspond to the self-reported geometry from the imaging system. The red detector and projected fiducials illustrates how translation and rotation offsets create variations in the projected fiducials in the sinogram space. The bottom left corner corresponds to the origin of the detector coordinate system. The detector's translation and rotation offsets are exaggerated here for illustrative purposes.
+#+CAPTION: Schematic represenation of a single projection view for the isocal phantom with the TrueBeam kV-CBCT scanning geometry. The blue detector and projected isocal fiducials correspond to the self-reported geometry from the imaging system. The red detector and projected fiducials illustrates how translation and rotation offsets of both the phantom and the source-detector system create variations in the projected fiducials in the sinogram space. The bottom left corner corresponds to the origin of the detector coordinate system. The detector's translation and rotation offsets are exaggerated here for illustrative purposes.
 #+LABEL: fig:geo_cal_schematic
 #+ATTR_LaTeX: :width 0.9\textwidth
 #+RESULTS: fig:geo_cal_schematic
@@ -899,12 +1145,17 @@ is calculated using the variables describing each view shown in Figure
 detector's frame vectors $\left\{ \hat{u}, \hat{v}, \hat{w} \right\}$)
 are rotated into the global image space by rotating these vectors by
 the gantry angle $\left( \theta_{g} \right)$ at each view (the gantry rotation
-axis is the $y$ axis in Figures ([[ref:fig:geo_cal_schematic]],
-[[ref:fig:geo_cal_proj]]).
+axis is the logitudinal axis of the cylinder in Figure
+([[ref:fig:geo_cal_schematic]]) and the $y$ axis in Figure
+([[ref:fig:geo_cal_proj]]).
 
-Next, the orthogonal component of the rays from the source to the
-detector is calculated by first finding a ray connecting the source to
-the detector, $\vec{r}_{\text{sd}}$. The component of this ray that is
+Projection of the fiducial coordinates onto the detector needs to be
+done in a coordinate system aligned with the detector’s frame vectors.
+The source-to-detector distance needed for projection is the distance
+along a direction normal to the detector plane, i.e. parallel to the
+frame vector $w$. The normal distance from source to detector is
+calculated by first choosing a ray connecting the source to the
+detector, $\vec{r}_{\text{sd}}$. The component of this ray that is
 orthogonal to the detector is then found using the dot product
 \begin{equation}
   L=\vec{r}_{sd}}\cdot \hat{w},
@@ -926,12 +1177,6 @@ settings.multisample=0;
 settings.outformat="pdf";
 settings.prc = false;
 settings.render = 0;
-
-
-import graph3;
-import geometry;
-import solids;
-import three;
 
 import graph3;
 import geometry;
@@ -1015,11 +1260,11 @@ transform3 proj=planeproject(detector);
 triple pierce = proj*src;
 
 draw(L=Label("$\vec{p}$", position=EndPoint, align=NW),src--pierce,blue+dashed,arrow=Arrow3);
-draw(L=Label("$\vec{p}_{uv}$", position=EndPoint, align=SE),det0--pierce,red+dashed,arrow=Arrow3);
+draw(L=Label("$\vec{p}_{uv}$", position=EndPoint, align=SE),det_cent--pierce,red+dashed,arrow=Arrow3);
 // draw(src--pierce,red+dotted, arrow=Arrow3);
 #+END_SRC
 
-#+CAPTION: Orthographic schematic of a single projection view and the associated variables used in building the projective transform matrix $\left( \boldsymbol{X} \right)$ for that view. The $\left\{x, y, z \right\}$ coordinate system corresponds to the standard IEC global coordinate system, and the $\left\{u, v, w \right\}$ coordinate system corresponds to the detector frame vectors for that view. The red arrow labeled by $\theta_g$ denotes the gantry rotation angle which is defined from the $x$ axis as shown here for the kV imaging system. The blue vector $\vec{r}_{sd}$ points from the source to the detector center, and the blue vector $\vec{p}$ shows the piercing point of the x-ray source on the detector. The red vector $\vec{p}_{uv}$ corresponds to the piercing point in the detector basis as calculated in Equation ([[ref:eq:geo_pierecuv]]).
+#+CAPTION: Schematic of a single projection view and the associated variables used in building the projective transform matrix $\left( \boldsymbol{X} \right)$ for that view. The $\left\{x, y, z \right\}$ coordinate system corresponds to the standard IEC global coordinate system, and the $\left\{u, v, w \right\}$ coordinate system corresponds to the detector frame vectors for that view. The red arrow labeled by $\theta_g$ denotes the gantry rotation angle which is defined from the $x$ axis as shown here for the kV imaging system. The blue vector $\vec{r}_{sd}$ points from the source to the detector center, and the blue vector $\vec{p}$ shows the piercing point of the x-ray source on the detector. The red vector $\vec{p}_{uv}$ corresponds to the piercing point in the detector basis as calculated in Equation ([[ref:eq:geo_pierecuv]]).
 #+LABEL: fig:geo_cal_proj
 #+ATTR_LaTeX: :width 0.9\textwidth
 #+RESULTS: fig:geo_cal_proj
@@ -1031,21 +1276,22 @@ the detector basis. The transform to the detector basis is represented
 by the homogeneous coordinate transform
 \begin{equation}
   \boldsymbol{G} = \begin{bmatrix}
-    u_i & u_j & u_k & -r_x \\
-    v_i & v_j & v_k & -r_y \\
-    w_i & w_j & w_k & -r_z \\
+    u_i & u_j & u_k & -r_{s,x} \\
+    v_i & v_j & v_k & -r_{s,y} \\
+    w_i & w_j & w_k & -r_{s,z} \\
     0 & 0 & 0 & 1
   \end{bmatrix}.
   \label{eq:geo_gmat}
 \end{equation}
-Then using the orthogonal ray component found in Equation
-([[ref:eq:geo_along]]), the homogeneous coordinate projection matrix is
+where $\left[-r_{{s,x}}, -r_{{s,y}}, -r_{{s,z}} \right]$ are the
+room-coordinate components of the source position. Then using the
+orthogonal ray component found in Equation ([[ref:eq:geo_along]]), the
+homogeneous coordinate projection matrix is
 \begin{equation}
   \boldsymbol{P} = \begin{bmatrix}
     1 & 0 & 0 & 0 \\
     0 & 1 & 0 & 0 \\
-    0 & 0 & \frac{1}{L} & 0 \\
-    0 & 0 & 0 & 0
+    0 & 0 & 1 &\frac{1}{L}
   \end{bmatrix}.
   \label{eq:geo_pmat}
 \end{equation}
@@ -1055,6 +1301,8 @@ position vectors, the combined transform is then
   \boldsymbol{M} = \boldsymbol{G}\boldsymbol{P}.
   \label{eq:geo_magicmat}
 \end{equation}
+which transforms a room coordinate point into the detector basis, and
+then projects it onto the detector plane
 
 Finally, this information can be combined to create a single transform
 of the fiducials in the global image coordinate system to the
@@ -1062,13 +1310,12 @@ projected spots on the detector in discretized detector bin
 coordinates. First, the coordinates of the piercing point must be
 calculated in the detector basis as
 \begin{equation}
-  \vec{p}_{uv} = \(\vec{p}-\vec{r}_d\)\boldsymbol{G},
+  \vec{p}_{uv} = \left(\vec{p}-\vec{r}_d\right)\boldsymbol{G},
   \label{eq:geo_pierecuv}
 \end{equation}
-where $\vec{r}_d_{}$ is the detector coordinates rotated into the global
-coordinate system. With all this, the projection transform used to
-calculate the projected fiducials in discretized detector bin
-coordinates is
+where $\vec{r}_d_{}$ is the center of the detector in room coordinates.
+With all this, the projection transform used to calculate the
+projected fiducials in discretized detector bin coordinates is
 \begin{equation}
   \boldsymbol{X} = \boldsymbol{M}\boldsymbol{T} (\vec{p}_{uv})
   \boldsymbol{S}\left( \left[\frac{1}{s_{\text{pix}}},
@@ -1088,22 +1335,19 @@ corresponding to the fiducials on the Isocal phantom can be projected
 onto the discretized detector basis as illustrated in Figure
 ([[ref:fig:geo_cal_schematic]]). These projected spots are then matched to
 the detector spots in the real sinogram. The $L_2$ norm between the
-real and simulated projected spots is then calculated as it serves as
-the cost function for the optimization-based calibration. The idea
-behind this being that when deviations from the nominal geometry are
-identified, the simulated and real projected fiducials should
-correspond to the same detector coordinates.
+real and simulated projected spots is then calculated and serves as
+the cost function for the optimization-based calibration.
 
 As with other optimization-based calibration procedures, we
-iteratively varied the parameters corresponding to the geometric
-degrees of freedom (DOF) of the scanning trajectory. The phantom pose
+iteratively vary the parameters corresponding to the geometric degrees
+of freedom (DOF) of the scanning trajectory. The phantom pose
 (position and orientation) is first allowed to vary in the room
 coordinate system to account for potential setup errors between the
 room coordinates and the modeled position of the phantom. Once the
 pose of the Isocal phantom is identified, then the source, detector,
 and patient couch translations and rotations are allowed to vary, and
 the cost of the simulated fiducial projections are calculated at each
-step. We used the Nelder-Mead simplex algorithm
+step. We use the Nelder-Mead simplex algorithm
 cite:lagarias_convergence_1998 to minimize the $L_{2}\text{-norm}$ cost
 function.
 
@@ -1112,7 +1356,7 @@ and detector motions that can cause the same change of the object
 relative to the source and detector within the image coordinate
 system, there are some degrees of freedom that can couple with others.
 For instance, shifting the patient in the positive longitudinal
-direction if effectively the same as allowing the source and detector
+direction is effectively the same as allowing the source and detector
 to move the same distance in the negative longitudinal direction. This
 requires that only a few parameters are allowed to vary at once as
 allowing too many parameters on this non-convex surface will often
@@ -1122,13 +1366,13 @@ information for calculating the system matrix $\mathcal{H}$ for the
 image reconstruction.
 
 For a new trajectory, this phantom is first scanned to identify any
-geometric offsets that are incorrectly reported in the TrueBeam data
-headers. Though we found the self-reported position accuracy from the
-acquisition metadata to be very good, there were still some scanning
-configurations for which we found the additional refinement from our
-geometric calibration to be critical for obtaining a useful
-reconstruction. This was particularly true for scanning trajectories
-where the object and the kV imaging system were moving simultaneously.
+potential corrections to the parameters reported in the TrueBeam data
+headers. Though we find the self-reported position accuracy from the
+acquisition metadata to be very good, there are still some scanning
+configurations for which the additional refinement from our geometric
+calibration is critical for obtaining the best quality reconstruction.
+This is particularly true for scanning trajectories where the object
+and the kV imaging system move simultaneously.
 *** Geometric-offset artifact catalog        :noexport:
     :PROPERTIES:
     :ID:       DED4A0A6-3775-41ED-AF64-BD6604B2B3AD
@@ -1220,13 +1464,12 @@ scan to extract calibration offsets for that particular trajectory
 using the calibration method described in Section ([[id:F53F4B5A-83EB-4B16-9B6D-F557D3E441C2][Calibration
 method]]).
 
-With this calibration extracted from the data domain using our
-calibration routine, we reconstructed the Catphan scans from these two
-trajectories with and without the calibrations offsets. We
-reconstructed onto an isotropic image grid of 0.473 mm for each
-reconstruction, and applied the half-fan weighting described in
-Section ([[id:cc6bcac6-a445-4dfb-8815-a95e31f517ed][Detector weighting]]). For all of these reconstructions we used
-200 iterations of MLEM as described in Section ([[id:e0a24b69-d136-4f9a-9e85-dc42e1d114a9][MLEM]]).
+We reconstructed the Catphan scans from these two trajectories with
+and without the calibrations offsets. We reconstructed onto an
+isotropic image grid of 0.473 mm for each reconstruction, and applied
+the half-fan weighting described in Section ([[id:cc6bcac6-a445-4dfb-8815-a95e31f517ed][Detector weighting]]). For
+all of these reconstructions we used 200 iterations of MLEM as
+described in Section ([[id:e0a24b69-d136-4f9a-9e85-dc42e1d114a9][MLEM]]).
 
 *Should we run the metric analysis on these two scans w/ and w/o calibration?*
 *** figures                                  :noexport:
@@ -1420,12 +1663,11 @@ Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the CTP 528 spatial
 resolution module slice from the reconstructions of both the circular
 scan in the left column and the virtual isocenter scan in the right
 column. The top row shows the slice from the uncalibrated
-reconstruction using just the nominal scanning information from scan's
+reconstruction using the nominal projection geometry from image
 metadata. It can be seen by comparing the circle and virtual isocenter
-scans without calibration that the additional complexity of moving the
-treatment couch during the scan introduces additional geometric error
-over the standard circle scan which visually degrades spatial
-resolution.
+scans without calibration that moving the treatment couch during the
+scan introduces additional geometric error over the standard circle
+scan which visually degrades spatial resolution.
 
 The bottom row of Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the same
 slice from the corresponding trajectory with the geometric offsets
@@ -1438,8 +1680,8 @@ calibration offsets in the reconstruction model, the spatial
 resolution of the virtual isocenter reconstruction becomes comparable
 to that of the circular scan.
 
-Figure ([[ref:fig:geo_cal_cost]]) shows the $L_{2}_{}-\text{norm}$ from the data
-domain between the simulated fiducial projections and the real
+Figure ([[ref:fig:geo_cal_cost]]) shows the $L_{2}_{}-\text{norm}$ of the
+distance between the simulated fiducial projections and the real
 fiducial projections acquired from the circle and virtual isocenter
 scans of the isocal phantom. As this served as the cost function which
 we used as the minimization objective for the optimized offset search,
@@ -1450,16 +1692,12 @@ the images shown in Figure ([[ref:fig:geo_cal_catphan_sens]]).
 
 Comparing the the $L_{2}_{}-\text{norm}$ of the uncalibrated scans in Figure
 ([[ref:fig:geo_cal_cost]]), we see that there is far more disagreement
-between the nominal trajectory and the real data for the virtual
-isocenter scan than that of the circular scan. We see that this
-subsequently produces far more artifacts and loss of spatial
-resolution in the virtual isocenter reconstruction than in that of the
-circular scan. We also see that after running the optimization-based
-calibration procedure, the cost for both trajectories is reduced to
-approximately the same order of magnitude. Again, this agrees with the
-reconstructed images as the spatial resolution in both the circular
-scan and the virtual isocetner scan is comparable after incorporating
-the calibrated geometry into the system matrix $\mathcal{H}$.
+between modeled and observed Isocal fiducial positions for the virtual
+isocenter scan than that of the circular scan, leading to more
+artifacts and loss of spatial resolution in the virtual isocenter
+reconstruction than in that of the circular scan. With the geometric
+calibrations applied, the cost for the virtual isocenter and circular
+trajectories is quite comparable, as is the spatial resolution.
 
 *Describe TB1 virtual isocenter couch backlash?*
 #+BEGIN_EXPORT latex
@@ -1494,6 +1732,7 @@ the calibrated geometry into the system matrix $\mathcal{H}$.
 #+END_EXPORT
 **** figures                                 :noexport:
 - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/calibration_images.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/calibration_images.ipynb]]
+- [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
 **** notes                                   :noexport:
 - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
 ** Conclusion
@@ -2073,35 +2312,35 @@ image and the images from different trajectories.
  axial direction while the gantry rotation is slowing and reversing
  direction before acquiring the second circle show in Figure ([[ref:fig:traj_smth][smooth]]).
 
- #+BEGIN_LaTeX
- \begin{figure*}
-   \centering
-   \begin{subfigure}[b]{0.3\textwidth}
-     \includegraphics[width=\textwidth]{img/traject/dual_circle_20cm.png}
-     \caption{Dual circle}
-     \label{fig:traj_dcirc}
-   \end{subfigure}
-   ~
-   \begin{subfigure}[b]{0.3\textwidth}
-     \includegraphics[width=\textwidth]{img/traject/dual_circle_line_20cm.png}
-     \caption{Circle line circle}
-     \label{fig:traj_clc}}
-   \end{subfigure}
-   ~
-   \begin{subfigure}[b]{0.3\textwidth}
-     \includegraphics[width=\textwidth]{img/traject/dual_smth_20cm.png}
-     \caption{Smooth}
-     \label{fig:traj_smth}}
-   \end{subfigure}
-   ~
-   \caption{The left image shows the dual circle trajectory. The center
-     image shows the circle-line-circle trajectory. The right image shows
-     the smooth trajectory. These diagrams of the source trajectory do
-     not show the opposing trajectory of the detector around the digital
-     patient.}
-   \label{fig:poly}
- \end{figure*}
- #+END_LaTeX
+#+BEGIN_LaTeX
+\begin{figure*}
+  \centering
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{img/traject/dual_circle_20cm.png}
+    \caption{Dual circle}
+    \label{fig:traj_dcirc}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{img/traject/dual_circle_line_20cm.png}
+    \caption{Circle line circle}
+    \label{fig:traj_clc}}
+\end{subfigure}
+~
+\begin{subfigure}[b]{0.3\textwidth}
+  \includegraphics[width=\textwidth]{img/traject/dual_smth_20cm.png}
+  \caption{Smooth}
+  \label{fig:traj_smth}}
+\end{subfigure}
+~
+\caption{The left image shows the dual circle trajectory. The center
+  image shows the circle-line-circle trajectory. The right image shows
+  the smooth trajectory. These diagrams of the source trajectory do
+  not show the opposing trajectory of the detector around the digital
+  patient.}
+\label{fig:poly}
+\end{figure*}
+#+END_LaTeX
 
 **** Developer mode
      :PROPERTIES:
@@ -2190,32 +2429,32 @@ image and the images from different trajectories.
  four of these disks in the tube, we can obtain these metrics as a
  function of axial position within a given reconstruction.
 
- #+BEGIN_LaTeX
-   \begin{figure}
-   \centering
-   \begin{subfigure}[b]{0.45\textwidth}
-   \centering
-   \includegraphics[height=1.75in]{img/poly/20150408_183320_setup.jpg}
-   \caption{Disk phantom tube}
-   \label{fig:disk_tube}
-   \end{subfigure}
-   \qquad
-   \begin{subfigure}[b]{0.45\textwidth}
-   \centering
-   \includegraphics[height=1.75in]{img/poly/20150609_disk_phantom.jpg}
-   \caption{Low-contrast disk phantom}
-   \label{fig:lc_disk}}
-   \end{subfigure}
-   \caption{The left image shows the experimental setup of the acrylic
-     tube with four low-contrast disks. Given they symmetry of the
-     scanning geometry, one disk is placed at the plane between the two
-     circles. The remaining 3 are place at different axial positions in
-     one half of the image volume. The right image shows one of the
-     low-contrast disks with the larger holes for the solid water RMI
-     inserts.}
-   \label{fig:poly}
-   \end{figure}
- #+END_LaTeX
+#+BEGIN_LaTeX
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[height=1.75in]{img/poly/20150408_183320_setup.jpg}
+    \caption{Disk phantom tube}
+    \label{fig:disk_tube}
+  \end{subfigure}
+  \qquad
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[height=1.75in]{img/poly/20150609_disk_phantom.jpg}
+    \caption{Low-contrast disk phantom}
+    \label{fig:lc_disk}}
+\end{subfigure}
+\caption{The left image shows the experimental setup of the acrylic
+  tube with four low-contrast disks. Given they symmetry of the
+  scanning geometry, one disk is placed at the plane between the two
+  circles. The remaining 3 are place at different axial positions in
+  one half of the image volume. The right image shows one of the
+  low-contrast disks with the larger holes for the solid water RMI
+  inserts.}
+\label{fig:poly}
+\end{figure}
+#+END_LaTeX
 
  To study these techniques with an anthropomorphic phantom, we used the
  CIRS (Norfolk, VA) Model 600 torso phantom shown in Figure ([[ref:fig:ed][ed]]). Using
@@ -2223,28 +2462,30 @@ image and the images from different trajectories.
  cm spacing*? This scan was chosen as it had the best performance with
  the metrics obtained with the disk phantom.
 
- #+BEGIN_LaTeX
-   \begin{figure}
-   \centering
-   \begin{subfigure}[b]{0.45\textwidth}
-   \centering
-   \includegraphics[height=1.75in]{../../research/trajectories/phantoms/cirs/20140901_ed_cllc.jpg}
-   \caption{CIRS torso phantom}
-   \label{fig:ed_setup}
-   \end{subfigure}
-   \qquad
-   \begin{subfigure}[b]{0.45\textwidth}
-   \centering
-   \includegraphics[height=1.75in]{../../research/trajectories/phantoms/cirs/600_PHO_01.jpg}
-   \caption{Phantom cross sections}
-   \label{fig:ed_secs}}
-   \end{subfigure}
-   \caption{The left image shows the experimental setup of the CIRS torso
-     phantom. The right image shows the cross sections of this phantom
-     with some of its low-contrast features.}
-   \label{fig:ed}
-   \end{figure}
- #+END_LaTeX
+#+BEGIN_LaTeX
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[height=1.75in]{../../research/trajectories/phantoms/cirs/20140901_ed_cllc.j
+
+      \caption{CIRS torso phantom}
+      \label{fig:ed_setup}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[b]{0.45\textwidth}
+      \centering
+      \includegraphics[height=1.75in]{../../research/trajectories/phantoms/cirs/600_PHO_01.jpg}
+      \caption{Phantom cross sections}
+      \label{fig:ed_secs}}
+  \end{subfigure}
+  \caption{The left image shows the experimental setup of the CIRS
+    torso
+    phantom. The right image shows the cross sections of this phantom
+    with some of its low-contrast features.}
+  \label{fig:ed}
+\end{figure}
+#+END_LaTeX
 
 **** TODO Evaluation
      :PROPERTIES:
