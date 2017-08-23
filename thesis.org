@@ -925,6 +925,31 @@ than that of our original phantom.
 #+LABEL: fig:geo_isocal
 [[../../research/phantoms/isocal/imgs/161012_isocal.jpg]]
 
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[width=\textwidth]{figures/geo/old_geocal_full_1701x1024x768}
+  \caption{}
+  \label{fig:geo_oldcal_proj}
+\end{subfigure}
+~ %add desired spacing between images, e. g. ~, \quad, \qquad,
+% \hfill etc.
+% (or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[width=\textwidth]{figures/geo/isocal_full_914x1024x768}
+  \caption{}
+  \label{fig:geo_isocal_proj}
+\end{subfigure}
+\caption{(a) shows a projection of our first calibration phantom
+  consisting of a single spiral of fiducials around the acryllic tube.
+  (b) shows a projection of Varian's isocal calibration phantom. The
+  additional fiducials seen in each projection, and their unambiguous
+  layout in the projection help prevent local minima when searching
+  for correct geometry offsets}
+\label{fig:geo_cal_sens_cost}
+\end{figure}
+#+END_EXPORT
 *** Calibration method
     :PROPERTIES:
     :ID:       F53F4B5A-83EB-4B16-9B6D-F557D3E441C2
