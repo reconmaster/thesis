@@ -20,7 +20,7 @@
 \department{Committee on Medical Physics}
 \division{Biological Sciences}
 \degree{Ph. D.}
-\date{August, 2017}
+\date{October, 2017}
 
 %% Use these commands to set a dedication and epigraph text
 \dedication{Dedication Text}
@@ -42,7 +42,7 @@
 
 \acknowledgments
 
-Funding was provided in part by Varian Medical Systems, the Lawrence
+*EXPAND* Funding was provided in part by Varian Medical Systems, the Lawrence
 H. Lanzl Fellowship (to A. D.), and NIH Grants R01 CA182264, R01
 EB018102, S10 RR021039 and P30 CA14599. We are grateful to Pascal
 Paysan and Dieter Seghers (also Varian) for providing and assisting
@@ -89,32 +89,89 @@ tomographic technology were driven by clinical research. One such form
 of tomographic imaging is computed tomography (CT) which uses
 projection images acquired from different locations around the object
 to compute the distribution of material densities inside the object.
-Though the mathematical framework for solving this inverse problem had
-been formulated by Johann Radon in 1917 and a patent for what is
-essentially CT was filled in 1940 by Gabriel Frank, it was not until
-1967 that the work of Allan M. Cormack and Godfrey N. Hounsfield led
-to the first clinical CT scanner. For their work, Cormack and
-Housfield shared the 1979 Nobel Prize in Physiology and Medicine
+With the growth of tomographic imaging, additional technologies were
+developed to acquire these images from a variety of waves from
+ultrasound to injecting radioactive tracers which emit these waves
+from inside a patient as in single-photon computed tomography (SPECT)
+and positron emission tomography (PET).
+
+** CT development history
+In a CT scanner system, an x-ray source and opposing detector
+typically rotate in a circle relative to the object being imaged as
+x-ray projection images are acquired at different angular positions.
+By modeling the attenuation of the incident x-rays by the object being
+imaged at different projection angles and finding an approximate
+inversion of this model, an estimate of the objects interior could be
+produced. The development of modern CT imaging systems today was
+driven not only by innovation in the hardware design, but also
+advances the algorithms used to invert the poorly conditioned forward
+model encountered in CT imaging.
+
+Figure ([[ref:fig:intro_hist_1st_gen]]) shows a schematic of the first
+generation of CT scanner, which was built by EMI (/Electric and
+Musical Industries Ltd./) in 1967 using the work of Allan M. Cormack
+and Godfrey N. Hounsfield cite:buzug_thorston_m._milestones_2008. In
+this design, a source and detector acquire a series of pencil-beam
+projections by translating together along a line in a plane orthogonal
+to the rotation axis. The source and detector then rotate before
+acquiring another series of projections along another line. This
+process is repeated a successive rotation angles until the system has
+rotated an entire $180^{\deg}$ and the source and detector have moved to
+each others starting position. For their work, Cormack and Housfield
+shared the 1979 Nobel Prize in Physiology and Medicine
 cite:hsieh_computed_2009.
 
-*ADD DIAGRAM*
+#+CAPTION: First-generation CT scanner. At each angle, the source and detector move together in a line to acquire a series of pencil beam projections at that angle. The source and detector then rotate one degree around the object before repeating this process.
+#+ATTR_LaTeX: :width 0.7\textwidth
+#+LABEL: fig:intro_hist_1st_gen
+[[file:figures/intro/1st_gen_ct.png]]
 
-In a CT scanner system, an x-ray source and opposing detector
-typically rotate relative to the object being imaged as x-ray
-projection images are acquired at different angular positions. Through
-the years of CT research, a fundamental questions has always been how
-to move the source and detector the imaging system relative to the
-object to obtain sufficient projection information to reconstruction a
-useful tomographic image. Part of this answer must take into account
-certain engineering limitations that go into building such a system.
-However, this is fundamentally a question that must address the
-requirements of the computational reconstruction algorithm used to
-assemble the image from the x-ray projections.
+The next
 
-*Discussion of generations and evolution of algorithms w/ design and
-functionality*
+#+CAPTION: Modern diagnostic CT imaging machine.
+#+ATTR_LaTeX: :width 0.8\textwidth
+#+LABEL: fig:intro_ct_scan
+[[file:figures/intro/US_Navy_cat_scan.jpg]]
+
+** Image-guided radiation therapy
+X-ray technology is unique in how rapidly it was applied to the field
+of medicine following the discovery of x-rays by Wilhelm
+R\text{\"o}ntgen in 1895. The next year in Chicago, Emil Grubbe built
+his own x-ray device which he began to use for therapeutic purposes
+cite:mukherjee_emperor_2010. Both diagnostic and therapeutic uses of
+radiation developed in concert throughout the 20^th century culminating
+in radiation treatment devices that combine low-energy CT imaging with
+high-energy treatment beams in image-guide radiation therapy. These
+image-guided radiation therapy (IGRT) linear accelerators (linacs)
+allow for the delivery of powerful megavoltage (MV) treatment beams to
+diseased tissue while using kilovoltage (kV) CT techniques to both
+localize the tissue and evaluate the tissues response to therapy
+cite:oldham_cone-beam-ct_2005,xing_overview_2006,saw_performance_2007.
+
+#+CAPTION: Annotated image of a TrueBeam linac. On the treatment couch is the CIRS torso phantom aligned at the mechanical isocenter using the laser guidance system. Above the torso phantom to the left is the round MV treatment head with the metallic accessory mount and beam exit window. Below the table to the left is the kV source which provides the kV x-rays for the kV-CBCT imaging system. Above the phantom to the right is the kV detector panel which acquires the projections through the phantom for the kV-CBCT imaging system. Both the kV source and kV detector are mounted on robotic position arms. Below the phantom to the right is the MV EPID, which is retracted in this image, for acquiring MV projections from the MV treatment beam. Finally all of these components are mounted on a rotating gantry which can rotate $360^{\circ}$ around the mechanical isocenter for a single rotation. A subsequent rotation must occur in the opposite direction as the gantry lacks the ability to make multiple rotations in the same direction like a diagntostic-CT system due to the complexity of the MV linac design.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:intro_linac
+[[file:figures/intro/annotated_linac.png]]
+
+The addition of a linac-mounted, kV-imaging, cone-beam computed
+tomography (CBCT) system to the gantry-mounted clinical linear
+accelerator (linac)
+cite:jaffray_flat-panel_2002,letourneau_cone-beam-ct_2005,rahman_linac:_2015
+helped this modality become the most popular form of image-guided
+radiation therapy (IGRT). Figure ([[ref:fig:intro_linac]]) shows an
+annotated image of a TrueBeam linac. The tomographic information
+provided in the kV energy range improves soft-tissue contrast
+resolution over that provided by the MV electronic portal imaging
+device (EPID) alone cite:jaffray_radiographic_1999. The linac-mounted,
+kV-imaging, CBCT system not only helps with patient setup and target
+verification, but it also allows the monitoring of the tumor response
+during treatment
+cite:oldham_cone-beam-ct_2005,xing_overview_2006,dawson_advances_2007.
 
 ** Organization
+   :PROPERTIES:
+   :ID:       252a18dd-1210-4360-b082-fce5510334ab
+   :END:
 In this work, we will discuss the optimization-based,
 image-reconstruction framework that enables the use of these new
 scanning trajectories. In particular, we will focus on how this
@@ -136,10 +193,27 @@ trajectories]]. Finally, we will summarize this work and discuss
 possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
 conclusions]].
 
-* Optimization-based algorithms              :opt:
+* General CBCT trajectory reconstruction with optimization-based algorithms :opt:
   :PROPERTIES:
   :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
   :END:
+Through the years of CT research, a fundamental questions has always
+been how to move the source and detector of the imaging system
+relative to the object to obtain sufficient projection information to
+reconstruct a useful image. Part of this answer must take into account
+certain engineering limitations that go into building such a system.
+However, this is fundamentally a question that must address the
+requirements of the computational reconstruction algorithm used to
+assemble the image from the x-ray projections.
+
+Though the mathematical framework for solving this inverse problem had
+been formulated by Johann Radon in 1917 and a patent for what is
+essentially CT was filled in 1940 by Gabriel Frank, it was not until
+1967 that the work of Allan M. Cormack and Godfrey N. Hounsfield led
+to the first clinical CT scanner. For their work, Cormack and
+Housfield shared the 1979 Nobel Prize in Physiology and Medicine
+cite:hsieh_computed_2009.
+
 Optimization-based image reconstruction provides robust framework for
 reconstructing from projections acquired with the task-specific
 imaging trajectories we studied . Unlike the analytic-based methods,
@@ -501,7 +575,7 @@ reconstruction.
     :ID:       6293da29-e448-4614-84b6-065af1cc6be9
     :END:
 In IGRT, linac-mounted CBCT imaging systems such as Variant's TrueBeam
-JV-imaging system now routinely provide patient image information.
+kV-imaging system now routinely provide patient image information.
 These images are used to check the patient alignment before delivering
 the radiation treatment. The circular rotation of the linac gantry
 defines the acquisition trajectory for the CBCT scan. While such a
@@ -543,7 +617,44 @@ investigated ways in which new trajectories enabled by
 optimization-based reconstruction could alleviate the complications
 imposed by the standard circular scan required by FDK.
 
-*** Non-circular trajectories
+*** General trajectories
+Though there has been previous work in developing analytic methods for
+addressing the reconstruction from some novel trajectories
+cite:katsevich_theoretically_2002,katsevich_image_2004,katsevich_image_2005,katsevich_formulation_2006,
+it could be clinically useful to enable reconstruction from an
+arbitrary, collision-avoiding trajectory. As the collision region (if
+one arises) is contingent on the patient's treatment position, the
+imaging trajectory would then vary on a per patient basis. As such,
+deriving the analytic inverse for each patient's scanning trajectory
+would be impractical in a clinical work flow.
+
+Optimization-based reconstruction algorithms provide a straightforward
+means of enabling reconstruction from patient-specific collision
+avoiding trajectories
+cite:han_optimization-based_2012,bian_optimization-based_2013. The
+imaging model is formulated as the linear transform
+\begin{equation}
+  \label{eq:linmodel}
+  \mathbf{g}=\mathcal{H}\mathbf{f},
+\end{equation}
+where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
+detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
+transform, and $\mathbf{f}$ is the object function represented on a N
+voxel basis. As the direct inversion of Equation ([[ref:eq:linmodel][linear model]]) is
+impractical due to both its size and inconsistencies from factors such
+as noise, optimization techniques are used to solve this system for an
+estimate of the object $\mathbf{f^{*}}$.
+
+This approach allows for a generalized reconstruction framework that
+allows for greater flexibility in reconstructing from projections
+acquired with non-circular trajectories. Provided the geometry of each
+view is correctly incorporated into the system matrix $\mathcal{H}$,
+clinically useful reconstructions can be obtained from acquisitions
+for which an analytic inverse may not be available. As the collision
+zone for a given patient would be patient specific, this robust
+approach enables tomographic imaging from collision-avoiding
+trajectories that would accommodate the patient's specific needs.
+
 The increased flexibility in choosing different scanning trajectories
 allowed by optimization-based reconstruction methods provided two
 solutions to the issues of limited axial FOV coverage and potential
@@ -747,11 +858,124 @@ addMargins(0.5cm, 0.5cm);
  #+RESULTS: fig:opt_weighting
  [[file:figures/opt/weighting.pdf]]
 ** Generalized trajectory framework
+To find an estimate of the object $\mathbf{f^{*}}$ as an approximate
+solution to Equation ([[ref:eq:linmodel]]), we choose a reconstruction
+program that can be solved with the well-understood maximum-likelihood
+expectation maximization (MLEM) algorithm cite:dempster_maximum_1977.
+Here, our reconstruction program is formulated as
+\begin{equation}
+  \mathbf{f^{*}} = \text{argmin}D_{KL} \left(\mathbf{f}\right)
+  \label{eq:opt_kl}
+\end{equation}
+where $D_{KL}(\mathbf{f})$ is the KL divergence between $\mathbf{g}$ and
+$\mathcal{H}\mathbf{f}$ cite:barrett_foundations_2003. The KL
+divergence is minimized with the MLEM algorithm
+\begin{equation}
+f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}
+  \label{eq:opt_mlem}
+\end{equation}
+where $f_{j}^{n}$ is $j-\text{th}$ voxel value at iteration $n$ and
+$\mathcal{H}_{ij}$ is the element of the system matrix at the
+$i-\text{th}$ row and $j-\text{th}$ column for $i=1,2,...,M$ and
+$j=1,2,...,N$. The initial image estimate for the reconstructions was
+$\mathbf{f}^{(0)}=1$. The $M\times M$ diagonal matrix $\mathcal{W}$ weights
+the corresponding data entries as is typically done for a standard
+half-fan detector configuration for a circular scan
+cite:bian_optimization-based_2013.
+
+In a traditional scanning configuration where the patient is
+stationary, the system matrix $\mathcal{H}_{ij}$ projects the object
+$\mathbf{f}$ from image space to the data space of $\mathbf{g}$. When
+this is the case, it is sufficient that the coordinate basis of the
+image space coincides with the room coordinate system, or is at least
+stationary relative to it. From each projection view acquired from the
+TrueBeam system, we extracted the position information of the CBCT
+imaging arms and subsequently built $\mathcal{H}_{ij}$ as the projective
+transform from image space in the IEC coordinate system to the data
+space of the kV detector.
+
+For a virtual isocenter-scanning trajectory, the image space
+$(\mathbf{f}_{\text{patient}})$ is moving relative to the room coordinate
+system for each projection view. As such, a change of basis for the
+columns space of $\mathcal{H}$ is necessary so that the new system
+matrix represents a transform from the image space of the patient to
+the data space of the detector represented as $\mathcal{H'}$. As the
+acquisition system also reports the couch position, we used this to
+build the required transformation matrix
+$\mathcal{T}_{\text{IEC,patient}$ for each projection view. The
+imaging model in Equation ([[ref:eq:linmodel]]) then becomes
+\begin{equation}
+  \label{eq:opt_linmodel_patient}
+  \mathbf{g}=\mathcal{H'}\mathbf{f_{\text{patient}}},
+\end{equation}
+where
+\begin{equation}
+  \label{eq:sys_patient}
+  \mathcal{H'}=\mathcal{H}\mathcal{T_{\text{IEC,patient}}}.
+\end{equation}
+Once the change of basis is accounted for, the reconstruction program
+in Equation ([[ref:eq:kl]]) can be reformulated with $\mathbf{f_{\text{patient}}}$
+instead of $\mathbf{f}$ and solved with the MLEM algorithm in Equation
+([[ref:eq:mlem]]) using $\mathcal{H'}$ instead of $\mathcal{H}$.
+
+** Framework implementation with Varian TrueBeam kV-CBCT system
+*** TrueBeam linac with Developer Mode
+     :PROPERTIES:
+     :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
+     :END:
+To study the new trajectories with a real clinical kV imaging system,
+we implemented some of these trajectories on Varian's TrueBeam system.
+The TrueBeam Developer Mode provides control of the kV imaging system
+to allow for motion control that is unavailable in clinical modes.
+Developer Mode allows control of the gantry rotation, the c-arm
+positions of the source and detector as well as the position of the
+treatment couch. By combining motions with all of these components, it
+is possible to acquire kV projection data for the trajectories studied
+in the simulations.
+
+To implement the different collision-avoiding scanning trajectories,
+we used Varian's TrueBeam 2.0 Developer Mode. This is a research mode
+of the TrueBeam system that allows us to implement scanning
+configurations that are unavailable in clinical modes by programming
+the motions of the gantry, couch and kV imaging arms. As in the case
+of this virtual isocenter study, it is possible to acquire projection
+images while both the treatment table and the gantry are in motion. At
+present, simultaneous motion of the gantry and kV imaging arms is not
+possible. We have worked around this limitation in our variable
+magnification imaging which we discuss further in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Chapter 5]].
+**** kV-CBCT system
+     :PROPERTIES:
+     :ID:       85ce12ce-235b-46da-873d-0ad54468893e
+     :END:
+For the majority of our non-simulation work, we used Varian's TrueBeam
+kV imaging system (Varian Medical Systems, Palo Alto, CA) to acquire
+the projection data used in this study. This is a linac-mounted CBCT
+c-arm system consisting of a Varian kV x-ray source (GS-1542) and a
+39.7 cm x 29.8 cm amorphous silicon flat-panel detector (PaxScan
+4030CB). The source and detector are mounted on robotic arms with the
+kV beam direction orthogonal to the MV treatment beam.
+***** note                                   :noexport:
+ Also, you might write a paragraph that describes how these parameters
+ come to you - that the acquired projections are stored in files using
+ Varian’s XIM or HND formats, which have extensive headers containing
+ dozens of parameters associated with the geometry, x-ray technique,
+ and other information concerning each specific image. maybe have a
+ table showing examples of a subset of the data from one projection -
+ all the couch, detector, source, gantry and x-ray parameters like kV,
+ mA, timing, exposure, etc? people not in this field probably have no
+ idea this stuff exists. it’s kind of like DICOM but specific to Varian
+ images. this could equally well go in the chapter where you describe
+ your geometry framework for building the system matrix, and you could
+ refer to it here.
 *** Varian coordinates
     :PROPERTIES:
     :ID:       9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1
     :END:
 *table of header parameters hnd/xim*
+** ideas                                     :noexport:
+Given that part of the robust nature of optimization-based algorithms
+is the ability to handle the poorly-conditioned nature of the inverse
+problem...
 * Geometric calibration                      :geo:
   :PROPERTIES:
   :ID:       652970b8-4916-4190-b83b-2d6ae117c8b3
@@ -874,7 +1098,6 @@ of all the inherent geometry information that is provided with the
 current clinical system. This information then provided an initial
 estimate of the scanning geometry which we could then refine with the
 calibration information we extracted with our calibration protocol.
-
 *** Phantoms
     :PROPERTIES:
     :ID:       F5BECB45-8652-47A3-915C-1E96DA6110E7
@@ -1496,7 +1719,7 @@ the half-fan weighting described in Section ([[id:cc6bcac6-a445-4dfb-8815-a95e31
 all of these reconstructions we used 200 iterations of MLEM as
 described in Section ([[id:e0a24b69-d136-4f9a-9e85-dc42e1d114a9][MLEM]]).
 
-*Should we run the metric analysis on these two scans w/ and w/o calibration?*
+*metric analysis on these two scans w/ and w/o calibration*
 *** figures                                  :noexport:
 **** four detector schematic
 # +LABEL: fig:geo_schematic
@@ -1618,64 +1841,6 @@ dot(proj270*isocal,red);
 #+CAPTION: Schematic representation of the scanning geometry
 #+ATTR_LaTeX: :width 0.75\textwidth
 # +RESULTS: fig:geo_schematic
-*** geocal procedure                         :noexport:
-    :PROPERTIES:
-    :ID:       DD6F1968-D9A8-46AB-AC2C-BF79512B530A
-    :END:
-The current version of the geocal procedure uses a single step
-projection matrix to transform positions in room coordinates to pixels
-on the detector. do you want to incude the equation for that? this is
-it basically, where “framevecs” are the 3 detector basis vectors
-rotated by roll, pitch, yaw and then gantry angle - your usual frame
-vectors. also note that my htransform_vectors function premultiplies
-the matrix by the vector, i.e. X’ = X M, so the component
-transformations are applied from left to right - if M=ABC, then it’s A
-first followed by B followed by C.
-
-#+BEGIN_SRC matlab :tangle no
-grotvecs=framevecs;
-dnormrot=grotvecs(3,:);
-
-sourcedetray=rotdet-rotsrc;  % this can be any ray connecting the source
-                             % with a point on the detector
-
-along=dot(sourcedetray,dnormrot);  % this is the new L for projection.
-                                   % the "along" component is the same for
-                                   % every ray from source to detector
-
-% find the new piercing point, of ray through source along det normal
-% direction.
-newpierce=rotsrc+along*dnormrot;
-mygmat=eye(4,4);
-mygmat(1:3,1:3)=grotvecs';
-mygtmat=hmatrix_translate(-rotsrc)*mygmat;
-
-projmat=eye(4,4);
-projmat(4,4)=0;
-projmat(3,4)=1.0/along;
-% compress the above to a single step - transform to detector basis,
-% project
-magicmat=mygtmat*projmat;
-
-% to compute pixel coordinates, first find the U and V coordinates of the
-% piercing point.  then just add the fids_on_detector U and V values.
-% note these will still be in cm, not in pixels.  last thing will be to
-% scale by pixel size and add detector center position, e.g. (512,384).
-pierceoffset=newpierce-rotdet;
-uvpierce=htransform_vectors(mygmat,pierceoffset);
-
-%uvfids1=(fids_on_det_4(:,1:2)+repmat(uvpierce(1:2),size(fids_on_det_4,1),1))/pixsize;
-xprojmat=magicmat*hmatrix_translate(uvpierce)* ...
-         hmatrix_scale([1.0/pixsize 1.0/pixsize 1])* ...
-         hmatrix_translate([usize/2+0.5, vsize/2+0.5, 0]);
-
-#+END_SRC
-
-#+RESULTS:
-*** ideas                                    :noexport:
-Given that part of the robust nature of optimization-based algorithms
-is the ability to handle the poorly-conditioned nature of the inverse
-problem...
 ** Results
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
@@ -1724,7 +1889,7 @@ reconstruction than in that of the circular scan. With the geometric
 calibrations applied, the cost for the virtual isocenter and circular
 trajectories is quite comparable, as is the spatial resolution.
 
-*Describe TB1 virtual isocenter couch backlash?*
+*describe TB1 virtual isocenter couch backlash*
 #+BEGIN_EXPORT latex
 \begin{figure}
   \centering
@@ -1933,105 +2098,105 @@ that there can be extensive gains in clinical utility for these
 extended volume images provided that the image quality is comparable
 to the current clinical standard.
 *** proposal                                 :noexport:
- In the 1980s, a lot of work was done to directly solve the inverse
- problem for the cone-beam geometry. By modeling the projection
- formation process as a Radon transform or an X-ray transform,
- reconstruction algorithms were formulated by finding an analytic-based
- inverse to the transform. However, for the inverse to be exact, it
- needed to meet strict requirements such as Tuy's condition which
- states that every plane through the object must intersect the source
- trajectory cite:tuy_inversion_1983. While some exceptions to this
- requirement were found, it demonstrates the strict requirements on the
- types of scanning trajectories for which an exact inverse could be
- found.
+In the 1980s, a lot of work was done to directly solve the inverse
+problem for the cone-beam geometry. By modeling the projection
+formation process as a Radon transform or an X-ray transform,
+reconstruction algorithms were formulated by finding an analytic-based
+inverse to the transform. However, for the inverse to be exact, it
+needed to meet strict requirements such as Tuy's condition which
+states that every plane through the object must intersect the source
+trajectory cite:tuy_inversion_1983. While some exceptions to this
+requirement were found, it demonstrates the strict requirements on the
+types of scanning trajectories for which an exact inverse could be
+found.
 
- The circular scanning trajectory that is ubiquitous in the clinic for
- CBCT is one trajectory that fails to meet Tuy's condition. The most
- popular reconstruction algorithm for the circular CBCT trajectory is
- the filtered-backprojection (FBP) algorithm proposed by Feldkamp,
- Davis, and Kress (FDK) cite:feldkamp_practical_1984 which is still the
- industry standard. FDK is only an exact inversion to the Radon
- transform on the midplane containing the circular source
- trajectory. For transaxial planes other than the midplane, a
- quasi-redundancy in the scanning data is assumed. It is the violation
- of this assumption which leads to cone-angle artifacts. These
- artifacts become more severe at larger cone angles where this
- assumption is less applicable.
+The circular scanning trajectory that is ubiquitous in the clinic for
+CBCT is one trajectory that fails to meet Tuy's condition. The most
+popular reconstruction algorithm for the circular CBCT trajectory is
+the filtered-backprojection (FBP) algorithm proposed by Feldkamp,
+Davis, and Kress (FDK) cite:feldkamp_practical_1984 which is still the
+industry standard. FDK is only an exact inversion to the Radon
+transform on the midplane containing the circular source trajectory.
+For transaxial planes other than the midplane, a quasi-redundancy in
+the scanning data is assumed. It is the violation of this assumption
+which leads to cone-angle artifacts. These artifacts become more
+severe at larger cone angles where this assumption is less applicable.
 
- The presence of cone-angle artifacts in FDK reconstructions from the
- incomplete data acquired with circular scanning trajectories led to
- research into inverse algorithms for cone-beam scans from
- theoretically complete trajectories such as a circle plus a line
- cite:zeng_cone-beam_1992. It became apparent in the reconstruction
- results that implementing these direct reconstruction algorithms did
- not produce the anticipated results cite:kudo_derivation_1994. Severe
- artifacts and numerical errors were found in the reconstructions due
- to factors such as truncation introducing high-frequency components
- that are amplified in the filtration process.
+The presence of cone-angle artifacts in FDK reconstructions from the
+incomplete data acquired with circular scanning trajectories led to
+research into inverse algorithms for cone-beam scans from
+theoretically complete trajectories such as a circle plus a line
+cite:zeng_cone-beam_1992. It became apparent in the reconstruction
+results that implementing these direct reconstruction algorithms did
+not produce the anticipated results cite:kudo_derivation_1994. Severe
+artifacts and numerical errors were found in the reconstructions due
+to factors such as truncation introducing high-frequency components
+that are amplified in the filtration process.
 
- Analytic-based reconstruction algorithms are formulated by explicitly
- finding an inverse to the X-ray transform
- #+BEGIN_LaTeX
-   \begin{equation}
-     \label{eq:xray}
-     g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
-   \end{equation}
- #+END_LaTeX
- where the data function $g$ is acquired by integrating along the ray
- from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
- the object function $f$. A fundamental problem with these
- reconstruction algorithms when practically reconstructing $f$ is the
- assumption of a continuous-to-continuous (CC) model. These
- analytic-based reconstruction algorithms impose dense sampling
- requirements for both the detector and number of views to approximate
- a continuous data function. Given that the data function from the
- digital detector and the numerical array for storing the reconstructed
- image are both discrete, a more natural approach to the inverse
- problem would be a discrete-to-discrete (DD) imaging model
- cite:barrett_foundations_2003.
+Analytic-based reconstruction algorithms are formulated by explicitly
+finding an inverse to the X-ray transform
+#+BEGIN_LaTeX
+  \begin{equation}
+    \label{eq:xray}
+    g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
+  \end{equation}
+#+END_LaTeX
+where the data function $g$ is acquired by integrating along the ray
+from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
+the object function $f$. A fundamental problem with these
+reconstruction algorithms when practically reconstructing $f$ is the
+assumption of a continuous-to-continuous (CC) model. These
+analytic-based reconstruction algorithms impose dense sampling
+requirements for both the detector and number of views to approximate
+a continuous data function. Given that the data function from the
+digital detector and the numerical array for storing the reconstructed
+image are both discrete, a more natural approach to the inverse
+problem would be a discrete-to-discrete (DD) imaging model
+cite:barrett_foundations_2003.
 
- Iterative reconstruction algorithms are more robust because they do
- implement a more accurate DD model of the imaging system. The X-ray
- transform of the object function can be represented as the linear
- system
- #+BEGIN_LaTeX
-   \begin{equation}
-     \label{eq:ddsys}
-     \mathbf{g}=\mathcal{H}\mathbf{f},
-   \end{equation}
- #+END_LaTeX
- where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
- detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
- transform, and $\mathbf{f}$ is the object function represented on a N
- voxel basis. As direct inversion of $\mathcal{H}$ is impractical due
- to both its size and inconsistencies from factors such as noise,
- optimization techniques are used to solve this system for an estimate
- of the object $\widetilde{\mathbf{f}}$.
+Iterative reconstruction algorithms are more robust because they do
+implement a more accurate DD model of the imaging system. The X-ray
+transform of the object function can be represented as the linear
+system
+#+BEGIN_LaTeX
+  \begin{equation}
+    \label{eq:ddsys}
+    \mathbf{g}=\mathcal{H}\mathbf{f},
+  \end{equation}
+#+END_LaTeX
+where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
+detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
+transform, and $\mathbf{f}$ is the object function represented on a N
+voxel basis. As direct inversion of $\mathcal{H}$ is impractical due
+to both its size and inconsistencies from factors such as noise,
+optimization techniques are used to solve this system for an estimate
+of the object $\widetilde{\mathbf{f}}$.
 
- The optimization problem for these iterative reconstruction algorithms
- is formulated as an objective function based on the actual data
- $\mathbf{g}$ and the image model $\mathcal{H}\mathbf{f}$. An
- optimization algorithm is then used to iteratively update the estimate
- of $\widetilde{\mathbf{f}}$ until a suitable convergence criterion has
- been met. The parameters of the optimization problem, the optimization
- algorithm, and the convergence criteria are all important factors in
- determining the properties of the reconstructed image and subsequently
- its utility.
+The optimization problem for these iterative reconstruction algorithms
+is formulated as an objective function based on the actual data
+$\mathbf{g}$ and the image model $\mathcal{H}\mathbf{f}$. An
+optimization algorithm is then used to iteratively update the estimate
+of $\widetilde{\mathbf{f}}$ until a suitable convergence criterion has
+been met. The parameters of the optimization problem, the optimization
+algorithm, and the convergence criteria are all important factors in
+determining the properties of the reconstructed image and subsequently
+its utility.
 
- Two optimization-based reconstruction methods we will use with these
- non-circular trajectories are maximum-likelihood expectation
- maximization (MLEM) cite:shepp_maximum_1982,dempster_maximum_1977 and
- constrained, total-variation (TV) minimization by adaptive steepest
- descent-projection onto convex sets (ASD-POCS)
- cite:sidky_image_2008. Previous work has shown that these iterative
- algorithms are able to reconstruct clinically useful images under
- scanning conditions for which analytic-based FDK fails
- cite:han_optimization-based_2012,sidky_image_2007,sidky_accurate_2006. The
- reconstruction work from sparse-view data cite:bian_evaluation_2010
- alone suggests that views could be distributed at different axial
- positions to acquire additional scan information without imparting
- more dose than the dense set of angular views used in current clinical
- circular scans with analytic-based reconstruction.
+Two optimization-based reconstruction methods we will use with these
+non-circular trajectories are maximum-likelihood expectation
+maximization (MLEM) cite:shepp_maximum_1982,dempster_maximum_1977 and
+constrained, total-variation (TV) minimization by adaptive steepest
+descent-projection onto convex sets (ASD-POCS) cite:sidky_image_2008.
+Previous work has shown that these iterative algorithms are able to
+reconstruct clinically useful images under scanning conditions for
+which analytic-based FDK fails
+cite:han_optimization-based_2012,sidky_image_2007,sidky_accurate_2006.
+The reconstruction work from sparse-view data
+cite:bian_evaluation_2010 alone suggests that views could be
+distributed at different axial positions to acquire additional scan
+information without imparting more dose than the dense set of angular
+views used in current clinical circular scans with analytic-based
+reconstruction.
 
 ** Methods
    :PROPERTIES:
@@ -2366,20 +2531,6 @@ image and the images from different trajectories.
 \label{fig:poly}
 \end{figure*}
 #+END_LaTeX
-
-**** Developer mode
-     :PROPERTIES:
-     :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
-     :END:
- To study the new trajectories with a real clinical kV imaging system,
- we implemented some of these trajectories on Varian's TrueBeam
- system. The TrueBeam Developer Mode provides control of the kV imaging
- system to allow for motion control that is unavailable in clinical
- modes. Developer Mode allows control of the gantry rotation, the c-arm
- positions of the source and detector as well as the position of the
- treatment couch. By combining motions with all of these components, it
- is possible to acquire kV projection data for the trajectories studied
- in the simulations.
 
 **** Trajectories
      :PROPERTIES:
@@ -2903,513 +3054,385 @@ From the results shown in Figure (\ref{fig:})
    :PROPERTIES:
    :ID:       b0e53ca9-9c57-46e5-a558-c878b2ee1bdd
    :END:
- The addition of a linac-mounted, kV-imaging, cone-beam computed
- tomography (CBCT) system to the gantry-mounted clinical linear
- accelerator (linac)
- cite:jaffray_flat-panel_2002,letourneau_cone-beam-ct_2005,rahman_linac:_2015
- helped this modality become the most popular form of image-guided
- radiation therapy (IGRT). The tomographic information provided in the
- kV energy range improves soft-tissue contrast resolution over that
- provided by the MV electronic portal imaging device (EPID) alone
- cite:jaffray_radiographic_1999. The linac-mounted, kV-imaging, CBCT
- system not only helps with patient setup and target verification, but
- it also allows the monitoring of the tumor response during treatment
- cite:oldham_cone-beam-ct_2005,xing_overview_2006,dawson_advances_2007.
+Given the clinical benefits provided by the linac-mounted CBCT sytem,
+it is detrimental when adequate tomographic information cannot be
+obtained from the kV-imaging CBCT system. One situation in which this
+can occur is when a collision between the patient and the machine
+arises. While there is has been substantial work done on the detection
+and avoidance of collisions in treatment delivery
+cite:humm_collision_1995,chao_image_2001,tsiakalos_graphical_2001,nioutsikou_patient-specific_2003,hua_practical_2004,becker_collision_2013,padilla_patient-specific_2014,padilla_collision_2015,
+the methods are often insufficient for standard CBCT imaging because
+they generally seek to resolve collisions preventing ideal treatment
+positions without attempting obtain tomographic image information. A
+generalized imaging framework such as the one we use hered may allow
+for some of these techniques to also acquire tomographic information
+at the same time.
 
- It is therefore detrimental when adequate tomographic information
- cannot be obtained from the kV-imaging CBCT system. One situation in
- which this can occur is when a collision between the patient and the
- machine arises cite:padilla_collision_2015. These may be of particular
- concern in breast and lung cancer patients where the arm position
- leads to a possible collision as shown in Figure ([[ref:fig:barbie_collision][barbie collision]]).
- Collisions also present a problem in treatment of posterior and
- lateral lesions in stereotactic body radiosurgery (SBRT). Similarly in
- prone breast treatments, where the target is near the couch top and a
- lateral couch translation is needed to bring the target to isocenter,
- collision with the contralateral side of the patient may occur. When
- collisions do occur, the angular range available for scanning is
- restricted and it is not possible to acquire a complete circular scan
- in the treatment position .
+These may be of particular concern in breast and lung cancer patients
+where the arm position leads to a possible collision as shown in
+Figure ([[ref:fig:col_barbie_collision]]). Collisions also present a
+problem in treatment of posterior and lateral lesions in stereotactic
+body radiosurgery (SBRT). Similarly in prone breast treatments, where
+the target is near the couch top and a lateral couch translation is
+needed to bring the target to isocenter, collision with the
+contralateral side of the patient may occur. When collisions do occur,
+the angular range available for scanning is restricted and it is not
+possible to acquire a complete circular scan in the treatment
+position.
 
- #+BEGIN_EXPORT latex
- \begin{figure*}
-   \centering
-   \begin{subfigure}[b]{0.45\textwidth}
-     \includegraphics[width=\textwidth]{figures/barbie_mv.jpg}
-     \caption{}
-     \label{fig:barbie_mv}
-   \end{subfigure}
-   ~%add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-   %(or a blank line to force the subfigure onto a new line)
-   \begin{subfigure}[b]{0.45\textwidth}
-     \includegraphics[width=\textwidth]{figures/barbie_kv.jpg}
-     \caption{}
-     \label{fig:barbie_kv}
-   \end{subfigure}
-   \caption{Two examples of potential collision for a
-     typical patient setup using a mannequin in a supine treatment
-     position. As can be seen, collisions can occur both with the face
-     of the MV treatment head (distance 41.7 cm from isocenter for this
-     linac) and with the kV detector (distance 45-70 cm from isocenter,
-     depending on magnification).}
-   \label{fig:barbie_collision}
- \end{figure*}
- #+END_EXPORT
+#+BEGIN_EXPORT latex
+\begin{figure*}
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/col/barbie_mv.jpg}
+    \caption{}
+    \label{fig:col_barbie_mv}
+  \end{subfigure}
+  ~%add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+  %(or a blank line to force the subfigure onto a new line)
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/col/barbie_kv.jpg}
+    \caption{}
+    \label{fig:col_barbie_kv}
+  \end{subfigure}
+  \caption{Two examples of potential collision for a
+    typical patient setup using a mannequin in a supine treatment
+    position. As can be seen, collisions can occur both with the face
+    of the MV treatment head (distance 41.7 cm from isocenter for this
+    linac) and with the kV detector (distance 45-70 cm from isocenter,
+    depending on magnification).}
+  \label{fig:col_barbie_collision}
+\end{figure*}
+#+END_EXPORT
 
- To avoid collisions with the treatment head, it could be desirable to
- move the patient away from the gantry as it approaches a collision,
- simply by translating the couch. To avoid collisions with the imaging
- panel, the patient might also be moved away from the panel as a
- collision approaches. As some linac-mounted, kV-imaging panels have
- motion capabilities, another solution would be to move the imager away
- from the patient in the collision zone, which changes the imaging
- magnification for that portion of the scan. Given that the clearance
- distance of the kV-imaging panel is not much larger than that of the
- MV-treatment head, a collision avoidance solution nneeds to take into
- account both of these components.
+To avoid collisions with the treatment head, it could be desirable to
+move the patient away from the gantry as it approaches a collision,
+simply by translating the couch. To avoid collisions with the imaging
+panel, the patient might also be moved away from the panel as a
+collision approaches. As some linac-mounted, kV-imaging panels have
+motion capabilities, another solution would be to move the imager away
+from the patient in the collision zone, which changes the imaging
+magnification for that portion of the scan. Given that the clearance
+distance of the kV-imaging panel is not much larger than that of the
+MV-treatment head, a collision avoidance solution needs to take into
+account both of these components.
 
- Though there has been previous work in developing analytic methods for
- addressing the reconstruction from some novel trajectories
- cite:katsevich_theoretically_2002,katsevich_image_2004,katsevich_image_2005,katsevich_formulation_2006,
- it could be clinically useful to enable reconstruction from an
- arbitrary, collision-avoiding trajectory. As the collision region (if
- one arises) is contingent on the patient's treatment position, the
- imaging trajectory would then vary on a per patient basis. As such,
- deriving the analytic inverse for each patient's scanning trajectory
- would be impractical in a clinical work flow.
+Here, we investigate examples of potential scanning trajectories that
+would allow the acquisition of sufficient projection information for a
+clinically useful image while avoiding a potential patient collision
+with the gantry. As the gantry rotates, there are two components of
+the linac that are potential sources of patient collisions. These are
+the MV-treatment head, shown in Figure ([[ref:fig:col_barbie_collision]]),
+and the kV-CBCT detector.
 
- Optimization-based reconstruction algorithms provide a straightforward
- means of enabling reconstruction from patient-specific collision
- avoiding trajectories
- cite:han_optimization-based_2012,bian_optimization-based_2013. The
- imaging model is formulated as the linear transform
- \begin{equation}
-   \label{eq:linmodel}
-   \mathbf{g}=\mathcal{H}\mathbf{f},
- \end{equation}
- where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
- detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
- transform, and $\mathbf{f}$ is the object function represented on a N
- voxel basis. As the direct inversion of Equation ([[ref:eq:linmodel][linear model]]) is
- impractical due to both its size and inconsistencies from factors such
- as noise, optimization techniques are used to solve this system for an
- estimate of the object $\mathbf{f^{*}}$.
+One trajectory that would avoid a patient collision with the
+MV-treatment head is a virtual isocenter trajectory. This trajectory
+avoids such a collision by increasing the effective source-to-axis
+distance (SAD). By using this increased SAD for an imaging trajectory,
+the clearance between the patient and the MV-treatment head as the
+gantry rotates is increased and the collision is avoided.
 
- This approach allows for a generalized reconstruction framework that
- allows for greater flexibility in reconstructing from projections
- acquired with non-circular trajectories. Provided the geometry of each
- view is correctly incorporated into the system matrix $\mathcal{H}$,
- clinically useful reconstructions can be obtained from acquisitions
- for which an analytic inverse may not be available. As the collision
- zone for a given patient would be patient specific, this robust
- approach enables tomographic imaging from collision-avoiding
- trajectories that would accommodate the patient's specific needs.
+The virtual isocenter trajectory utilizes synchronized gantry rotation
+and couch translation to maintain a fixed distance (``virtual SAD'')
+between the MV source and a chosen center of rotation (``virtual
+isocenter'') in the patient. At the beginning of the scan, the patient
+is moved away from the linac head along the MV beam direction. As the
+gantry rotates, the couch moves continuously to maintain the specified
+separation as shown in Figure ([[ref:fig:col_virtual_iso]]). The virtual
+SAD can be chosen large enough so that collisions as shown in Figure
+([[ref:fig:col_barbie_mv]]) are avoided; at this point in the trajectory,
+the couch would have moved far enough to the left to avoid the
+collision. Note that it is only the distance to the linac head that is
+increased in the plain virtual SAD technique; the distance from the kV
+source and detector to the patient and to each other are unchanged.
 
- In this study, we investigate examples of potential scanning
- trajectories that would allow the acquisition of sufficient projection
- information for a clinically useful image while avoiding a potential
- patient collision with the gantry. As the gantry rotates, there are
- two components of the linac that are potential sources of patient
- collisions. These are the MV-treatment head, shown in Figure ([[ref:fig:barbie_collision][barbie
- collision]]), and the kV-CBCT detector.
+#+BEGIN_EXPORT latex
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{figures/col/gantry_3angles.eps}
+\caption{Patient, kV and MV beams and kV detector at several angles
+  during a virtual isocenter rotation. Room coordinate system (dotted
+  axes) has its origin at mechanical isocenter, also the intersection
+  of the MV (red) and kV (green) beam axes. As the gantry rotates, the
+  patient (filled contour) is continually shifted to maintain a
+  specified distance along the MV beam direction between the
+  mechanical isocenter and the chosen virtual isocenter (circle symbol
+  within the patient). The path of the virtual isocenter is a circle
+  about the mechanical isocenter, with radius equal to the chosen
+  shift (12 cm from the isocenter in this example). Detector may or
+  may not be shifted as shown, depending on virtual isocenter position
+  and patient geometry.
+\label{fig:col_virtual_iso}}
+\end{figure*}
+#+END_EXPORT
 
- One trajectory that would avoid a patient collision with the
- MV-treatment head is a virtual isocenter trajectory. This trajectory
- avoids such a collision by increasing the effective source-to-axis
- distance (SAD). By using this increased SAD for an imaging trajectory,
- the clearance between the patient and the MV-treatment head as the
- gantry rotates is increased and the collision is avoided.
+Another trajectory that could avoid a patient collision with the kV
+detector would be one during which either the patient or the detector
+is moved during the scan in the angular range of a collision. Either
+solution leads to changing kV-CBCT imaging magnification during the
+acquisition. Again, optimization-based reconstruction methods can
+readily handle such a change in magnification provided the projection
+information is correctly incorporated into the system matrix.
 
- The virtual isocenter trajectory utilizes synchronized gantry rotation
- and couch translation to maintain a fixed distance (``virtual SAD'')
- between the MV source and a chosen center of rotation (``virtual
- isocenter'') in the patient. At the beginning of the scan, the patient
- is moved away from the linac head along the MV beam direction. As the
- gantry rotates, the couch moves continuously to maintain the specified
- separation as shown in Figure ([[ref:fig:virtual_iso]]). The virtual SAD
- can be chosen large enough so that collisions as shown in Figure
- ([[ref:fig:barbie_mv]]) are avoided; at this point in the trajectory, the
- couch would have moved far enough to the left to avoid the collision.
- Note that it is only the distance to the linac head that is increased
- in the plain virtual SAD technique; the distance from the kV source
- and detector to the patient and to each other are unchanged.
-
- #+BEGIN_EXPORT latex
- \begin{figure*}
- \centering
- \includegraphics[width=\textwidth]{figures/gantry_3angles.eps}
- \caption{Patient, kV and MV beams and kV detector at several angles
-   during a virtual isocenter rotation. Room coordinate system (dotted
-   axes) has its origin at mechanical isocenter, also the intersection
-   of the MV (red) and kV (green) beam axes. As the gantry rotates, the
-   patient (filled contour) is continually shifted to maintain a
-   specified distance along the MV beam direction between the
-   mechanical isocenter and the chosen virtual isocenter (circle symbol
-   within the patient). The path of the virtual isocenter is a circle
-   about the mechanical isocenter, with radius equal to the chosen
-   shift (12 cm from the isocenter in this example). Detector may or
-   may not be shifted as shown, depending on virtual isocenter position
-   and patient geometry.
- \label{fig:virtual_iso}}
- \end{figure*}
- #+END_EXPORT
-
- Another trajectory that could avoid a patient collision with the kV
- detector would be one during which either the patient or the detector
- is moved during the scan in the angular range of a collision. Either
- solution leads to changing kV-CBCT imaging magnification during the
- acquisition. Again, optimization-based reconstruction methods can
- readily handle such a change in magnification provided the projection
- information is correctly incorporated into the system matrix.
-
- Finally, we study a trajectory that combines both virtual isocenter
- and dynamic magnification trajectories to create a hybrid scanning
- acquisition that would alleviate collisions with both the MV-treatment
- head and the kV-CBCT detector. We use such a trajectory as an example
- of a patient-specific scanning trajectory designed to avoid a
- collision that would arise with a particular treatment position.
+Finally, we study a trajectory that combines both virtual isocenter
+and dynamic magnification trajectories to create a hybrid scanning
+acquisition that would alleviate collisions with both the MV-treatment
+head and the kV-CBCT detector. We use such a trajectory as an example
+of a patient-specific scanning trajectory designed to avoid a
+collision that would arise with a particular treatment position.
 
 ** Methods and Materials
    :PROPERTIES:
    :ID:       973b1793-b733-43ce-a7aa-dd31af58c680
    :END:
-*** CBCT System
-    :PROPERTIES:
-    :ID:       85ce12ce-235b-46da-873d-0ad54468893e
-    :END:
- We used Varian's TrueBeam kV imaging system (Varian Medical Systems,
- Palo Alto, CA) to acquire the projection data used in this study. This
- is a linac-mounted CBCT c-arm system consisting of a Varian kV x-ray
- source (GS-1542) and a 39.7 cm x 29.8 cm amorphous silicon flat-panel
- detector (PaxScan 4030CB). The source and detector are mounted on
- robotic arms with the kV beam direction orthogonal to the MV treatment
- beam.
-
- To implement the different collision-avoiding scanning trajectories,
- we used Varian's TrueBeam 2.0 Developer Mode. This is a research mode
- of the TrueBeam system that allows us to implement scanning
- configurations that are unavailable in clinical modes by programming
- the motions of the gantry, couch and kV imaging arms. As in the case
- of this virtual isocenter study, it is possible to acquire projection
- images while both the treatment table and the gantry are in motion. At
- present, simultaneous motion of the gantry and kV imaging arms is not
- possible. We have worked around this limitation in our variable
- magnification imaging as described in [[id:dd0b68a5-c0eb-4c57-a28f-c27e2c57c8d8][II.C]] below.
-
 *** Phantoms
     :PROPERTIES:
     :ID:       501e0d09-ed7c-4c78-a997-477e6414df18
     :END:
- The abdominal region of the CIRS (Computerized Imaging Reference
- Systems, Norfolk, VA) model 600 torso phantom was scanned. This
- phantom contains both high-contrast (bone) and low-contrast (soft
- tissue) structures in an anthropomorphic form. These features provide
- an indication of imaging performance in more clinically relevant
- conditions.
+The abdominal region of the CIRS (Computerized Imaging Reference
+Systems, Norfolk, VA) model 600 torso phantom was scanned. This
+phantom contains both high-contrast (bone) and low-contrast (soft
+tissue) structures in an anthropomorphic form. These features provide
+an indication of imaging performance in more clinically relevant
+conditions.
 
- To quantify image quality metrics for the different scanning
- trajectories, we used a Catphan 504 (The Phantom Laboratory, Salem,
- NY). This is a standard quality assessment (QA) phantom for clinical
- CT devices that provides a series of sections with different objects
- for calculating image quality metrics. We used the CTP 404 module for
- evaluating low-contrast resolution, and the CTP 404 and 528 modules
- for evaluating spatial resolution.
+To quantify image quality metrics for the different scanning
+trajectories, we used a Catphan 504 (The Phantom Laboratory, Salem,
+NY). This is a standard quality assessment (QA) phantom for clinical
+CT devices that provides a series of sections with different objects
+for calculating image quality metrics. We used the CTP 404 module for
+evaluating low-contrast resolution, and the CTP 404 and 528 modules
+for evaluating spatial resolution.
 
 *** Scans
     :PROPERTIES:
     :ID:       dd0b68a5-c0eb-4c57-a28f-c27e2c57c8d8
     :END:
- For the circular scans, the gantry made a full rotation about the
- patient with the treatment volume at a fixed mechanical SAD of 100 cm.
- For the virtual isocenter scans, the patient couch was translated
- continuously in the gantry rotation plane during gantry rotation to
- maintain a distance of 112 cm between the MV source and the chosen
- target point within the treatment volume (the "virtual isocenter"),
- rather than the mechanical SAD of 100 cm as shown in Figure
- ([[ref:fig:virtual_iso]]). We generated all of the scanning trajectories
- in this study using the Developer Mode 2.0 XML schema to create
- control points for the gantry, the kV imaging arms, and the patient
- treatment table. Imaging control points were placed along the
- trajectory to acquire kV-projection images during the scan. We used a
- half-fan detector configuration with a 13 cm offset for the circular
- acquisition, and an equivalent offset for the virtual isocenter to
- obtain the same illumination.
+For the circular scans, the gantry made a full rotation about the
+patient with the treatment volume at a fixed mechanical SAD of 100 cm.
+For the virtual isocenter scans, the patient couch was translated
+continuously in the gantry rotation plane during gantry rotation to
+maintain a distance of 112 cm between the MV source and the chosen
+target point within the treatment volume (the "virtual isocenter"),
+rather than the mechanical SAD of 100 cm as shown in Figure
+([[ref:fig:col_virtual_iso]]). We generated all of the scanning
+trajectories in this study using the Developer Mode 2.0 XML schema to
+create control points for the gantry, the kV imaging arms, and the
+patient treatment table. Imaging control points were placed along the
+trajectory to acquire kV-projection images during the scan. We used a
+half-fan detector configuration with a 13 cm offset for the circular
+acquisition, and an equivalent offset for the virtual isocenter to
+obtain the same illumination.
 
- To increase the clearance between the kV detector and the patient, we
- increased the radius of the kV detector with accompanying increase in
- magnification of the kV imaging system. To create projection datasets
- where the detector distance changes during a scan, we acquired
- multiple scans using different detector positions and subsequently
- spliced these together to create the sinograms of interest with the
- corresponding system matrix $\mathcal{H}$. This allowed us to create
- different dynamic magnification scan datasets. We acquired both
- circular and virtual isocenter trajectories with detector positions of
- 50 cm, 60 cm and 70 cm away from the mechanical isocenter for
- magnifications of 1.5X, 1.6X and 1.7X respectively. In each case, the
- detector cover is 5 cm closer to the patient than the CsI layer,
- potentially leading to collisions with the limits shown in the first
- plot in Figure ([[ref:fig:collision_zones]]).
+To increase the clearance between the kV detector and the patient, we
+increased the radius of the kV detector with accompanying increase in
+magnification of the kV imaging system. To create projection datasets
+where the detector distance changes during a scan, we acquired
+multiple scans using different detector positions and subsequently
+spliced these together to create the sinograms of interest with the
+corresponding system matrix $\mathcal{H}$. This allowed us to create
+different dynamic magnification scan datasets. We acquired both
+circular and virtual isocenter trajectories with detector positions of
+50 cm, 60 cm and 70 cm away from the mechanical isocenter for
+magnifications of 1.5X, 1.6X and 1.7X respectively. In each case, the
+detector cover is 5 cm closer to the patient than the CsI layer,
+potentially leading to collisions with the limits shown in the first
+plot in Figure ([[ref:fig:col_collision_zones]]).
 
- #+CAPTION: Collision zones in the patient image space for the kV detector cover and the MV treatment head accessory mount. The left figure shows the increasing radius of the kV-detector collision zone with an increase in magnification. The middle figure shows the increased radius of the kV-detector collision zone for the two dynamic magnification trajectories utilizing a $45^{\circ}$ bump at a higher magnification. The right figure shows the increased radius of the MV-treatment-head collision zone when using the virtual isocenter scanning trajectory.
- #+ATTR_LaTeX: :width \textwidth :float multicolumn
- #+LABEL: fig:collision_zones
- [[file:figures/collision_zones.pdf]]
+#+CAPTION: Collision zones in the patient image space for the kV detector cover and the MV treatment head accessory mount. The left figure shows the increasing radius of the kV-detector collision zone with an increase in magnification. The middle figure shows the increased radius of the kV-detector collision zone for the two dynamic magnification trajectories utilizing a $45^{\circ}$ bump at a higher magnification. The right figure shows the increased radius of the MV-treatment-head collision zone when using the virtual isocenter scanning trajectory.
+#+ATTR_LaTeX: :width \textwidth :float multicolumn
+#+LABEL: fig:col_collision_zones
+[[file:figures/col/collision_zones.pdf]]
 
- To create the combined sinogram of a hypothetical collision-avoiding
- dynamic magnification scan, we replaced a $45^{\circ}$ region of the 1.5X
- circular scan with the corresponding angular range from scans at
- different magnifications. We chose this region to be centered on the
- angular position where the mannequin's elbow is in Figure
- ([[ref:fig:barbie_collision]]). Increasing the magnification in this
- region corresponds to increasing the clearance between the kV-detector
- and the patient. Increasing the magnification to 1.6X provides an
- additional 10 cm of clearance, and to 1.7X an additional 20 cm of
- clearance. We also created an additional $35^{\circ}$ 1.7X bump
- magnification with $5^{\circ}$ transitions at a 1.6X magnification. The
- kV-detector collision zones of these dynamic magnification
- trajectories are shown in the middle plot shown in Figure
- ([[ref:fig:collision_zones]]).
+To create the combined sinogram of a hypothetical collision-avoiding
+dynamic magnification scan, we replaced a $45^{\circ}$ region of the 1.5X
+circular scan with the corresponding angular range from scans at
+different magnifications. We chose this region to be centered on the
+angular position where the mannequin's elbow is in Figure
+([[ref:fig:col_barbie_collision]]). Increasing the magnification in this
+region corresponds to increasing the clearance between the kV-detector
+and the patient. Increasing the magnification to 1.6X provides an
+additional 10 cm of clearance, and to 1.7X an additional 20 cm of
+clearance. We also created an additional $35^{\circ}$ 1.7X bump
+magnification with $5^{\circ}$ transitions at a 1.6X magnification. The
+kV-detector collision zones of these dynamic magnification
+trajectories are shown in the middle plot shown in Figure
+([[ref:fig:col_collision_zones]]).
 
- For the collision with the MV treatment head accessory mount shown in
- Figure ([[ref:fig:barbie_collision]]), using the virtual isocenter imaging
- trajectory would alleviate this problem. The radius of the accessory
- mount from the mechanical isocenter is 41.7 cm. For the virtual
- isocenter used in this study, there is a 12 cm increase in the radius
- of this collision zone as shown in the last plot in Figure
- ([[ref:fig:collision_zones]]). Utilizing a different virtual SAD would
- allow for additional clearance if necessary.
+For the collision with the MV treatment head accessory mount shown in
+Figure ([[ref:fig:col_barbie_collision]]), using the virtual isocenter
+imaging trajectory would alleviate this problem. The radius of the
+accessory mount from the mechanical isocenter is 41.7 cm. For the
+virtual isocenter used in this study, there is a 12 cm increase in the
+radius of this collision zone as shown in the last plot in Figure
+([[ref:fig:col_collision_zones]]). Utilizing a different virtual SAD would
+allow for additional clearance if necessary.
 
- The last set of trajectories we studied combines the dynamic
- magnification with the virtual isocenter trajectory. As the collision
- radius with the MV treatment head and the kV detector are similar for
- the current clinical scan, collisions with both could arise. By
- combining the change in magnification with the virtual isocenter
- trajectory, both collision zones could be avoided. Table
- ([[ref:tab:trajectories]]) shows the different scans investigated in this
- study.
+The last set of trajectories we studied combines the dynamic
+magnification with the virtual isocenter trajectory. As the collision
+radius with the MV treatment head and the kV detector are similar for
+the current clinical scan, collisions with both could arise. By
+combining the change in magnification with the virtual isocenter
+trajectory, both collision zones could be avoided. Table
+([[ref:tab:col_trajectories]]) shows the different scans investigated in this
+study.
 
- # +ATTR_LATEX: :environment longtable
- #+CAPTION: Scanning trajectories
- #+NAME: tab:trajectories
- |-------------------+------------------------------------------|
- | Trajectory        | Magnification                            |
- |-------------------+------------------------------------------|
- | Circle            | 1.5X                                     |
- |                   | 1.5X & $45^{\circ}$ 1.6X bump                   |
- |                   | 1.5X & $45^{\circ}$ 1.7X bump                   |
- |                   | 1.5X & $35^{\circ}$ 1.7X bump, 1.6X transitions |
- |-------------------+------------------------------------------|
- | Virtual isocenter | 1.5X                                     |
- |                   | 1.5X & $45^{\circ}$ 1.6X bump                   |
- |                   | 1.5X & $45^{\circ}$ 1.7X bump                   |
- |                   | 1.5X & $35^{\circ}$ 1.7X bump, 1.6X transitions |
- |-------------------+------------------------------------------|
+# +ATTR_LATEX: :environment longtable
+#+CAPTION: Scanning trajectories
+#+NAME: tab:col_trajectories
+|-------------------+------------------------------------------|
+| Trajectory        | Magnification                            |
+|-------------------+------------------------------------------|
+| Circle            | 1.5X                                     |
+|                   | 1.5X & $45^{\circ}$ 1.6X bump                   |
+|                   | 1.5X & $45^{\circ}$ 1.7X bump                   |
+|                   | 1.5X & $35^{\circ}$ 1.7X bump, 1.6X transitions |
+|-------------------+------------------------------------------|
+| Virtual isocenter | 1.5X                                     |
+|                   | 1.5X & $45^{\circ}$ 1.6X bump                   |
+|                   | 1.5X & $45^{\circ}$ 1.7X bump                   |
+|                   | 1.5X & $35^{\circ}$ 1.7X bump, 1.6X transitions |
+|-------------------+------------------------------------------|
 **** figures                                 :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb]]
 *** Reconstruction
     :PROPERTIES:
     :ID:       d0eac288-37d6-4cef-97c8-7896dcc67733
     :END:
- To find an estimate of the object $\mathbf{f^{*}}$ as an approximate
- solution to Equation ([[ref:eq:linmodel]]), we choose a reconstruction
- program that can be solved with the well-understood maximum-likelihood
- expectation maximization (MLEM) algorithm cite:dempster_maximum_1977.
- Here, our reconstruction program is formulated as
- \begin{equation}
-   \mathbf{f^{*}} = \text{argmin}D_{KL} \left(\mathbf{f}\right)
-   \label{eq:kl}
- \end{equation}
- where $D_{KL}(\mathbf{f})$ is the KL divergence between $\mathbf{g}$ and
- $\mathcal{H}\mathbf{f}$ cite:barrett_foundations_2003. The KL
- divergence is minimized with the MLEM algorithm
- \begin{equation}
- f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}
-   \label{eq:mlem}
- \end{equation}
- where $f_{j}^{n}$ is $j-\text{th}$ voxel value at iteration $n$ and
- $\mathcal{H}_{ij}$ is the element of the system matrix at the
- $i-\text{th}$ row and $j-\text{th}$ column for $i=1,2,...,M$ and
- $j=1,2,...,N$. The initial image estimate for the reconstructions was
- $\mathbf{f}^{(0)}=1$. The $M\times M$ diagonal matrix $\mathcal{W}$ weights
- the corresponding data entries as is typically done for a standard
- half-fan detector configuration for a circular scan
- cite:bian_optimization-based_2013.
+The addition of couch motion to the imaging trajectory does increase
+the degrees of freedom for which proper geometric calibration must be
+acquired. Using Varian's Isocal calibration phantom, we developed an
+optimization-based calibration protocol that allows us to extract
+calibration offsets for improving our estimate of the system matrix
+$\mathcal{H'}$. Using same scanning trajectory to image the Isocal
+phantom, the nominal scanning metadata from the TrueBeam projections
+provided an initial estimate of the imaging geometry. We then used the
+Nelder-Mead simplex program to search for the geometric offsets for
+the source, detector, and treatment couch positions at each view, as
+well as the phantom pose to account for possible setup errors. The
+cost of this optimization used the $L_{2}-\text{norm}$ between the
+projected fiducials in the real data sinogram and the simulated
+projection of the fiducials using the current estimate of the system
+geometry. We used the estimated offsets that minimized the cost
+function to refine our system matrix $\mathcal{H'}$ that we
+subsequently used in the MLEM reconstruction program.
 
- In a traditional scanning configuration where the patient is
- stationary, the system matrix $\mathcal{H}_{ij}$ projects the object
- $\mathbf{f}$ from image space to the data space of $\mathbf{g}$. When
- this is the case, it is sufficient that the coordinate basis of the
- image space coincides with the room coordinate system, or is at least
- stationary relative to it. From each projection view acquired from the
- TrueBeam system, we extracted the position information of the CBCT
- imaging arms and subsequently built $\mathcal{H}_{ij}$ as the projective
- transform from image space in the IEC coordinate system to the data
- space of the kV detector.
+We reconstructed all of these fixed magnification and dynamic
+magnification scans from circular and virtual isocenter trajectories
+into the patient image space described by the imaging model in
+Equation ([[ref:eq:opt_linmodel_patient]]). The Catphan scans were
+reconstructed onto an isotropic voxel size of 0.473 mm. The CIRS torso
+scans were reconstructed onto an isotropic voxel size of 0.836 mm. As
+the circular acquisition with 1.5X magnification is the typical
+clinical acquisition trajectory, this provides a clinical reference
+volume for the reconstructions from the other scanning configurations.
 
- For a virtual isocenter-scanning trajectory, the image space
- $(\mathbf{f}_{\text{patient}})$ is moving relative to the room coordinate
- system for each projection view. As such, a change of basis for the
- columns space of $\mathcal{H}$ is necessary so that the new system
- matrix represents a transform from the image space of the patient to
- the data space of the detector represented as $\mathcal{H'}$. As the
- acquisition system also reports the couch position, we used this to
- build the required transformation matrix
- $\mathcal{T}_{\text{IEC,patient}$ for each projection view. The
- imaging model in Equation ([[ref:eq:linmodel]]) then becomes
- \begin{equation}
-   \label{eq:linmodel_patient}
-   \mathbf{g}=\mathcal{H'}\mathbf{f_{\text{patient}}},
- \end{equation}
- where
- \begin{equation}
-   \label{eq:sys_patient}
-   \mathcal{H'}=\mathcal{H}\mathcal{T_{\text{IEC,patient}}}.
- \end{equation}
- Once the change of basis is accounted for, the reconstruction program
- in Equation ([[ref:eq:kl]]) can be reformulated with $\mathbf{f_{\text{patient}}}$
- instead of $\mathbf{f}$ and solved with the MLEM algorithm in Equation
- ([[ref:eq:mlem]]) using $\mathcal{H'}$ instead of $\mathcal{H}$.
+#+CAPTION: Plot of the Catphan's edge-spread function MTF at 50% and 25% as well as the MTF AUC for the clinical circular 1.5X half-fan scan.
+#+ATTR_LaTeX: :width 0.8\textwidth
+#+LABEL: fig:col_mtf_vs_iteration
+[[file:figures/col/edge_spread_mtf_iteration.pdf]]
 
- The addition of couch motion to the imaging trajectory does increase
- the degrees of freedom for which proper geometric calibration must be
- acquired. Using Varian's Isocal calibration phantom, we developed an
- optimization-based calibration protocol that allows us to extract
- calibration offsets for improving our estimate of the system matrix
- $\mathcal{H'}$. Using same scanning trajectory to image the Isocal
- phantom, the nominal scanning metadata from the TrueBeam projections
- provided an initial estimate of the imaging geometry. We then used the
- Nelder-Mead simplex program to search for the geometric offsets for
- the source, detector, and treatment couch positions at each view, as
- well as the phantom pose to account for possible setup errors. The
- cost of this optimization used the $L_{2}-\text{norm}$ between the
- projected fiducials in the real data sinogram and the simulated
- projection of the fiducials using the current estimate of the system
- geometry. We used the estimated offsets that minimized the cost
- function to refine our system matrix $\mathcal{H'}$ that we
- subsequently used in the MLEM reconstruction program.
-
- We reconstructed all of these fixed magnification and dynamic
- magnification scans from circular and virtual isocenter trajectories
- into the patient image space described by the imaging model in
- Equation ([[ref:eq:linmodel_patient]]). The Catphan scans were
- reconstructed onto an isotropic voxel size of 0.473 mm. The CIRS torso
- scans were reconstructed onto an isotropic voxel size of 0.836 mm. As
- the circular acquisition with 1.5X magnification is the typical
- clinical acquisition trajectory, this provides a clinical reference
- volume for the reconstructions from the other scanning configurations.
-
- #+CAPTION: Plot of the Catphan's edge-spread function MTF at 50% and 25% as well as the MTF AUC for the clinical circular 1.5X half-fan scan.
- #+ATTR_LaTeX: :width \columnwidth
- #+LABEL: fig:mtf_vs_iteration
- [[./figures/edge_spread_mtf_iteration.pdf]]
-
- Figure ([[ref:fig:mtf_vs_iteration]]) shows the 25% and 50% MTF crossing
- spatial frequencies and the MTF AUC of the edge spread function from
- the MLEM reconstruction of the Catphan phantom acquired with a
- circular scan at 1.5X magnification, vs. iteration number. Based on
- this result from a typical scanning configuration, we chose to use 200
- iterations of the MLEM algorithm for all reconstructions, using
- approximately 900 projection views for each scan.
+Figure ([[ref:fig:mtf_vs_iteration]]) shows the 25% and 50% MTF crossing
+spatial frequencies and the MTF AUC of the edge spread function from
+the MLEM reconstruction of the Catphan phantom acquired with a
+circular scan at 1.5X magnification, vs. iteration number. Based on
+this result from a typical scanning configuration, we chose to use 200
+iterations of the MLEM algorithm for all reconstructions, using
+approximately 900 projection views for each scan.
 **** figs                                    :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb")][truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb]]
 *** Metric Evaluation
     :PROPERTIES:
     :ID:       bbb809be-d901-4945-b045-bb886cf349bd
     :END:
- To evaluate the different magnifications of both the circular and
- virtual isocenter trajectory, we used the sensitometry and spatial
- resolution modules (CTP 404 and CTP 528 respectively) of the Catphan
- phantom. Using metrics that quantify these image qualities, we
- compared the different magnifications of both the circular and virtual
- isocenter scans to the MLEM reconstruction of a standard circular
- scan.
-**** Catphan spatial resolution metrics
- There are a number of ways to evaluate the spatial resolution from
- images of the Catphan phantom in a CT image. The CTP528 module
- contains a circular array of bar patterns which we used to,
- subjectively, determine the highest frequency set which is resolvable.
- The same module also has two 0.28mm tungsten carbide beads simulating
- an impulse source from which a point spread and then modulation
- transfer function (MTF) can be determined. Furthermore, the MTF can be
- calculated from the bar patterns themselves
- cite:droege_practical_1982, as well as any suitably high contrast edge
- in the image cite:rossmann_point_1969.
+To evaluate the different magnifications of both the circular and
+virtual isocenter trajectory, we used the sensitometry and spatial
+resolution modules (CTP 404 and CTP 528 respectively) of the Catphan
+phantom. Using metrics that quantify these image qualities, we
+compared the different magnifications of both the circular and virtual
+isocenter scans to the MLEM reconstruction of a standard circular
+scan.
 
- While the use of MTF in CT has its challenges, notably the assumption
- of shift-invariance is not satisfied, it still can be useful when
- treated with some care. Each of the methods above has some advantages
- and disadvantages. The point source method can provide 3D directional
- estimates of the point-spread function (PSF), however it can also be
- sensitive to the location of the bead relative to the image grid with
- significant difference between a bead located totally within a single
- voxel or on the interface of many.
+There are a number of ways to evaluate the spatial resolution from
+images of the Catphan phantom in a CT image. The CTP528 module
+contains a circular array of bar patterns which we used to,
+subjectively, determine the highest frequency set which is resolvable.
+The same module also has two 0.28mm tungsten carbide beads simulating
+an impulse source from which a point spread and then modulation
+transfer function (MTF) can be determined. Furthermore, the MTF can be
+calculated from the bar patterns themselves
+cite:droege_practical_1982, as well as any suitably high contrast edge
+in the image cite:rossmann_point_1969.
 
- The bar pattern based evaluation is a clear complement to the visual
- analysis, however the orientation of the bars relative to the grid
- will affect some frequencies differently than others which can result
- in atypical appearing MTF curves. Using an edge spread analysis on the
- circular phantom boundary provides many samples, at varying directions
- to the image grid which can be averaged out. It can be impacted by
- scatter or saturation in the air region near the phantom boundary,
- however this has not proven to be a significant factor in the images
- we have analyzed.
-**** Edge spread calculation method          :noexport:
- The image slice for analysis, the central slice here, is first
- thresholded based on the image intensity, the connected component with
- area of the appropriate size is isolated and any holes in the
- thresholded region are filled. The center of this region is taken as
- the phantom center and used as the origin of the coordinates for
- analysis. The data are then resampled at high density, along radial
- spokes at 8 angles chosen to avoid surface alignment marks, using a
- linear interpolant from 5 mm inside to 5 mm outside the surface
- boundary. The edge-spread function is then the mean $(\mu(X))$
- subtracted profile over the standard deviation $(\sigma(X))$, or
- \begin{equation}
- \text{ESF} = \frac{X-\mu(X)}{\sigma(X)}.
- \end{equation}
- In standard form, the line-spread function (LSF) can be computed from
- the derivate of the edge-spread function (ESF),
- \begin{equation}
- \text{LSF} = \frac{d}{dX}\text{ESF},
- \end{equation}
- and the MTF as the discrete fourier transform $(\mathcal{D})$ of the
- LSF,
- \begin{equation}
- \text{MTF} = \mathcal{D}(\text{LSF})
- \end{equation}
-**** Low-contrast resolution
-     :PROPERTIES:
-     :ID:       c91ac952-b03c-4bc2-b694-28040b955011
-     :END:
- To characterize low-contrast resolution, we calculated the
- contrast-to-noise ratio (CNR) using the polystyrene insert in the CTP
- 404 sensitometry module. These inserts have CT numbers which are the
- closest to the water-like polymer that surrounds them. The metric is
- defined as
- \begin{equation}
- \label{eq:lcv}
- \text{CNR} = \frac{2\left|\mu_{\text{roi}}-\mu_{\text{bkg}}\right|}{\sigma_\text{roi}+\sigma_\text{bkg}}
- \end{equation}
- where $\sigma$ represents the standard deviation and $\mu$ the mean of the of
- the pixel values in the respective regions.
-**** CT-number comparison
-     :PROPERTIES:
-     :ID:       0494C872-381F-4CA6-BC91-2FAB4CDC0FC0
-     :END:
- The last metric we evaluated was the reproducibility of the CT numbers
- between the circular and virtual isocenter scan, and the different
- combinations of magnification bumps. For this we used the mean and
- standard deviations in ROIs for all the material insert the Catphan
- CTP 404 sensitometry module in addition to the polystyrene and
- background ROIs used for the low-contrast CNR calculations. We also
- evaluated three additional ROIs of the water-like background for a
- total of four background ROIs.
+While the use of MTF in CT has its challenges, notably the assumption
+of shift-invariance is not satisfied, it still can be useful when
+treated with some care. Each of the methods above has some advantages
+and disadvantages. The point source method can provide 3D directional
+estimates of the point-spread function (PSF), however it can also be
+sensitive to the location of the bead relative to the image grid with
+significant difference between a bead located totally within a single
+voxel or on the interface of many.
 
- In addition to the catphan modules, we also analyzed ROIs
- corresponding to aorta, liver and spleen in the abdomen of the CIRS
- torso phantom. For each of the magnifications from both the circular
- and virtual isocenter trajectories, the mean HU values and standard
- deviations were calculated.
+The bar pattern based evaluation is a clear complement to the visual
+analysis, however the orientation of the bars relative to the grid
+will affect some frequencies differently than others which can result
+in atypical appearing MTF curves. Using an edge spread analysis on the
+circular phantom boundary provides many samples, at varying directions
+to the image grid which can be averaged out. It can be impacted by
+scatter or saturation in the air region near the phantom boundary,
+however this has not proven to be a significant factor in the images
+we have analyzed.
+
+The image slice for analysis, the central slice here, is first
+thresholded based on the image intensity, the connected component with
+area of the appropriate size is isolated and any holes in the
+thresholded region are filled. The center of this region is taken as
+the phantom center and used as the origin of the coordinates for
+analysis. The data are then resampled at high density, along radial
+spokes at 8 angles chosen to avoid surface alignment marks, using a
+linear interpolant from 5 mm inside to 5 mm outside the surface
+boundary. The edge-spread function is then the mean $(\mu(X))$
+subtracted profile over the standard deviation $(\sigma(X))$, or
+\begin{equation}
+\text{ESF} = \frac{X-\mu(X)}{\sigma(X)}.
+\end{equation}
+In standard form, the line-spread function (LSF) can be computed from
+the derivative of the edge-spread function (ESF),
+\begin{equation}
+\text{LSF} = \frac{d}{dX}\text{ESF},
+\end{equation}
+and the MTF as the discrete fourier transform $(\mathcal{D})$ of the
+LSF,
+\begin{equation}
+\text{MTF} = \mathcal{D}(\text{LSF})
+\end{equation}
+
+To characterize low-contrast resolution, we calculated the
+contrast-to-noise ratio (CNR) using the polystyrene insert in the CTP
+404 sensitometry module. These inserts have CT numbers which are the
+closest to the water-like polymer that surrounds them. The metric is
+defined as
+\begin{equation}
+\label{eq:lcv}
+\text{CNR} = \frac{2\left|\mu_{\text{roi}}-\mu_{\text{bkg}}\right|}{\sigma_\text{roi}+\sigma_\text{bkg}}
+\end{equation}
+where $\sigma$ represents the standard deviation and $\mu$ the mean of the of
+the pixel values in the respective regions.
+
+The last metric we evaluated was the reproducibility of the CT numbers
+between the circular and virtual isocenter scan, and the different
+combinations of magnification bumps. For this we used the mean and
+standard deviations in ROIs for all the material insert the Catphan
+CTP 404 sensitometry module in addition to the polystyrene and
+background ROIs used for the low-contrast CNR calculations. We also
+evaluated three additional ROIs of the water-like background for a
+total of four background ROIs.
+
+In addition to the catphan modules, we also analyzed ROIs
+corresponding to aorta, liver and spleen in the abdomen of the CIRS
+torso phantom. For each of the magnifications from both the circular
+and virtual isocenter trajectories, the mean HU values and standard
+deviations were calculated.
 *** analysis                                 :noexport:
  - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"161213_virtiso_circ_half_dynmag_catphan_isocal/collision_avoidance.ipynb")][collisions figures]]
  - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170126_virtiso_circ_half_dynmag_ed/ed_images.ipynb")][ed analysis]]
@@ -3417,99 +3440,99 @@ From the results shown in Figure (\ref{fig:})
    :PROPERTIES:
    :ID:       28832b04-7d26-4ef8-83f2-08db94493ab9
    :END:
- Figure ([[ref:fig:recons_catphan]]) shows slices of the CTP 528
- spatial-resolution module from the $200^{\text{th}}$ iteration of the
- MLEM reconstructions of the Catphan phantom for the different scanning
- trajectories. The top row shows reconstructions from the circular
- scanning trajectories, and the bottom row shows reconstructions from
- the virtual isocenter trajectories. The left column is from a single
- 1.5X magnification, and the remaining columns are different
- synthesized trajectories with different magnifications as illustrated
- in Figure ([[ref:fig:collision_zones]]). In all of these images, the
- $8^{\text{th}}$ largest gauge is visually resolvable.
+Figure ([[ref:fig:col_recons_catphan]]) shows slices of the CTP 528
+spatial-resolution module from the $200^{\text{th}}$ iteration of the
+MLEM reconstructions of the Catphan phantom for the different scanning
+trajectories. The top row shows reconstructions from the circular
+scanning trajectories, and the bottom row shows reconstructions from
+the virtual isocenter trajectories. The left column is from a single
+1.5X magnification, and the remaining columns are different
+synthesized trajectories with different magnifications as illustrated
+in Figure ([[ref:fig:col_collision_zones]]). In all of these images, the
+$8^{\text{th}}$ largest gauge is visually resolvable.
 
- #+CAPTION: Images of the Catphan 528 spatial resolution module in a display window of [-100, 2000] HU. The top row shows all the circular scan permutations while the bottom row shows those of the virtual isocenter. The columns show different magnification combinations from left to right of 1.5X only, 1.5X with a 1.6X bump, 1.5X with a 1.7X bump, and a 1.5X with a 1.7X bump and a 1.6X transition on either side. For all of the reconstructions, the 8$^{\text{th}}$ largest gauge is resolvable (indicated by the red arrow).
- #+ATTR_LaTeX: :width \textwidth :float multicolumn
- #+LABEL: fig:recons_catphan
- [[./figures/catphanDynmagQuarter.pdf]]
+#+CAPTION: Images of the Catphan 528 spatial resolution module in a display window of [-100, 2000] HU. The top row shows all the circular scan permutations while the bottom row shows those of the virtual isocenter. The columns show different magnification combinations from left to right of 1.5X only, 1.5X with a 1.6X bump, 1.5X with a 1.7X bump, and a 1.5X with a 1.7X bump and a 1.6X transition on either side. For all of the reconstructions, the 8$^{\text{th}}$ largest gauge is resolvable (indicated by the red arrow).
+#+ATTR_LaTeX: :width \textwidth :float multicolumn
+#+LABEL: fig:col_recons_catphan
+[[file:figures/col/catphanDynmagQuarter.pdf]]
 
- The visual similarity in the spatial resolution shown in Figure
- ([[ref:fig:recons_catphan]]) is reflected in the MTF metrics for all of
- the different scanning configurations. We compared MTF metrics derived
- from the PSF using the Catphan beads, the bar pattern shown in Figure
- ([[ref:fig:recons_catphan]]), and the edge-spread function (ESF) measure
- along an ensemble of radial lines. When comparing these MTF-based
- metrics between the circle and the virtual isocenter scans with
- different magnifications, we found no clear trend distinguishing the
- different trajectories.
+The visual similarity in the spatial resolution shown in Figure
+([[ref:fig:col_recons_catphan]]) is reflected in the MTF metrics for all of
+the different scanning configurations. We compared MTF metrics derived
+from the PSF using the Catphan beads, the bar pattern shown in Figure
+([[ref:fig:col_recons_catphan]]), and the edge-spread function (ESF) measure
+along an ensemble of radial lines. When comparing these MTF-based
+metrics between the circle and the virtual isocenter scans with
+different magnifications, we found no clear trend distinguishing the
+different trajectories.
 
- #+CAPTION: Plot of low-contrast CNR and error bars corresponding to $\pm$ one standard deviation of the CNR from the Catphan scanned with both the circular and virtual isocenter trajectories.
- #+ATTR_LaTeX: :width \columnwidth
- #+LABEL: fig:catphan_cnr
- [[./figures/catphanCNR_ps.pdf]]
+#+CAPTION: Plot of low-contrast polystyrene CNR and error bars corresponding to $\pm$ one standard deviation of the CNR from the Catphan scanned with both the circular and virtual isocenter trajectories.
+#+ATTR_LaTeX: :width 0.8\textwidth
+#+LABEL: fig:col_catphan_cnr
+[[file:figures/col/catphanCNR_ps.pdf]]
 
- Figure ([[ref:fig:catphan_cnr]]) shows the low-contrast CNR from the
- Catphan with these different imaging configurations which are also in
- good agreement with each other. In addition to using the material rods
- in the CTP 404 sensitometry module to calculate the CNR, we also
- compared mean values from each of the materials for the different
- scanning trajectories and magnifications. Figure
- ([[ref:fig:catphan_rois]]) shows the ROI means for these different
- scanning configurations. The height of the bar represents the standard
- deviation of the ROI. The first four bars for each material are from
- the circular scans, and the remaining four from the virtual isocenter
- scans.
+Figure ([[ref:fig:catphan_cnr]]) shows the low-contrast CNR from the
+Catphan with these different imaging configurations which are also in
+good agreement with each other. In addition to using the material rods
+in the CTP 404 sensitometry module to calculate the CNR, we also
+compared mean values from each of the materials for the different
+scanning trajectories and magnifications. Figure
+([[ref:fig:catphan_rois]]) shows the ROI means for these different
+scanning configurations. The height of the bar represents the standard
+deviation of the ROI. The first four bars for each material are from
+the circular scans, and the remaining four from the virtual isocenter
+scans.
 
- #+BEGIN_EXPORT latex
- \begin{figure*}
-   \centering
-   \begin{subfigure}[b]{\textwidth}
-     \includegraphics[width=\textwidth]{figures/sensRoiplot.pdf}
-     \caption{}
-     \label{fig:catphan_rois}
-   \end{subfigure}
-   ~%add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-   %(or a blank line to force the subfigure onto a new line)
-   \begin{subfigure}[b]{\textwidth}
-     \includegraphics[width=\textwidth]{figures/edROIplot.pdf}
-     \caption{}
-     \label{fig:ed_rois}
-   \end{subfigure}
-   \caption{ROI material comaprison results for the Catphan CTP 404
-     module and the CIRS torso phantom. The height of the bars are $\pm$
-     one standard deviation of the ROI mean. The first four bars for
-     each material ROI are from the circular scans, and the remaining four
-     bars for each material ROI are from the virtual isocenter scans. The
-     order of the scans for each material ROI are displayed in the order listed in the
-     legend in (a) from left to right.}
-   \label{fig:hu_results}
- \end{figure*}
- #+END_EXPORT
+#+BEGIN_EXPORT latex
+\begin{figure*}
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{figures/col/sensROIplot.pdf}
+    \caption{}
+    \label{fig:col_catphan_rois}
+  \end{subfigure}
+  ~%add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+  %(or a blank line to force the subfigure onto a new line)
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{figures/col/edROIplot.pdf}
+    \caption{}
+    \label{fig:col_ed_rois}
+  \end{subfigure}
+  \caption{ROI material comaprison results for the Catphan CTP 404
+    module and the CIRS torso phantom. The height of the bars are $\pm$
+    one standard deviation of the ROI mean. The first four bars for
+    each material ROI are from the circular scans, and the remaining four
+    bars for each material ROI are from the virtual isocenter scans. The
+    order of the scans for each material ROI are displayed in the order listed in the
+    legend in (a) from left to right.}
+  \label{fig:col_hu_results}
+\end{figure*}
+#+END_EXPORT
 
- #+CAPTION: Images of the CIRS torso phantom's abdomen in a display window of display window of [-200, 500] HU. The top row shows all the circular scan permutations while the bottom row shows those of the virtual isocenter. The columns show different magnification combinations from left to right of 1.5X only, 1.5X with a 1.6X bump, 1.5X with a 1.7X bump, and a 1.5X with a 1.7X bump and a 1.6X transition on either side.
- #+ATTR_LaTeX: :width \textwidth :float multicolumn :placement
- #+LABEL: fig:recons_ed
- [[./figures/edDynmag.pdf]]
+#+CAPTION: Images of the CIRS torso phantom's abdomen in a display window of display window of [-200, 500] HU. The top row shows all the circular scan permutations while the bottom row shows those of the virtual isocenter. The columns show different magnification combinations from left to right of 1.5X only, 1.5X with a 1.6X bump, 1.5X with a 1.7X bump, and a 1.5X with a 1.7X bump and a 1.6X transition on either side.
+#+ATTR_LaTeX: :width \textwidth :float multicolumn :placement
+#+LABEL: fig:col_recons_ed
+[[file:figures/col/edDynmag.pdf]]
 
- Figure ([[ref:fig:recons_ed]]) shows an abdominal slice from the
- $200^{\text{th}}$ iteration MLEM reconstruction of the CIRS torso phantom
- scanned with a 13 cm offset half-fan configuration. The layout of
- these images is the same as that in Figure ([[ref:fig:recons_catphan]])
- with the top row showing magnification variations from the circular
- trajectory. The bottom row shows the corresponding magnifications from
- the virtual isocenter trajectory. The slice is the same as that in
- Figure ([[ref:fig:ed_rois]]) which we used to calculate values for three
- organ ROIs.
+Figure ([[ref:fig:col_recons_ed]]) shows an abdominal slice from the
+$200^{\text{th}}$ iteration MLEM reconstruction of the CIRS torso phantom
+scanned with a 13 cm offset half-fan configuration. The layout of
+these images is the same as that in Figure
+([[ref:fig:col_recons_catphan]]) with the top row showing magnification
+variations from the circular trajectory. The bottom row shows the
+corresponding magnifications from the virtual isocenter trajectory.
+The slice is the same as that in Figure ([[ref:fig:col_ed_rois]]) which we
+used to calculate values for three organ ROIs.
 
- For the different organ ROIs, we recorded the means and standard
- deviations for the different scanning trajectories and magnifications.
- Figure ([[ref:fig:ed_rois]]) shows these mean values and the
- associated standard deviations. Though the circular scan variations
- fluctuate more than the virtual isocenter scans, the values are in
- agreement for the different organs of interest. As with Figure
- ([[ref:fig:catphan_rois]]), the first four points for each organ are
- from the circular scan, and the remaining four are from the virtual
- isocenter trajectory.
+For the different organ ROIs, we recorded the means and standard
+deviations for the different scanning trajectories and magnifications.
+Figure ([[ref:fig:col_ed_rois]]) shows these mean values and the
+associated standard deviations. Though the circular scan variations
+fluctuate more than the virtual isocenter scans, the values are in
+agreement for the different organs of interest. As with Figure
+([[ref:fig:col_catphan_rois]]), the first four points for each organ are
+from the circular scan, and the remaining four are from the virtual
+isocenter trajectory.
 *** fixed illumination analysis              :noexport:
 **** [[file:/ssh:remus:/data/amdavis/truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/figs/][figs]]
 **** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/catphan_images.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/catphan_images.ipynb]]
@@ -3631,7 +3654,7 @@ return('figures/catphan_comparison_iter_{0:03d}.png'.format(iter))
 
  #+RESULTS:
  [[file:figures/catphan_comparison_iter_075.png]]
-****** itools analyis
+****** itools analysis
        :PROPERTIES:
        :ID:       bc6df6dd-13e6-4bc5-826c-2002d54ab552
        :END:
@@ -4180,64 +4203,64 @@ return('figures/ed_comparison_iter_{0:03d}.png'.format(iter))
    :PROPERTIES:
    :ID:       5d03aa38-f620-4ad1-a60d-f02d5000ea97
    :END:
- As mentioned earlier, the virtual isocenter trajectory is designed to
- increase the distance between the gantry head and the patient by
- synchronized table translation and gantry motion. The geometry of the
- imaging arms remains unchanged, though the center of the image space
- is moved from the mechanical isocenter to the virtual isocenter. As
- shown in the previous section, this results in CBCT image quality that
- is comparable to a normal circular scan.
+As mentioned earlier, the virtual isocenter trajectory is designed to
+increase the distance between the gantry head and the patient by
+synchronized table translation and gantry motion. The geometry of the
+imaging arms remains unchanged, though the center of the image space
+is moved from the mechanical isocenter to the virtual isocenter. As
+shown in the previous section, this results in CBCT image quality that
+is comparable to a normal circular scan.
 
- It is certainly possible to envision situations in which collisions
- with the kV imaging source or (more likely) the detector also occur.
- The system matrix in our optimization-based reconstruction method can
- incorporate changes in the position of the imaging arms as well as the
- patient position. Thus a trajectory with variable source-detector
- distance, caused by the detector moving to avoid a patient collision,
- can also be reconstructed. Such a variable magnification scan may be
- performed with the patient couch moving in a virtual isocenter
- trajectory, or with the patient couch fixed and rotation about the
- physical machine isocenter.
+It is certainly possible to envision situations in which collisions
+with the kV imaging source or (more likely) the detector also occur.
+The system matrix in our optimization-based reconstruction method can
+incorporate changes in the position of the imaging arms as well as the
+patient position. Thus a trajectory with variable source-detector
+distance, caused by the detector moving to avoid a patient collision,
+can also be reconstructed. Such a variable magnification scan may be
+performed with the patient couch moving in a virtual isocenter
+trajectory, or with the patient couch fixed and rotation about the
+physical machine isocenter.
 
- All virtual isocenter scanning in the present work was done in
- TrueBeam Developer Mode, which is a strictly nonclinical mode of
- operation. Simultaneous motion of couch, gantry and imaging arms is
- not fully supported by the TrueBeam; however, the motions required for
- the virtual isocenter scan, which involve only coupled gantry rotation
- and couch translation, are feasible in Developer Mode. Although the
- linac can clearly execute the required motions and acquire the images,
- virtual isocenter scanning is as yet not available as a clinical
- capability. In addition, these scans must be reconstructed using
- iterative optimization-based methods, rather than the current
- clinically available filtered back-projection method. A historic
- concern about optimization-based methods has been reconstruction
- speed. These are very computationally intensive programs, but with the
- recent availability of GPU-based processing, reconstruction times are
- more manageable.
+All virtual isocenter scanning in the present work was done in
+TrueBeam Developer Mode, which is a strictly nonclinical mode of
+operation. Simultaneous motion of couch, gantry and imaging arms is
+not fully supported by the TrueBeam; however, the motions required for
+the virtual isocenter scan, which involve only coupled gantry rotation
+and couch translation, are feasible in Developer Mode. Although the
+linac can clearly execute the required motions and acquire the images,
+virtual isocenter scanning is as yet not available as a clinical
+capability. In addition, these scans must be reconstructed using
+iterative optimization-based methods, rather than the current
+clinically available filtered back-projection method. A historic
+concern about optimization-based methods has been reconstruction
+speed. These are very computationally intensive programs, but with the
+recent availability of GPU-based processing, reconstruction times are
+more manageable.
 
 ** Conclusion
    :PROPERTIES:
    :ID:       016dd868-817a-44fc-8717-e64fdc5bc0d3
    :END:
- Virtual isocenter trajectories and dynamic magnification are
- potentially useful as collision-avoiding alternatives to standard
- isocentric rotation, both in cases where arc treatments are being
- delivered and in cases where CBCT scanning is desirable, but a normal
- isocentric scan would cause gantry-patient collisions. Using
- optimization-based reconstruction methods, patient-specific, collision
- avoiding imaging trajectories that utilize virtual isocenter CBCT
- scans and different kV-detector magnifications can be reconstructed by
- incorporating the view-by-view imaging and patient geometry into the
- system matrix. Image quality, as characterized by spatial resolution
- and low contrast object detectability, is comparable for virtual
- isocenter scans and for standard isocentric scans using different
- magnification bumps to avoid kV-detector collisions. Thus, virtual
- isocenter CBCT scans and kV-detector magnification changes could be
- combined with optimization-based reconstruction as a useful clinical
- approach in collision-plagued situations.
+Virtual isocenter trajectories and dynamic magnification are
+potentially useful as collision-avoiding alternatives to standard
+isocentric rotation, both in cases where arc treatments are being
+delivered and in cases where CBCT scanning is desirable, but a normal
+isocentric scan would cause gantry-patient collisions. Using
+optimization-based reconstruction methods, patient-specific, collision
+avoiding imaging trajectories that utilize virtual isocenter CBCT
+scans and different kV-detector magnifications can be reconstructed by
+incorporating the view-by-view imaging and patient geometry into the
+system matrix. Image quality, as characterized by spatial resolution
+and low contrast object detectability, is comparable for virtual
+isocenter scans and for standard isocentric scans using different
+magnification bumps to avoid kV-detector collisions. Thus, virtual
+isocenter CBCT scans and kV-detector magnification changes could be
+combined with optimization-based reconstruction as a useful clinical
+approach in collision-plagued situations.
+
 * Summary and conclusions                    :conc:
   :PROPERTIES:
   :ID:       1bade25b-80d6-4650-b8a3-baf370fa657c
   :END:
-
 \makebibliography
