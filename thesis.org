@@ -96,6 +96,9 @@ from inside a patient as in single-photon computed tomography (SPECT)
 and positron emission tomography (PET).
 
 ** CT development history
+   :PROPERTIES:
+   :ID:       1b7b31c8-4bd5-4402-b930-d81984ee5901
+   :END:
 In a CT scanner system, an x-ray source and opposing detector
 typically rotate in a circle relative to the object being imaged as
 x-ray projection images are acquired at different angular positions.
@@ -126,12 +129,119 @@ cite:hsieh_computed_2009.
 #+LABEL: fig:intro_hist_1st_gen
 [[file:figures/intro/1st_gen_ct.png]]
 
-The next
+The reconstruction algorithms for reconstructing the tomographic from
+these x-ray projections at different angle evolved concurrently with
+the different CT-scanner hardware. The digitized projection data
+acquired from the first-generation scanner was necessarily digitized
+as the reconstructed image was computed by solving a linear system of
+equations which was what is now known as algebraic tomographic
+reconstruction (ART) cite:hsieh_computed_2009. Though Radon's theories
+that provide the basis for some of the analytic-based reconstruction
+algorithms were known at the time, the necessary computer hardware
+needed for a practical implementation had yet to be developed when
+Cormack and Hounsfield reconstructed their first CT image
+cite:buzug_thorston_m._milestones_2008.
+
+Though the first-generation CT system was a groundbreaking
+achievement, the rasterized scanning of the pencil beam at multiple
+angles required approximately 4.5 minutes to acquire the projection
+information to reconstruct a single two-dimensional (2D) slice of the
+scanned object cite:hsieh_computed_2009. The second generation of CT
+scanners significantly reduced this acquisition time to about 30
+seconds by replacing the pencil beam of x-rays with a fan beam and the
+single detector element with around 30 detector elements. This new
+design, shown in Figure ([[ref:fig:intro_hist_2nd_gen]]), still required
+the source and detector to acquire projections using a linear
+translation before rotating to a new angular position and repeating
+the process cite:buzug_thorston_m._milestones_2008.
+
+#+CAPTION: Second-generation CT scanner. Though similar to the first-generation scanner in Figure ([[ref:fig:intro_hist_1st_gen]]), a significant reduction in acquisition time was achieved by replacing the pencil beam and single detector with a fan beam and an array of detector elements. The acquistion method remained the same in that the source and detector first acquired multiple projections via a linear translation before rotating to a new angular position and repeating the translation.
+#+ATTR_LaTeX: :width 0.7\textwidth
+#+LABEL: fig:intro_hist_2nd_gen
+[[file:figures/intro/2nd_gen_ct.png]]
+
+*parallel beam alg*
+
+One of the most important factors driving the hardware development in
+CT-scanner technology was the issue of acquisition speed. As the
+reconstruction framework used a forward model that assumes the
+projections are acquired from a stationary object, the first two
+generations were only successful in imaging parts of the patient that
+were relatively stationary. As such, these early scanners were only
+initially used with the cranium as it is relatively motionless
+relative to the required acquisition time. Unlike the cranium, other
+parts of patient anatomy such as the thorax and abdomen are greatly
+affected by cardiac and respiratory. The next generation of scanners
+were designed to reduce the acquisition time to under 20 seconds in
+order to image a patient's abdomen in a single breath hold
+cite:buzug_thorston_m._milestones_2008.
+
+#+CAPTION: Third-generation CT scanner. This design kept the fan-beam x-ray source seen in the second generation of scanners, but the linear detector array was curved. This new design no longer required the source and detector to acquire a linear translation before rotating to a new scanning angle. Instead, this generation of scanners simply acquire a single projection at each angle which significantly reduces the acquisition time.
+#+ATTR_LaTeX: :width 0.7\textwidth
+#+LABEL: fig:intro_hist_3rd_gen
+[[file:figures/intro/3rd_gen_ct.png]]
+
+The third generation of CT scanners, shown in Figure
+([[ref:fig:intro_hist_3rd_gen]]), would soon become the most popular
+generation of CT scanners. This remains true today as most modern
+diagnostic CT imaging systems, such as the one shown in Figure
+([[ref:fig:intro_ct_scan]]), are still based on the third generation
+design. Unlike the earlier generations of scanners, this design
+removed the need for the linear translation of the source and detector
+by replacing the flat array of detector elements with a curved array
+of detector elements. By doing this, it was only necessary to acquire
+a single projection at each rotation angle which significantly reduced
+the acquisition time cite:hsieh_computed_2009.
 
 #+CAPTION: Modern diagnostic CT imaging machine.
 #+ATTR_LaTeX: :width 0.8\textwidth
 #+LABEL: fig:intro_ct_scan
 [[file:figures/intro/US_Navy_cat_scan.jpg]]
+
+*fan beam alg*
+
+The fourth generation of CT scanners was developed to eliminate ring
+artifacts that can appear the third-generation CT scanners. These ring
+artifacts can occur when there is a mismatch in projection data of
+opposing rays along the same line in the patient which can occur from
+misalignment of the moving detector. With a stationary ring of
+detectors, these ring artifacts are eliminated. However, with the
+advent of multi-slice detector technology which will be discussed in
+[[id:f84fb81e-a07d-4945-9653-fd1544703733][Cone-beam CT and new scanning trajectories]], the engineering and cost
+requirements will likely result in these scanners being phased out
+cite:hsieh_computed_2009.
+
+#+CAPTION: Fourth-generation CT scanner. In this design, only the x-ray source rotates inside a ring of fixed detector elements.
+#+ATTR_LaTeX: :width 0.7\textwidth
+#+LABEL: fig:intro_hist_4th_gen
+[[file:figures/intro/4th_gen_ct.png]]
+
+The fifth generation of CT scanners, also known as electron-beam,
+computed-tomography (EBCT) scanners, was developed in the early 1980s
+for cardiac imaging. In order to acquire the projection data fast
+enough (20-50 ms), it would be impossible to design a mechanical
+system that could rotate that fast and withstand the centripetal force
+incurred with such high rotational velocity. Instead, this generation
+was designed to drive the electron beam onto the x-ray anode that was
+curved around the patient -- effectively placing the patient inside
+the x-ray tube. The design is similar to the fourth generation in that
+the EBCT scanners have a fixed, partial-ring detector around the
+patient cite:buzug_thorston_m._milestones_2008,hsieh_computed_2009.
+
+Though the fourth and fifth generation scanners are interesting
+manifestations of CT scanning technology, they are only included here
+for completeness and will not be discussed further. In the following
+section, we will look at a major development in reconstruction
+algorithm technology that enabled the the third-generation CT
+scanner's popularity. Furthermore, the changes in the third-generation
+CT scanner design this enabled provided the development of a new CT
+geometry which is the focus of this work.
+
+** TODO Cone-beam CT and new scanning trajectories
+   :PROPERTIES:
+   :ID:       f84fb81e-a07d-4945-9653-fd1544703733
+   :END:
+The
 
 ** Image-guided radiation therapy
 X-ray technology is unique in how rapidly it was applied to the field
@@ -158,14 +268,15 @@ tomography (CBCT) system to the gantry-mounted clinical linear
 accelerator (linac)
 cite:jaffray_flat-panel_2002,letourneau_cone-beam-ct_2005,rahman_linac:_2015
 helped this modality become the most popular form of image-guided
-radiation therapy (IGRT). Figure ([[ref:fig:intro_linac]]) shows an
-annotated image of a TrueBeam linac. The tomographic information
-provided in the kV energy range improves soft-tissue contrast
-resolution over that provided by the MV electronic portal imaging
-device (EPID) alone cite:jaffray_radiographic_1999. The linac-mounted,
-kV-imaging, CBCT system not only helps with patient setup and target
-verification, but it also allows the monitoring of the tumor response
-during treatment
+radiation therapy (IGRT)
+cite:xing_overview_2006,bissonnette_quality_2012,dawson_advances_2007.
+Figure ([[ref:fig:intro_linac]]) shows an annotated image of a TrueBeam
+linac. The tomographic information provided in the kV energy range
+improves soft-tissue contrast resolution over that provided by the MV
+electronic portal imaging device (EPID) alone
+cite:jaffray_radiographic_1999. The linac-mounted, kV-imaging, CBCT
+system not only helps with patient setup and target verification, but
+it also allows the monitoring of the tumor response during treatment
 cite:oldham_cone-beam-ct_2005,xing_overview_2006,dawson_advances_2007.
 
 ** Organization
@@ -193,7 +304,7 @@ trajectories]]. Finally, we will summarize this work and discuss
 possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
 conclusions]].
 
-* General CBCT trajectory reconstruction with optimization-based algorithms :opt:
+* General CBCT trajectory reconstruction framework  with optimization-based algorithms :opt:
   :PROPERTIES:
   :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
   :END:
@@ -728,11 +839,67 @@ the kV detector, it is not possible to change the position of the
 treatment head. In this case, moving the patient would be the only
 viable trajectory to avoid a collision.
 
-** Algorithms
+** Algorithms                                :noexport:
 *** MLEM
     :PROPERTIES:
     :ID:       e0a24b69-d136-4f9a-9e85-dc42e1d114a9
     :END:
+To utilize optimization-based methods for image reconstruction, the
+image formation process is modeled as the linear system
+#+BEGIN_LaTeX
+\begin{equation}
+  \label{eq:ddsys}
+  \mathbf{g}=\mathcal{H}\mathbf{f},
+\end{equation}
+#+END_LaTeX
+where $\mathbf{g}$ is the discrete $M$-pixel sampled projection on the
+detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
+transform, and $\mathbf{f}$ is the object function represented on a
+$N$-voxel basis. As direct inversion of $\mathcal{H}$ is impractical
+due to both its size and inconsistencies from factors such as noise,
+optimization techniques are used to solve this system for an estimate
+of the object $\widetilde{\mathbf{f}}$.
+
+The optimization problem for this approach is then framed as an
+objective function based on the actual data $\mathbf{g}$ and the image
+model $\mathcal{H}\mathbf{f}$. An optimization algorithm is then used
+to iteratively update the estimate of $\widetilde{\mathbf{f}}$ until a
+suitable convergence criterion has been met.
+
+Where, we used the maximum-likelihood expectation maximization (MLEM)
+algorithm cite:dempster_maximum_1977. As we are interested in using
+optimization-based methods to enable reconstruction from novel
+trajectories, we selected an algorithm that is well understood and has
+relatively few parameters. However, the freedom in calculating the
+system matrix by modeling the image formation process as a linear
+system does not limit the algorithm choice to MLEM alone.
+
+The reconstruction program for solving Equation (\ref{eq:ddsys}) using
+MLEM can be formulated as
+#+BEGIN_LaTeX
+\begin{equation}
+  D_{KL}(\mathbf{f})\leq \epsilon_{KL}
+  \label{eq:kl}
+\end{equation}
+#+END_LaTeX
+where $D_{KL}(\mathbf{f})$ is the Kullback-Leibler (KL) divergence
+between $\mathbf{g}$ and $\mathcal{H}\mathbf{f}$
+cite:barrett_foundations_2003 and $\epsilon_{KL}>0$ is the upper bound for the
+KL divergence. The KL divergence can be minimized with the MLEM
+algorithm
+#+BEGIN_LaTeX
+\begin{equation}
+  f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}}
+    \label{eq:mlem}
+\end{equation}
+#+END_LaTeX
+where $f_{j}^{n}$ is $j$-th voxel value at iteration $n$ and
+$\mathcal{H}_{ij}$ is the element of the system matrix at the $i$-th
+row and $j$-th column for $i=1,2,...,M$ and $j=1,2,...,N$. The initial
+image estimate for the reconstructions was $\mathbf{f}^{(0)}=1$. The
+$M\times M$ diagonal matrix $\mathcal{W}$ weights the corresponding
+data entries cite:bian_optimization-based_2013.
+
 ** Additional reconstruction parameters
 *** Iterations and stopping criteria
     :PROPERTIES:
@@ -2026,28 +2193,16 @@ quality.
    :ID:       b815fcd4-92c6-4f72-9905-10acc22b580e
    :END:
 # What question (problem) was studied?
-The use of cone-beam computed tomography (CBCT) in image-guided
-radiation therapy (IGRT) has become increasingly popular in radiation
-oncology
-cite:xing_overview_2006,bissonnette_quality_2012,dawson_advances_2007. A
-kV imaging system is mounted on the treatment linear accelerator
-(linac) orthogonally to the MV treatment beam. This allows the
-acquisition of projection data of the patient while the gantry
-rotates. The reconstructed CT image from these projections provides
-volumetric information to assist with patient setup and target volume
-positioning cite:jaffray_flat-panel_2002-1. Linac manufacturers now
-routinely included kV imaging systems on their linacs, such as the
-Varian Medical Systems' (Palo Alto, CA) TrueBeam kV imaging system.
-
-A major limitation of these imaging systems is a lack of extended
-axial coverage. This is partially due to the detector size which is
-restricted due to engineering concerns. Another reason for this
-limited coverage is the prevalence of analytic-based reconstruction
-algorithms in the clinic cite:pan_why_2009. These algorithms, such as
-FDK cite:feldkamp_practical_1984, are known to suffer from cone-angle
-artifacts at the axial extremes of the reconstruction volume. The
-increasing severity of these artifacts at the axial extremes is
-partially why developing larger kV detectors have not been pursued.
+A major limitation of linac-mounted CBCT kV-imaging systems is a lack
+of extended axial coverage. This is partially due to the detector size
+which is restricted due to engineering concerns. Another reason for
+this limited coverage is the prevalence of analytic-based
+reconstruction algorithms in the clinic cite:pan_why_2009. These
+algorithms, such as FDK cite:feldkamp_practical_1984, are known to
+suffer from cone-angle artifacts at the axial extremes of the
+reconstruction volume. The increasing severity of these artifacts at
+the axial extremes is partially why developing larger kV detectors
+have not been pursued.
 
 Analytic-based reconstruction algorithms are problematic in that they
 require a fixed trajectory in formulating the inverse. When
@@ -2203,87 +2358,87 @@ reconstruction.
    :ID:       b42e5e65-dfda-4692-8ea6-f6d96bc1dd5b
    :END:
 *** Simulation
-    Clinical extended-axial-FOV images are obtained by stitching
-    together two circular scans at different axial locations. We first
-    wanted to find the maximum axial coverage that can be achieved with
-    such a trajectory. That is, what would be the maximum axial
-    spacing between the two planes of the source's trajectory for
-    which a useful extended volume image could be reconstructed?
+Clinical extended-axial-FOV images are obtained by stitching
+together two circular scans at different axial locations. We first
+wanted to find the maximum axial coverage that can be achieved with
+such a trajectory. That is, what would be the maximum axial
+spacing between the two planes of the source's trajectory for
+which a useful extended volume image could be reconstructed?
 
-    Simulating forward projections from this trajectory, we compared
-    the images obtained from stitching together the independent FDK
-    images to those obtained by reconstructing the two circles as a
-    single trajectory with MLEM. We also compared stacked FDK images
-    to reconstructions from the simulated *CLC* and smooth
-    trajectories.
+Simulating forward projections from this trajectory, we compared
+the images obtained from stitching together the independent FDK
+images to those obtained by reconstructing the two circles as a
+single trajectory with MLEM. We also compared stacked FDK images
+to reconstructions from the simulated *CLC* and smooth
+trajectories.
 
-    We simulated a Defrise-style phantom modeled with the 3D X-ray
-    projection software TAKE cite:seger_matlab/c_2005. The phantom was
-    composed of a 15.2 cm outer diameter acrylic cylinder with
-    alternating density disks of Delrin and cork 0.5 mm thick. This
-    particular phantom with alternating density disks is acknowledged
-    by the authors of FDK as being particularly susceptible to
-    cone-angle artifacts cite:feldkamp_practical_1984.
+We simulated a Defrise-style phantom modeled with the 3D X-ray
+projection software TAKE cite:seger_matlab/c_2005. The phantom was
+composed of a 15.2 cm outer diameter acrylic cylinder with
+alternating density disks of Delrin and cork 0.5 mm thick. This
+particular phantom with alternating density disks is acknowledged
+by the authors of FDK as being particularly susceptible to
+cone-angle artifacts cite:feldkamp_practical_1984.
 
-    We used the TAKE software to forward project the phantom as well
-    as generate a digitized "truth" phantom for calculating comparison
-    metrics. The projector generates a forward projection from a
-    specified trajectory given a mathematical definition of the
-    phantom as well as its material properties and the spectrum
-    generated by the x-ray source.
+We used the TAKE software to forward project the phantom as well
+as generate a digitized "truth" phantom for calculating comparison
+metrics. The projector generates a forward projection from a
+specified trajectory given a mathematical definition of the
+phantom as well as its material properties and the spectrum
+generated by the x-ray source.
 
-    We created projection data for a set of dual-circle trajectories
-    that had an increasing amount of axial separation between the two
-    circles. With a 1.5x magnification factor and a 30 cm detector
-    size along the axial direction, a single circular scan has a
-    maximum axial coverage of 20 cm in the image space. Furthermore,
-    the maximum spacing between the two circles is 20 cm as any
-    separation larger than this means the independent image volumes
-    from the two circles are no longer contiguous. We therefore
-    created trajectories with 10, 12, 14, 16, 18, and 20 cm
-    separations *only show the larger gaps that are of interest?*
-    between the planes of the source's dual-circle trajectory.
+We created projection data for a set of dual-circle trajectories
+that had an increasing amount of axial separation between the two
+circles. With a 1.5x magnification factor and a 30 cm detector
+size along the axial direction, a single circular scan has a
+maximum axial coverage of 20 cm in the image space. Furthermore,
+the maximum spacing between the two circles is 20 cm as any
+separation larger than this means the independent image volumes
+from the two circles are no longer contiguous. We therefore
+created trajectories with 10, 12, 14, 16, 18, and 20 cm
+separations *only show the larger gaps that are of interest?*
+between the planes of the source's dual-circle trajectory.
 
-    We uniformly distributed 600 views over the entire trajectory
-    which is comparable to the total number of views used in a single
-    clinical CBCT scan with the kV imaging system. For the other two
-    trajectories with a component of projection views taken during the
-    axial translation (CLC and smooth), 600 views were used with 20% of
-    the views being distributed along the axial translation stage.
+We uniformly distributed 600 views over the entire trajectory
+which is comparable to the total number of views used in a single
+clinical CBCT scan with the kV imaging system. For the other two
+trajectories with a component of projection views taken during the
+axial translation (CLC and smooth), 600 views were used with 20% of
+the views being distributed along the axial translation stage.
 
-    *FIX*
+*FIX*
 
-    The reconstruction image space consisted of a $256\times256$ transverse
-    grid of 1 mm isotropic voxels. As the spacing between the circles
-    increased, the number of voxels in the axial direction also
-    increased to accommodate the increasingly large FOV.
+The reconstruction image space consisted of a $256\times256$ transverse
+grid of 1 mm isotropic voxels. As the spacing between the circles
+increased, the number of voxels in the axial direction also
+increased to accommodate the increasingly large FOV.
 
-    For the extended-volume reconstruction using the stacked FDK, we
-    independently reconstructed each circular scan with FDK using a
-    standard Hann filter. To combine the two reconstructed volumes for an
-    extended axial-coverage image at a given spacing, we used the midplane
-    between the two planes of the source's circular trajectory to select
-    how much of each reconstruction to put in the combined image.
+For the extended-volume reconstruction using the stacked FDK, we
+independently reconstructed each circular scan with FDK using a
+standard Hann filter. To combine the two reconstructed volumes for an
+extended axial-coverage image at a given spacing, we used the midplane
+between the two planes of the source's circular trajectory to select
+how much of each reconstruction to put in the combined image.
 
-    For the MLEM reconstructions, we used all of the projection data
-    simultaneously to reconstruct the extended volume. After defining the
-    extended image volume, we computed the system matrix for each of the
-    different spacings and trajectories based on the trajectory of the
-    source and detector. We used 100 iterations *justify choice* of the
-    MLEM algorithm to find an estimate for the image.
+For the MLEM reconstructions, we used all of the projection data
+simultaneously to reconstruct the extended volume. After defining the
+extended image volume, we computed the system matrix for each of the
+different spacings and trajectories based on the trajectory of the
+source and detector. We used 100 iterations *justify choice* of the
+MLEM algorithm to find an estimate for the image.
 
 
-    *FIX*
+*FIX*
 
-    Our initial evaluation of the images obtained from non-circular
-    trajectories is simply a qualitative visual inspection which does
-    provide an informative assessment of the variety of artifacts that
-    occur for a given reconstruction. For a more rigorous evaluation of
-    the images obtained from different trajectories, we will use mutual
-    information (MI) cite:pluim_mutual-information-based_2003 and the
-    universal quality index (UQI) cite:wang_universal_2002 to provide a
-    quantitative assessment of the image similarity between the reference
-    image and the images from different trajectories.
+Our initial evaluation of the images obtained from non-circular
+trajectories is simply a qualitative visual inspection which does
+provide an informative assessment of the variety of artifacts that
+occur for a given reconstruction. For a more rigorous evaluation of
+the images obtained from different trajectories, we will use mutual
+information (MI) cite:pluim_mutual-information-based_2003 and the
+universal quality index (UQI) cite:wang_universal_2002 to provide a
+quantitative assessment of the image similarity between the reference
+image and the images from different trajectories.
 
 *** Old FOV Paper Simulation
    :PROPERTIES:
@@ -2408,68 +2563,6 @@ image and the images from different trajectories.
  40 cm $\times$ 30 cm with a $2048 \times 1536$ pixel array that performs a $2 \times
  2$ binning for a readout of $1024 \times 768$ square pixels of effective
  size 0.388 mm.
-
-*** Reconstruction
-    :PROPERTIES:
-    :ID:       6cdf439a-318d-4c75-a479-e4dbfcb7a076
-    :END:
- To utilize optimization-based methods for image reconstruction, the
- image formation process is modeled as the linear system
- #+BEGIN_LaTeX
- \begin{equation}
-   \label{eq:ddsys}
-   \mathbf{g}=\mathcal{H}\mathbf{f},
- \end{equation}
- #+END_LaTeX
- where $\mathbf{g}$ is the discrete $M$-pixel sampled projection on the
- detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
- transform, and $\mathbf{f}$ is the object function represented on a
- $N$-voxel basis. As direct inversion of $\mathcal{H}$ is impractical
- due to both its size and inconsistencies from factors such as noise,
- optimization techniques are used to solve this system for an estimate
- of the object $\widetilde{\mathbf{f}}$.
-
- The optimization problem for this approach is then framed as an
- objective function based on the actual data $\mathbf{g}$ and the image
- model $\mathcal{H}\mathbf{f}$. An optimization algorithm is then used
- to iteratively update the estimate of $\widetilde{\mathbf{f}}$ until a
- suitable convergence criterion has been met.
-
- Where, we used the maximum-likelihood expectation maximization (MLEM)
- algorithm cite:dempster_maximum_1977. As we are interested in using
- optimization-based methods to enable reconstruction from novel
- trajectories, we selected an algorithm that is well understood and has
- relatively few parameters. However, the freedom in calculating the
- system matrix by modeling the image formation process as a linear
- system does not limit the algorithm choice to MLEM alone.
-
- The reconstruction program for solving Equation (\ref{eq:ddsys}) using
- MLEM can be formulated as
- #+BEGIN_LaTeX
- \begin{equation}
-   D_{KL}(\mathbf{f})\leq \epsilon_{KL}
-   \label{eq:kl}
- \end{equation}
- #+END_LaTeX
- where $D_{KL}(\mathbf{f})$ is the Kullback-Leibler (KL) divergence
- between $\mathbf{g}$ and $\mathcal{H}\mathbf{f}$
- cite:barrett_foundations_2003 and $\epsilon_{KL}>0$ is the upper bound for the
- KL divergence. The KL divergence can be minimized with the MLEM
- algorithm
- #+BEGIN_LaTeX
- \begin{equation}
-   f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}}
-     \label{eq:mlem}
- \end{equation}
- #+END_LaTeX
- where $f_{j}^{n}$ is $j$-th voxel value at iteration $n$ and
- $\mathcal{H}_{ij}$ is the element of the system matrix at the $i$-th
- row and $j$-th column for $i=1,2,...,M$ and $j=1,2,...,N$. The initial
- image estimate for the reconstructions was $\mathbf{f}^{(0)}=1$. The
- $M\times M$ diagonal matrix $\mathcal{W}$ weights the corresponding
- data entries cite:bian_optimization-based_2013.
-
- *list the voxel/FOV size*
 
 *** Trajectories
     :PROPERTIES:
