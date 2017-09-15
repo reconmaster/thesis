@@ -160,8 +160,6 @@ the process cite:buzug_thorston_m._milestones_2008.
 #+LABEL: fig:intro_hist_2nd_gen
 [[file:figures/intro/2nd_gen_ct.png]]
 
-*parallel beam alg*
-
 One of the most important factors driving the hardware development in
 CT-scanner technology was the issue of acquisition speed. As the
 reconstruction framework used a forward model that assumes the
@@ -193,12 +191,31 @@ of detector elements. By doing this, it was only necessary to acquire
 a single projection at each rotation angle which significantly reduced
 the acquisition time cite:hsieh_computed_2009.
 
+The evolution from the first generation of scanners to the second and
+third generations of scanners was enabled by advances in both computer
+hardware and reconstruction algorithms for solving the inverse
+problem. As we will further discuss in following chapter,
+analytic-based algorithms for solving the CT inverse problem gradually
+replaced the initial algebraic solution to the linearized forward
+model used by Cormack and Hounsfield. The most popular form of this
+implementation is known as filtered-backprojection (FBP) cite:buzug_thorston_m._two-dimensional_2008,hsieh_computed_2009.
+
+The FBP approach to CT reconstruction was first implemented as the
+parallel-beam backprojection algorithm
+cite:buzug_thorston_m._two-dimensional_2008. This provided an analytic
+inverse to the acquisition method of the first generation of scanners
+where at a given angle, all of the projections are acquired as
+parallel incident x-ray beams. However, with the second and third
+generation of CT scanners, this imaging model changed to account for
+the divergent x-ray beam of a point-like x-ray source on an array of
+x-ray detectors. The new fan-beam FBP algorithm enabled the scanning
+geometry of the third generation of scanners which are still the
+backbone of clinical CT today cite:pan_why_2009.
+
 #+CAPTION: Modern diagnostic CT imaging machine.
 #+ATTR_LaTeX: :width 0.8\textwidth
 #+LABEL: fig:intro_ct_scan
 [[file:figures/intro/US_Navy_cat_scan.jpg]]
-
-*fan beam alg*
 
 The fourth generation of CT scanners was developed to eliminate ring
 artifacts that can appear the third-generation CT scanners. These ring
@@ -237,11 +254,33 @@ scanner's popularity. Furthermore, the changes in the third-generation
 CT scanner design this enabled provided the development of a new CT
 geometry which is the focus of this work.
 
-** TODO Cone-beam CT and new scanning trajectories
+** Cone-beam CT and new scanning trajectories
    :PROPERTIES:
    :ID:       f84fb81e-a07d-4945-9653-fd1544703733
    :END:
-The
+For all the CT scanners discussed in the previous section [[id:1b7b31c8-4bd5-4402-b930-d81984ee5901][CT
+development history]], the only scanning trajectory utilized for CT was
+the circular rotation of the source and detector around the patient.
+This limitation was due to both the hardware geometry and the
+reconstruction algorithms that were initially focused on acquiring and
+reconstructing 2D-planar slices of the object being imaged.
+Unfortunately, this slice-by-slice acquisition and reconstruction
+framework was somewhat limiting in acquiring volumetric CT images. 
+
+The use of new scanning trajectories to increase the clinical utility
+of CT began With the development of the helical CT reconstruction
+algorithm cite:katsevich_theoretically_2002,katsevich_exact_2004. By
+adding longitudinal translation of the patient couch through a
+third-generation scanner, it was possible to acquire a helical
+trajectory of the source and detector around the patient. This made it
+possible to rapidly acquire multi-slice (or volumetric) CT of a
+patient using the existing diagnostic imaging hardware of the
+third-generation scanners.
+
+It was not until the cone-beam CT (CBCT)
+
+the modification of the FBP algorithm by Feldkamp,
+Davis, and Kress that 
 
 ** Image-guided radiation therapy
 X-ray technology is unique in how rapidly it was applied to the field
@@ -362,11 +401,11 @@ methods cite:xu_accelerating_2005,sharp_gpu-based_2007.
 
 ** Background: Cone-beam computed tomography
    :PROPERTIES:
-   :ID:       898c8a79-a3b0-4cb2-b1be-2838c8b86426
+   :ID:       d136ffd1-6def-4c22-85ed-6049f04b8486
    :END:
 *** Analytic-based reconstruction
     :PROPERTIES:
-    :ID:       20c14d08-7649-4644-b616-e86e0b7cc515
+    :ID:       04DD4E55-A20B-4A27-BBDD-BB493DD82674
     :END:
 Analytic-based reconstruction algorithms are formulated by explicitly
 finding an inverse to the X-ray transform
