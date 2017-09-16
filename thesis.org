@@ -119,21 +119,21 @@ projections by translating together along a line in a plane orthogonal
 to the rotation axis. The source and detector then rotate before
 acquiring another series of projections along another line. This
 process is repeated a successive rotation angles until the system has
-rotated an entire $180^{\deg}$ and the source and detector have moved to
+rotated an entire $180^{{\circ}}$ and the source and detector have moved to
 each others starting position. For their work, Cormack and Housfield
 shared the 1979 Nobel Prize in Physiology and Medicine
 cite:hsieh_computed_2009.
 
 #+CAPTION: First-generation CT scanner. At each angle, the source and detector move together in a line to acquire a series of pencil beam projections at that angle. The source and detector then rotate one degree around the object before repeating this process.
-#+ATTR_LaTeX: :width 0.7\textwidth
+#+ATTR_LaTeX: :width 0.5\textwidth
 #+LABEL: fig:intro_hist_1st_gen
 [[file:figures/intro/1st_gen_ct.png]]
 
-The reconstruction algorithms for reconstructing the tomographic from
-these x-ray projections at different angle evolved concurrently with
-the different CT-scanner hardware. The digitized projection data
-acquired from the first-generation scanner was necessarily digitized
-as the reconstructed image was computed by solving a linear system of
+The algorithms for reconstructing the tomographic image from these
+x-ray projections at different angle evolved concurrently with the
+different CT-scanner hardware. The projection data acquired from the
+first-generation scanner was necessarily digitized as the
+reconstructed image was computed by solving a linear system of
 equations which was what is now known as algebraic tomographic
 reconstruction (ART) cite:hsieh_computed_2009. Though Radon's theories
 that provide the basis for some of the analytic-based reconstruction
@@ -148,15 +148,15 @@ angles required approximately 4.5 minutes to acquire the projection
 information to reconstruct a single two-dimensional (2D) slice of the
 scanned object cite:hsieh_computed_2009. The second generation of CT
 scanners significantly reduced this acquisition time to about 30
-seconds by replacing the pencil beam of x-rays with a fan beam and the
-single detector element with around 30 detector elements. This new
-design, shown in Figure ([[ref:fig:intro_hist_2nd_gen]]), still required
-the source and detector to acquire projections using a linear
-translation before rotating to a new angular position and repeating
-the process cite:buzug_thorston_m._milestones_2008.
+seconds by replacing the pencil beam of x-rays with a fan beam and a
+detector array with around 30 detector elements. This new design,
+shown in Figure ([[ref:fig:intro_hist_2nd_gen]]), still required the
+source and detector to acquire projections using a linear translation
+before rotating to a new angular position and repeating the process
+cite:buzug_thorston_m._milestones_2008.
 
 #+CAPTION: Second-generation CT scanner. Though similar to the first-generation scanner in Figure ([[ref:fig:intro_hist_1st_gen]]), a significant reduction in acquisition time was achieved by replacing the pencil beam and single detector with a fan beam and an array of detector elements. The acquistion method remained the same in that the source and detector first acquired multiple projections via a linear translation before rotating to a new angular position and repeating the translation.
-#+ATTR_LaTeX: :width 0.7\textwidth
+#+ATTR_LaTeX: :width 0.5\textwidth
 #+LABEL: fig:intro_hist_2nd_gen
 [[file:figures/intro/2nd_gen_ct.png]]
 
@@ -165,8 +165,8 @@ CT-scanner technology was the issue of acquisition speed. As the
 reconstruction framework used a forward model that assumes the
 projections are acquired from a stationary object, the first two
 generations were only successful in imaging parts of the patient that
-were relatively stationary. As such, these early scanners were only
-initially used with the cranium as it is relatively motionless
+were relatively stationary. As such, these early scanners were
+initially only used with the cranium as it is relatively motionless
 relative to the required acquisition time. Unlike the cranium, other
 parts of patient anatomy such as the thorax and abdomen are greatly
 affected by cardiac and respiratory. The next generation of scanners
@@ -213,7 +213,7 @@ geometry of the third generation of scanners which are still the
 backbone of clinical CT today cite:pan_why_2009.
 
 #+CAPTION: Modern diagnostic CT imaging machine.
-#+ATTR_LaTeX: :width 0.8\textwidth
+#+ATTR_LaTeX: :width 0.5\textwidth
 #+LABEL: fig:intro_ct_scan
 [[file:figures/intro/US_Navy_cat_scan.jpg]]
 
@@ -229,7 +229,7 @@ requirements will likely result in these scanners being phased out
 cite:hsieh_computed_2009.
 
 #+CAPTION: Fourth-generation CT scanner. In this design, only the x-ray source rotates inside a ring of fixed detector elements.
-#+ATTR_LaTeX: :width 0.7\textwidth
+#+ATTR_LaTeX: :width 0.5\textwidth
 #+LABEL: fig:intro_hist_4th_gen
 [[file:figures/intro/4th_gen_ct.png]]
 
@@ -268,19 +268,41 @@ Unfortunately, this slice-by-slice acquisition and reconstruction
 framework was somewhat limiting in acquiring volumetric CT images. 
 
 The use of new scanning trajectories to increase the clinical utility
-of CT began With the development of the helical CT reconstruction
-algorithm cite:katsevich_theoretically_2002,katsevich_exact_2004. By
-adding longitudinal translation of the patient couch through a
+of CT began with the development of the spiral or helical CT
+reconstruction algorithm
+cite:kalender_spiral_1990,kudo_helical-scan_1991,katsevich_theoretically_2002,katsevich_exact_2004.
+By adding longitudinal translation of the patient couch through a
 third-generation scanner, it was possible to acquire a helical
 trajectory of the source and detector around the patient. This made it
 possible to rapidly acquire multi-slice (or volumetric) CT of a
 patient using the existing diagnostic imaging hardware of the
 third-generation scanners.
 
-It was not until the cone-beam CT (CBCT)
+Another approach acquire volumetric tomographic images was to extend
+the CT detector array in the longitudinal direction by adding
+additional rows of detector arrays. These multi-array detectors helped
+to improve the interpolation procedure used for reconstructing the
+data acquired from a helical scan, and continue to be used in modern
+third generation CT scanners. As these multi-array detectors began to
+cover larger extents of the axial FOV, they eventually led to large
+flat-panel detector rays being used to acquire projection information.
+These new flat-panel detector systems are now known as cone-beam CT
+(CBCT) systems to reflect the cone of x-ray illumination on these
+detectors as opposed to the fan-beam geometry of the earlier
+slice-by-slice scanners.
 
-the modification of the FBP algorithm by Feldkamp,
-Davis, and Kress that 
+With the advent of CBCT scanners, efforts were made to modify the FBP
+algorithm so that it could be extended in three dimension (3D)
+cite:grangeat_mathematical_1991,kudo_derivation_1994,kudo_fast_1998,buzug_thorston_m._three-dimensional_2008.
+Though all of these methods attempted to find an exact analytic
+inverse imaging model, this required obtaining exact Radon data which
+is not the case for the circular trajectory routinely employed by
+third generation scanners. It was the development of a modified FBP
+algorithm by Feldkamp, Davis and Krees or FDK
+cite:feldkamp_practical_1984 (which we will discuss further in
+[[id:04DD4E55-A20B-4A27-BBDD-BB493DD82674][Analytic-based reconstruction]]) that made it possible to obtain a
+useful reconstruction from a circular scanning trajectory on a CBCT
+system.
 
 ** Image-guided radiation therapy
 X-ray technology is unique in how rapidly it was applied to the field
@@ -317,6 +339,19 @@ cite:jaffray_radiographic_1999. The linac-mounted, kV-imaging, CBCT
 system not only helps with patient setup and target verification, but
 it also allows the monitoring of the tumor response during treatment
 cite:oldham_cone-beam-ct_2005,xing_overview_2006,dawson_advances_2007.
+
+While there are many advantages in using linac-mounted CBCT imaging
+systems in IGRT, there are still limitations in the current clinical
+workflow that could be alleviated by utilizing non-circular scanning
+trajectories with optimization-based reconstruction. One issue is the
+limited axial FOV coverage provided by the current detectors and
+circular scanning trajectory. Another issue are possible patient
+collisions with the rotating treatment gantry. In this work, we will
+focus exclusively on utilizing a generalized optimization-based
+reconstruction framework from arbitrary CBCT trajectories to address
+these clinical issues for IGRT. However, the framework itself is not
+necessarily restricted to IGRT and could be of potential use for a
+variety of other CBCT applications.
 
 ** Organization
    :PROPERTIES:
