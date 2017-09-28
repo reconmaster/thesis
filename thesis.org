@@ -86,14 +86,14 @@ border-control checkpoints to local medical clinics.
 As the non-invasive nature of tomographic imaging had obvious benefits
 for the field of medicine, a lot of significant advances in
 tomographic technology were driven by clinical research. One such form
-of tomographic imaging is computed tomography (CT) which uses
+of tomographic imaging is x-ray computed tomography (CT) which uses
 projection images acquired from different locations around the object
 to compute the distribution of material densities inside the object.
 With the growth of tomographic imaging, additional technologies were
-developed to acquire these images from a variety of waves from
-ultrasound to injecting radioactive tracers which emit these waves
-from inside a patient as in single-photon computed tomography (SPECT)
-and positron emission tomography (PET).
+developed to acquire images from a variety of waves from ultrasound to
+injecting radioactive tracers which emit these waves from inside a
+patient as in single-photon computed tomography (SPECT) and positron
+emission tomography (PET).
 
 ** CT development history
    :PROPERTIES:
@@ -106,9 +106,9 @@ By modeling the attenuation of the incident x-rays by the object being
 imaged at different projection angles and finding an approximate
 inversion of this model, an estimate of the objects interior could be
 produced. The development of modern CT imaging systems today was
-driven not only by innovation in the hardware design, but also
-advances the algorithms used to invert the poorly conditioned forward
-model encountered in CT imaging.
+driven not only by innovation in the hardware design, but also by
+advances in the algorithms used to invert the poorly conditioned
+forward model encountered in CT imaging.
 
 Figure ([[ref:fig:intro_hist_1st_gen]]) shows a schematic of the first
 generation of CT scanner, which was built by EMI (/Electric and
@@ -121,7 +121,7 @@ acquiring another series of projections along another line. This
 process is repeated a successive rotation angles until the system has
 rotated an entire $180^{{\circ}}$ and the source and detector have moved to
 each others starting position. For their work, Cormack and Housfield
-shared the 1979 Nobel Prize in Physiology and Medicine
+shared the 1979 Nobel Prize in Physiology or Medicine
 cite:hsieh_computed_2009.
 
 #+CAPTION: First-generation CT scanner. At each angle, the source and detector move together in a line to acquire a series of pencil beam projections at that angle. The source and detector then rotate one degree around the object before repeating this process.
@@ -1179,32 +1179,42 @@ instead of $\mathbf{f}$ and solved with the MLEM algorithm in Equation
      :PROPERTIES:
      :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
      :END:
-To study the new trajectories with a real clinical kV imaging system,
-we implemented some of these trajectories on Varian's TrueBeam system.
-The TrueBeam Developer Mode provides control of the kV imaging system
-to allow for motion control that is unavailable in clinical modes.
-Developer Mode allows control of the gantry rotation, the c-arm
-positions of the source and detector as well as the position of the
+To study these trajectories with a clinical, kV-imaging system, we
+acquired some of them on Varian's TrueBeam system. The TrueBeam
+Developer Mode provides control of the kV imaging system to allow for
+motion control that is unavailable in clinical modes. Developer Mode
+provides a scriptable control interface that allows control of the
+gantry rotation, the kV-imaging arms, as well as the position of the
 treatment couch. By combining motions with all of these components, it
-is possible to acquire kV projection data for the trajectories studied
-in the simulations.
+is possible to acquire kV projection data from a variety of different
+interesting motions. From the acquisition, each projection is returned
+with self-reported nominal values that can be used to build the
+reconstruction system matrix. Table ([[ref:tab:opt_varian_header]]) shows
+a subset of these header variables pertaining to the kV imaging
+system.
 
-To implement the different collision-avoiding scanning trajectories,
-we used Varian's TrueBeam 2.0 Developer Mode. This is a research mode
-of the TrueBeam system that allows us to implement scanning
-configurations that are unavailable in clinical modes by programming
-the motions of the gantry, couch and kV imaging arms. As in the case
-of this virtual isocenter study, it is possible to acquire projection
-images while both the treatment table and the gantry are in motion. At
-present, simultaneous motion of the gantry and kV imaging arms is not
-possible. We have worked around this limitation in our variable
-magnification imaging which we discuss further in the chapter
-[[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding trajectories]].
+#+ATTR_LATEX: :environment longtable :align l|l|l|l|l
+#+CAPTION: Subset of Varian's TrueBeam projection header variables pertaining to the kV-imaging system.
+#+NAME: tab:opt_varian_header
+|-------------+----------------+------------------+--------------------+----------------|
+|             | Couch          | Detector         | Gantry             | kV Source      |
+|-------------+----------------+------------------+--------------------+----------------|
+| Acquisition | CouchLat       | ImagerLat        | GantryAcceleration | Current        |
+|             | CouchLng       | ImagerLng        | StartAngle         | FrameRate      |
+|             | CouchRtn       | ImagerOrigin     | StopAngle          | KVFilter       |
+|             | CouchThickness | ImagerResX       |                    | PulseLength    |
+|             | CouchVrt       | ImagerResY       |                    | SAD            |
+|             | CouchWidth     | ImagerSizeX      |                    | SID            |
+|             |                | ImagerSizeY      |                    | Voltage        |
+|             |                | ScatterGrid      |                    |                |
+|-------------+----------------+------------------+--------------------+----------------|
+| Projection  | CouchLat       | ImagerDeltaLat   | GantryRtn          | SourceAngle    |
+|             | CouchLng       | ImagerDeltaLng   |                    | SourceDeltaLat |
+|             | CouchRtn       | ImagerDeltaPitch |                    | SourceDeltaLng |
+|             | CouchVrt       | ImagerDeltaRtn   |                    | SourceDeltaVrt |
+|             |                | ImagerDeltaVrt   |                    |                |
+|-------------+----------------+------------------+--------------------+----------------|
 
-**** kV-CBCT system
-     :PROPERTIES:
-     :ID:       85ce12ce-235b-46da-873d-0ad54468893e
-     :END:
 For the majority of our non-simulation work, we used Varian's TrueBeam
 kV imaging system (Varian Medical Systems, Palo Alto, CA) to acquire
 the projection data used in this study. This is a linac-mounted CBCT
@@ -1214,7 +1224,6 @@ c-arm system consisting of a Varian kV x-ray source (GS-1542) and a
 binning for a readout of $1024 \times 768$ square pixels of effective size
 0.388 mm. The source and detector are mounted on robotic arms with the
 kV beam direction orthogonal to the MV treatment beam.
-
 ***** note                                   :noexport:
  Also, you might write a paragraph that describes how these parameters
  come to you - that the acquired projections are stored in files using
@@ -1232,6 +1241,8 @@ kV beam direction orthogonal to the MV treatment beam.
     :PROPERTIES:
     :ID:       9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1
     :END:
+
+
 *table of header parameters hnd/xim*
 ** ideas                                     :noexport:
 Given that part of the robust nature of optimization-based algorithms
