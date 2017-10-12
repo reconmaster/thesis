@@ -1100,12 +1100,18 @@ problem...
    :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
    :END:
 Correctly modeling the geometric parameters of the image acquisition
-is a critical component tomographic image reconstruction. This is true
-regardless of whether reconstruction is done with analytic-based or
-optimization-based methods. Any inconsistency between the real
-projection geometry and that used for image reconstruction will cause
-artifacts in the reconstructed image. An example of such an artifact
-is shown in Figure ([[ref:fig:geo_cal_catphan_example]]).
+is a critical component of tomographic image reconstruction. This is
+true regardless of whether reconstruction is done with analytic-based
+or optimization-based methods. Any inconsistency between the real
+projection geometry and that used for image reconstruction creates
+artifacts in the reconstructed image
+cite:rougee_geometrical_1993,fahrig_three-dimensional_2000,noo_analytic_2000,smekal_geometric_2004,cho_accurate_2005,yang_geometric_2006,panetta_optimization-based_2008,daly_geometric_2008,li_generic_2010,wicklein_image_2012.
+An example of such an artifact is shown in Figure
+([[ref:fig:geo_cal_catphan_example]]). This is especially true when using
+non-standard scanning trajectories, Thus we developed a calibration
+procedure that would accommodate the different scanning configurations
+including non-standard scanning trajectories and scenarios in which
+the object, source and detector are all moving during the scan.
 
 #+BEGIN_EXPORT latex
 \begin{figure}
@@ -1134,15 +1140,6 @@ is shown in Figure ([[ref:fig:geo_cal_catphan_example]]).
 \end{figure}
 #+END_EXPORT
 
-While investigating different non-standard scanning trajectories, we
-found that correct geometric calibration must be performed to avoid
-geometric imaging artifacts. As with the optimization-based image
-reconstruction, we needed a calibration procedure that would
-accommodate the different scanning configurations we wanted to scan.
-This is especially true when working with trajectories where the
-object is moving in addition to the source and detector during the
-scan.
-
 Previous work on geometric calibration for tomographic image
 reconstruction has approached the calibration problem via analytic
 cite:noo_analytic_2000,smekal_geometric_2004,cho_accurate_2005,yang_geometric_2006,daly_geometric_2008
@@ -1156,16 +1153,17 @@ in a way that minimized a cost function associated with improper
 modeling of the acquisition geometry.
 
 These calibration methods (analytic-based methods included) usually
-rely on a known calibration phantom. This is typically a set of highly
-attenuating fiducials arranged in a specific pattern. After scanning
-the phantom with the system of interest, the detected fiducials are
-then compared to predicted positions based on the known geometry of
-the phantom and the nominal projection geometry In the analytic-based
-approach, the view parameters are determined by solving for parameters
-that would transform the projection of the phantom to match the
-observed projection. In the optimization-based approach, geometric
-parameters are varied to improve the match between the projection of
-the modeled fiducials an the detected fiducials in the sinogram.
+rely on a known calibration phantom, which is typically a set of
+highly attenuating fiducials arranged in a specific pattern. After
+scanning the phantom with the system of interest, the detected
+fiducials are then compared to predicted positions based on the known
+geometry of the phantom and the nominal projection geometry In the
+analytic-based approach, the view parameters are determined by solving
+for parameters that would transform the projection of the phantom to
+match the observed projection. In the optimization-based approach,
+geometric parameters are varied to improve the match between the
+projection of the modeled fiducials and the detected fiducials in the
+sinogram.
 
 Both methods of performing geometric calibration have their own
 strengths and weaknesses. The biggest advantage of utilizing
@@ -1181,8 +1179,8 @@ Using previous work for optimization-based geometric calibration
 cite:rougee_geometrical_1993,gullberg_estimation_1990,silver_determination_2000,
 we developed a calibration method that utilizes a phantom with known
 placement of highly attenuating fiducials. By scanning this phantom
-and comparing the the projections to the modeled forward-projection of
-a mathematical model of the phantom, we can more accurately determine
+and comparing the projections to the modeled forward-projection of a
+mathematical model of the phantom, we can more accurately determine
 the system matrix $(\mathcal{H})$ in Equation ([[ref:eq:ddsys]]) for
 reconstructing from a non-circular scanning trajectory with
 optimization-based methods resulting in reduced image artifacts.
@@ -1196,10 +1194,12 @@ acquisition trajectory such a as a fixed scanning radius of the source
 and detector and the angular position of each projection, the
 optimization-based system matrix makes no assumptions of the geometry
 in other views. As such, we created a reconstruction framework that
-incorporates the best geometric estimate of the projection geometry of
-each view. The flexibility to incorporate geometric corrections in
-this way is another useful aspect in using optimization-based methods
-for image reconstruction.
+incorporates the best geometric estimate of the projection geometry
+from each view. The flexibility to incorporate geometric corrections
+in this way is another useful aspect in using optimization-based
+methods for image reconstruction.
+
+*lit review of calibration phantoms/methods*
 
 Before attempting to determine any geometric errors in our scanning
 acquisition, we first modified the calculation of our system matrix to
@@ -1213,12 +1213,13 @@ calibration information we extracted with our calibration protocol.
     :PROPERTIES:
     :ID:       F5BECB45-8652-47A3-915C-1E96DA6110E7
     :END:
-Our first calibration phantom for determining geometric offsets is
-shown in Figure (\ref{fig:geo_geocal}). The phantom is a 15.2 cm outer
-diameter acrylic tube with a spiral pattern of CT-spot fiducials
-placed 2.5 cm along the axial direction every $45^{\circ}$. When scanned,
-the CT spots are clearly visible in the projection images which is
-ideal for automating the fiducial detection in the data domain.
+The first calibration phantom we fabricated for determining geometric
+offsets is shown in Figure (\ref{fig:geo_geocal}). The phantom is a
+15.2 cm outer diameter acrylic tube with a spiral pattern of CT-spot
+fiducials placed 2.5 cm along the axial direction every $45^{\circ}$.
+When scanned, the CT spots are clearly visible in the projection
+images which is ideal for automating the fiducial detection in the
+data domain.
 
 However, we realized that using such a spiral calibration phantom
 creates a degree of ambiguity in the geometry of the projected
@@ -1294,16 +1295,16 @@ Developer Mode. As such, the nominal trajectory we used to initialize
 our calibration method was self-reported, view-by-view geometry
 provided by the TrueBeam system for each projection. Starting with
 this initial estimate with which we calculated our reconstruction
-system matrix $\mathcal{H}$, the additional calibration information we
-were able to extract with our calibration improved our estimate of
-both the system matrix and subsequently the estimated image from the
-reconstruction.
+system matrix $\mathcal{H}$, the additional information extracted from
+our calibration was use to improve the estimate of both the system
+matrix and subsequently the estimated image from the reconstruction.
 
 Figure ([[ref:fig:geo_cal_schematic]]) provides a schematic illustration
-of this with the Isocal phantom for a single view. Ideally, the
-nominal geometry used to calculate a single projection would produce
-the simulated projected fiducials in blue. However, as both our work
-and that of others has found, this is not usually the case.
+of the Isocal phantom for a single view. Ideally, the nominal geometry
+used to calculate a single projection would produce the simulated
+projected fiducials in blue. However, as both our work and that of
+others has found, this is not usually the case
+cite:rougee_geometrical_1993,noo_analytic_2000,smekal_geometric_2004,cho_accurate_2005,yang_geometric_2006,li_generic_2010,wicklein_image_2012.
 Discrepancies between the reported geometry and the actual scanning
 geometry can arise from multiple sources in a given acquisition.
 
@@ -1508,6 +1509,8 @@ axis is the logitudinal axis of the cylinder in Figure
 ([[ref:fig:geo_cal_schematic]]) and the $y$ axis in Figure
 ([[ref:fig:geo_cal_proj]]).
 
+*simple flowchart of procedure*
+
 Projection of the fiducial coordinates onto the detector needs to be
 done in a coordinate system aligned with the detector’s frame vectors.
 The source-to-detector distance needed for projection is the distance
@@ -1683,7 +1686,7 @@ projected fiducials in discretized detector bin coordinates is
     \right] \right),
   \label{eq:geo_xproj}
 \end{equation}
-where $boldsymbol{S}$ is a scaling transformation along the $\left\{
+where $\boldsymbol{S}$ is a scaling transformation along the $\left\{
 u,v \right\}$ basis by the inverse of the pixel size $\left(
 s_{{\text{pix}} \right)$, and \boldsymbol{T} is a translation
 transformation to place the origin of the discretized detector basis
@@ -1710,6 +1713,8 @@ step. We use the Nelder-Mead simplex algorithm
 cite:lagarias_convergence_1998 to minimize the $L_{2}\text{-norm}$ cost
 function.
 
+*discuss physical limits as constraint possibility*
+
 Given that there are there are different combinations of couch, source
 and detector motions that can cause the same change of the object
 relative to the source and detector within the image coordinate
@@ -1726,12 +1731,13 @@ image reconstruction.
 
 For a new trajectory, this phantom is first scanned to identify any
 potential corrections to the parameters reported in the TrueBeam data
-headers. Though we find the self-reported position accuracy from the
-acquisition metadata to be very good, there are still some scanning
-configurations for which the additional refinement from our geometric
-calibration is critical for obtaining the best quality reconstruction.
-This is particularly true for scanning trajectories where the object
-and the kV imaging system move simultaneously.
+headers. Though we find the self-reported position *accuracy (ADD
+ACCURACY ESTIMATE)* from the acquisition metadata to be very good,
+there are still some scanning configurations for which the additional
+refinement from our geometric calibration is critical for obtaining
+the best quality reconstruction. This is particularly true for
+scanning trajectories where the object and the kV imaging system move
+simultaneously.
 *** Geometric-offset artifact catalog        :noexport:
     :PROPERTIES:
     :ID:       DED4A0A6-3775-41ED-AF64-BD6604B2B3AD
@@ -1824,11 +1830,11 @@ using the calibration method described in Section ([[id:F53F4B5A-83EB-4B16-9B6D-
 method]]).
 
 We reconstructed the Catphan scans from these two trajectories with
-and without the calibrations offsets. We reconstructed onto an
-isotropic image grid of 0.473 mm for each reconstruction, and applied
-the half-fan weighting described in Section ([[id:cc6bcac6-a445-4dfb-8815-a95e31f517ed][Detector weighting]]). For
-all of these reconstructions we used 200 iterations of MLEM as
-described in Section ([[id:e0a24b69-d136-4f9a-9e85-dc42e1d114a9][MLEM]]).
+and without the calibrations offsets. An isotropic image grid of 0.473
+mm was used for each reconstruction with application of the half-fan
+weighting described in Section ([[id:cc6bcac6-a445-4dfb-8815-a95e31f517ed][Detector weighting]]). For all
+reconstructions, 200 iterations of MLEM were used, as described in
+Section ([[id:e0a24b69-d136-4f9a-9e85-dc42e1d114a9][MLEM]]).
 
 *metric analysis on these two scans w/ and w/o calibration*
 *** figures                                  :noexport:
@@ -1962,13 +1968,13 @@ dot(proj270*isocal,red);
     :END:
 Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the CTP 528 spatial
 resolution module slice from the reconstructions of both the circular
-scan in the left column and the virtual isocenter scan in the right
-column. The top row shows the slice from the uncalibrated
-reconstruction using the nominal projection geometry from image
-metadata. It can be seen by comparing the circle and virtual isocenter
-scans without calibration that moving the treatment couch during the
-scan introduces additional geometric error over the standard circle
-scan which visually degrades spatial resolution.
+scan (left column) and the virtual isocenter scan (right column). The
+top row shows the slice from the uncalibrated reconstruction using the
+nominal projection geometry from image metadata. The circle and
+virtual isocenter scans without calibration demonstrate that moving
+the treatment couch during the scan introduces additional geometric
+error over the standard circle scan which visually degrades spatial
+resolution.
 
 The bottom row of Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the same
 slice from the corresponding trajectory with the geometric offsets
@@ -1985,22 +1991,24 @@ Figure ([[ref:fig:geo_cal_cost]]) shows the $L_{2}_{}-\text{norm}$ of the
 distance between the simulated fiducial projections and the real
 fiducial projections acquired from the circle and virtual isocenter
 scans of the isocal phantom. As this served as the cost function which
-we used as the minimization objective for the optimized offset search,
-we can see that the calibration did effectively reduce this cost from
-the nominal geometry (blue) to the calibrated geometry (green). This
-cost also reflects the same trend we see in the spatial resolution of
-the images shown in Figure ([[ref:fig:geo_cal_catphan_sens]]).
+was used as the minimization objective for the optimized offset
+search, we can see that the calibration did effectively reduce this
+cost from the nominal geometry (blue) to the calibrated geometry
+(green). This cost also reflects the same trend we see in the spatial
+resolution of the images shown in Figure
+([[ref:fig:geo_cal_catphan_sens]]).
 
 Comparing the the $L_{2}_{}-\text{norm}$ of the uncalibrated scans in Figure
-([[ref:fig:geo_cal_cost]]), we see that there is far more disagreement
-between modeled and observed Isocal fiducial positions for the virtual
-isocenter scan than that of the circular scan, leading to more
+([[ref:fig:geo_cal_cost]]), *we see that there is far more disagreement
+between modeled* and observed Isocal fiducial positions for the
+virtual isocenter scan than that of the circular scan, leading to more
 artifacts and loss of spatial resolution in the virtual isocenter
 reconstruction than in that of the circular scan. With the geometric
 calibrations applied, the cost for the virtual isocenter and circular
 trajectories is quite comparable, as is the spatial resolution.
 
 *describe TB1 virtual isocenter couch backlash*
+
 #+BEGIN_EXPORT latex
 \begin{figure}
   \centering
@@ -2044,8 +2052,8 @@ In developing our optimization-based geometry calibration procedure,
 we found that proper geometric calibration is a critical component of
 improving tomographic image quality. This is particularly true for
 more complicated trajectories where additional motion components such
-as that of the treatment couch introduce additional degrees of freedom
-in which geometric errors can arise. As shown in Figure
+as that of the treatment couch *introduce additional degrees of
+freedom* in which geometric errors can arise. As shown in Figure
 ([[ref:fig:geo_cal_sens_cost]]), the additional motion of the couch with
 the simultaneous motion of the source and detector introduces a larger
 deviation from the nominal scanning geometry.
@@ -2056,12 +2064,14 @@ ability to acquire view-by-view calibration information with this
 approach dovetails nicely with the optimization-based framework that
 enables the reconstruction from the different trajectories we studied
 in this research. Though many of the different analytic-based methods
-described in the literature could be adopted to many of these
-trajectories (and have been for some), the benefit of the
-optimization-based framework for both reconstruction and geometric
-calibration comes from freedom to easily model and reconstruct from
-trajectories as well as geometric offsets that deviate from the
-analytically prescribed model.
+described in the literature could be adopted to some of these
+trajectories cite:noo_analytic_2000,smekal_geometric_2004, the benefit
+of the optimization-based framework for both reconstruction and
+geometric calibration comes from freedom to easily model and
+reconstruct from trajectories as well as geometric offsets that
+deviate from the analytically prescribed model.
+
+*estimate of the calibration time*
 
 Though this does imply that calibration scans must be acquired for
 each scan of interest, there are optimization-based calibration
@@ -2076,16 +2086,15 @@ of calibrating the imaging system as the linac use case already
 demands accurate calibration for treatment accuracy in addition to
 image quality alone.
 
-In the following chapters we where we investigate particular
+In the following chapters, where we investigate particular
 applications of these different trajectories, we will use our
 calibration method with the Isocal phantom to more accurately model
 the system matrix $\mathcal(H)$. Though the more exotic scanning
 trajectories introduce more degrees of freedom that create greater
-geometric uncertainty, our calibration procedure performs rather well
-in determining what these deviations are from the self-reported
-geometry metadata. For these trajectories, we found that
-incorporating geometric calibration consistently improves image
-quality.
+geometric uncertainty, our calibration procedure performs *rather
+well* in determining what these deviations are from the self-reported
+geometry metadata. For these trajectories, we found that incorporating
+geometric calibration consistently improves image quality.
 * Axial field-of-view extension              :fov:
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
