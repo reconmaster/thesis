@@ -84,9 +84,9 @@ methods can be found being deployed in locations ranging from
 border-control checkpoints to local medical clinics.
 
 As the non-invasive nature of tomographic imaging had obvious benefits
-for the field of medicine, a lot of significant advances in
-tomographic technology were driven by clinical research. One such form
-of tomographic imaging is x-ray computed tomography (CT) which uses
+for the field of medicine, many significant advances in tomographic
+technology were driven by clinical research. One such form of
+tomographic imaging is x-ray computed tomography (CT) which uses
 projection images acquired from different locations around the object
 to compute the distribution of material densities inside the object.
 With the growth of tomographic imaging, additional technologies were
@@ -104,7 +104,7 @@ typically rotate in a circle relative to the object being imaged as
 x-ray projection images are acquired at different angular positions.
 By modeling the attenuation of the incident x-rays by the object being
 imaged at different projection angles and finding an approximate
-inversion of this model, an estimate of the objects interior could be
+inversion of this model, an estimate of the object's interior could be
 produced. The development of modern CT imaging systems today was
 driven not only by innovation in the hardware design, but also by
 advances in the algorithms used to invert the poorly conditioned
@@ -118,10 +118,10 @@ this design, a source and detector acquire a series of pencil-beam
 projections by translating together along a line in a plane orthogonal
 to the rotation axis. The source and detector then rotate before
 acquiring another series of projections along another line. This
-process is repeated a successive rotation angles until the system has
-rotated an entire $180^{{\circ}}$ and the source and detector have moved to
-each others starting position. For their work, Cormack and Housfield
-shared the 1979 Nobel Prize in Physiology or Medicine
+process is repeated for successive rotation angles until the system
+has rotated an entire $180^{{\circ}}$ and the source and detector have
+moved to each other's starting position. For their work, Cormack and
+Housfield shared the 1979 Nobel Prize in Physiology or Medicine
 cite:hsieh_computed_2009.
 
 #+CAPTION: First-generation CT scanner. At each angle, the source and detector move together in a line to acquire a series of pencil beam projections at that angle. The source and detector then rotate one degree around the object before repeating this process.
@@ -131,15 +131,15 @@ cite:hsieh_computed_2009.
 
 The algorithms for reconstructing the tomographic image from these
 x-ray projections at different angle evolved concurrently with the
-different CT-scanner hardware. The projection data acquired from the
-first-generation scanner was necessarily digitized as the
-reconstructed image was computed by solving a linear system of
-equations which was what is now known as algebraic tomographic
-reconstruction (ART) cite:hsieh_computed_2009. Though Radon's theories
-that provide the basis for some of the analytic-based reconstruction
-algorithms were known at the time, the necessary computer hardware
-needed for a practical implementation had yet to be developed when
-Cormack and Hounsfield reconstructed their first CT image
+different iterations of CT-scanner hardware. The projection data
+acquired from the first-generation scanner was necessarily digitized
+as the reconstructed image was computed by solving a linear system of
+equations, now known as algebraic tomographic reconstruction (ART)
+cite:hsieh_computed_2009. Though Radon's theories that provide the
+basis for some of the analytic-based reconstruction algorithms were
+known at the time, the necessary computer hardware needed for a
+practical implementation had yet to be developed when Cormack and
+Hounsfield reconstructed their first CT image
 cite:buzug_thorston_m._milestones_2008.
 
 Though the first-generation CT system was a groundbreaking
@@ -169,9 +169,9 @@ were relatively stationary. As such, these early scanners were
 initially only used with the cranium as it is relatively motionless
 relative to the required acquisition time. Unlike the cranium, other
 parts of patient anatomy such as the thorax and abdomen are greatly
-affected by cardiac and respiratory. The next generation of scanners
-were designed to reduce the acquisition time to under 20 seconds in
-order to image a patient's abdomen in a single breath hold
+affected by cardiac and respiratory motion. The next generation of
+scanners were designed to reduce the acquisition time to under 20
+seconds in order to image a patient's abdomen in a single breath hold
 cite:buzug_thorston_m._milestones_2008.
 
 #+CAPTION: Third-generation CT scanner. This design kept the fan-beam x-ray source seen in the second generation of scanners, but the linear detector array was curved. This new design no longer required the source and detector to acquire a linear translation before rotating to a new scanning angle. Instead, this generation of scanners simply acquire a single projection at each angle which significantly reduces the acquisition time.
@@ -194,11 +194,12 @@ the acquisition time cite:hsieh_computed_2009.
 The evolution from the first generation of scanners to the second and
 third generations of scanners was enabled by advances in both computer
 hardware and reconstruction algorithms for solving the inverse
-problem. As we will further discuss in following chapter,
+problem. As we will further discuss in the following chapter,
 analytic-based algorithms for solving the CT inverse problem gradually
 replaced the initial algebraic solution to the linearized forward
 model used by Cormack and Hounsfield. The most popular form of this
-implementation is known as filtered-backprojection (FBP) cite:buzug_thorston_m._two-dimensional_2008,hsieh_computed_2009.
+implementation is known as filtered-backprojection (FBP)
+cite:buzug_thorston_m._two-dimensional_2008,hsieh_computed_2009.
 
 The FBP approach to CT reconstruction was first implemented as the
 parallel-beam backprojection algorithm
@@ -206,9 +207,10 @@ cite:buzug_thorston_m._two-dimensional_2008. This provided an analytic
 inverse to the acquisition method of the first generation of scanners
 where at a given angle, all of the projections are acquired as
 parallel incident x-ray beams. However, with the second and third
-generation of CT scanners, this imaging model changed to account for
-the divergent x-ray beam of a point-like x-ray source on an array of
-x-ray detectors. The new fan-beam FBP algorithm enabled the scanning
+generation of CT scanners, this imaging model was modified from the
+parallel-beam geometry to the fan-beam geometry to account for the
+divergent x-ray beam of a point-like x-ray source on an array of x-ray
+detectors. The new fan-beam FBP algorithm enabled the scanning
 geometry of the third generation of scanners which are still the
 backbone of clinical CT today cite:pan_why_2009.
 
@@ -218,15 +220,15 @@ backbone of clinical CT today cite:pan_why_2009.
 [[file:figures/intro/US_Navy_cat_scan.jpg]]
 
 The fourth generation of CT scanners was developed to eliminate ring
-artifacts that can appear the third-generation CT scanners. These ring
-artifacts can occur when there is a mismatch in projection data of
-opposing rays along the same line in the patient which can occur from
-misalignment of the moving detector. With a stationary ring of
+artifacts that can appear in the third-generation CT scanners. These
+ring artifacts can occur when there is a mismatch in projection data
+of opposing rays along the same line in the patient which can occur
+from misalignment of the moving detector. With a stationary ring of
 detectors, these ring artifacts are eliminated. However, with the
 advent of multi-slice detector technology which will be discussed in
 [[id:f84fb81e-a07d-4945-9653-fd1544703733][Cone-beam CT and new scanning trajectories]], the engineering and cost
-requirements will likely result in these scanners being phased out
-cite:hsieh_computed_2009.
+requirements will likely result in the fourth-generation scanners
+being phased out cite:hsieh_computed_2009.
 
 #+CAPTION: Fourth-generation CT scanner. In this design, only the x-ray source rotates inside a ring of fixed detector elements.
 #+ATTR_LaTeX: :width 0.5\textwidth
@@ -249,9 +251,11 @@ Though the fourth and fifth generation scanners are interesting
 manifestations of CT scanning technology, they are only included here
 for completeness and will not be discussed further. In the following
 section, we will look at a major development in reconstruction
-algorithm technology that enabled the the third-generation CT
-scanner's popularity. Furthermore, the changes in the third-generation
-CT scanner design this enabled provided the development of a new CT
+algorithm technology that cemented the third-generation CT scanner's
+popularity. This algorithm development enabled the extension of the CT
+detector's axial coverage allowing for volumetric image acquisition
+and reconstruction using the third-generation scanner design. This
+development also led to the development of a new cone-beam CT (CBCT)
 geometry which is the focus of this work.
 
 ** Cone-beam CT and new scanning trajectories
@@ -278,28 +282,28 @@ possible to rapidly acquire multi-slice (or volumetric) CT of a
 patient using the existing diagnostic imaging hardware of the
 third-generation scanners.
 
-Another approach acquire volumetric tomographic images was to extend
-the CT detector array in the longitudinal direction by adding
+Another approach to acquire volumetric tomographic images was to
+extend the CT detector array in the longitudinal direction by adding
 additional rows of detector arrays. These multi-array detectors helped
 to improve the interpolation procedure used for reconstructing the
 data acquired from a helical scan, and continue to be used in modern
 third generation CT scanners. As these multi-array detectors began to
-cover larger extents of the axial FOV, they eventually led to large
-flat-panel detector rays being used to acquire projection information.
-These new flat-panel detector systems are now known as cone-beam CT
-(CBCT) systems to reflect the cone of x-ray illumination on these
-detectors as opposed to the fan-beam geometry of the earlier
+cover larger extents of the axial field of view (FOV), they eventually
+led to large flat-panel detector rays being used to acquire projection
+information. These new flat-panel detector systems are now known as
+cone-beam CT (CBCT) systems to reflect the cone of x-ray illumination
+on these detectors as opposed to the fan-beam geometry of the earlier
 slice-by-slice scanners.
 
-With the advent of CBCT scanners, efforts were made to modify the FBP
-algorithm so that it could be extended in three dimension (3D)
+With the advent of CBCT scanners, efforts were made to extend the FBP
+algorithm to three dimensions (3D)
 cite:grangeat_mathematical_1991,kudo_derivation_1994,kudo_fast_1998,buzug_thorston_m._three-dimensional_2008.
 Though all of these methods attempted to find an exact analytic
-inverse imaging model, this required obtaining exact Radon data which
-is not the case for the circular trajectory routinely employed by
-third generation scanners. It was the development of a modified FBP
-algorithm by Feldkamp, Davis and Krees or FDK
-cite:feldkamp_practical_1984 (which we will discuss further in
+inverse to the forward-projection imaging model, this required
+obtaining exact Radon data which is not the case for the circular
+trajectory routinely employed by third generation scanners. It was the
+development of a modified FBP algorithm by Feldkamp, Davis and Krees
+or FDK cite:feldkamp_practical_1984 (which we will discuss further in
 [[id:04DD4E55-A20B-4A27-BBDD-BB493DD82674][Analytic-based reconstruction]]) that made it possible to obtain a
 useful reconstruction from a circular scanning trajectory on a CBCT
 system.
@@ -332,12 +336,13 @@ helped this modality become the most popular form of image-guided
 radiation therapy (IGRT)
 cite:xing_overview_2006,bissonnette_quality_2012,dawson_advances_2007.
 Figure ([[ref:fig:intro_linac]]) shows an annotated image of a TrueBeam
-linac. The tomographic information provided in the kV energy range
-improves soft-tissue contrast resolution over that provided by the MV
-electronic portal imaging device (EPID) alone
-cite:jaffray_radiographic_1999. The linac-mounted, kV-imaging, CBCT
-system not only helps with patient setup and target verification, but
-it also allows the monitoring of the tumor response during treatment
+linac (Varian Medical Systems, Palo Alto, CA). The tomographic
+information provided in the kV energy range improves soft-tissue
+contrast resolution over that provided by the MV electronic portal
+imaging device (EPID) alone cite:jaffray_radiographic_1999. The
+linac-mounted, kV-imaging, CBCT system not only helps with patient
+setup and target verification, but it also allows the monitoring of
+the tumor response during treatment
 cite:oldham_cone-beam-ct_2005,xing_overview_2006,dawson_advances_2007.
 
 While there are many advantages in using linac-mounted CBCT imaging
@@ -345,13 +350,13 @@ systems in IGRT, there are still limitations in the current clinical
 workflow that could be alleviated by utilizing non-circular scanning
 trajectories with optimization-based reconstruction. One issue is the
 limited axial FOV coverage provided by the current detectors and
-circular scanning trajectory. Another issue are possible patient
-collisions with the rotating treatment gantry. In this work, we will
-focus exclusively on utilizing a generalized optimization-based
-reconstruction framework from arbitrary CBCT trajectories to address
-these clinical issues for IGRT. However, the framework itself is not
-necessarily restricted to IGRT and could be of potential use for a
-variety of other CBCT applications.
+circular scanning trajectory. Another issue is the increased
+probability of patient collisions with the rotating treatment gantry.
+In this work, we will focus exclusively on utilizing a generalized
+optimization-based reconstruction framework from arbitrary CBCT
+trajectories to address these clinical issues for IGRT. However, the
+framework itself is not necessarily restricted to IGRT and could be of
+potential use for a variety of other CBCT applications.
 
 ** Organization
    :PROPERTIES:
@@ -360,29 +365,33 @@ variety of other CBCT applications.
 In this work, we will discuss the optimization-based,
 image-reconstruction framework that enables the use of these new
 scanning trajectories. In particular, we will focus on how this
-approach was developed in addressing the two clinical bottlenecks of
-limited axial FOV coverage and patient collisions with the linac
-gantry. By using these two examples, we will hopefully not only show
-the feasibility of using these non-circular trajectories, but also a
+approach was developed to address the two clinical bottlenecks of
+limited axial FOV coverage and potential patient collisions with the
+linac gantry. By using these two examples, we will not only show the
+feasibility of using these non-circular trajectories, but also a
 potential solution to existing clinical needs.
 
 First, we will discuss the framework and considerations of using
 optimization-based reconstruction with different scanning trajectories
-in [[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][Optimization-based algorithms]]. Next, we will look at the need for
+in [[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][Optimization-based algorithms]]. Next, we will discuss the need for
 geometric calibration and discuss a method we developed to do this for
-these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]. We will then look at
-using new trajectories to address the limited axial FOV issue in [[id:eaae199f-f899-4862-af50-720895a31c36][Axial
-field-of-view extension]] followed by using these trajectories to
+these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]. We will then review the
+use of new trajectories to address the limited axial FOV issue in
+[[id:eaae199f-f899-4862-af50-720895a31c36][Axial field-of-view extension]] followed by using these trajectories to
 alleviate the issue of patient collisions in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
 trajectories]]. Finally, we will summarize this work and discuss
 possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
 conclusions]].
 
-* General CBCT trajectory reconstruction framework  with optimization-based algorithms :opt:
+We will implement and maintain image quality
+
+*current clinical workarounds reposition paitient or re-evaluate/scan sim*
+
+* General CBCT trajectory reconstruction framework with optimization-based algorithms :opt:
   :PROPERTIES:
   :ID:       06ec01f2-e128-4baf-9ec7-4569a3aaa886
   :END:
-Through the years of CT research, a fundamental questions has always
+Through the years of CT research, a fundamental question has always
 been how to move the source and detector of the imaging system
 relative to the object to obtain sufficient projection information to
 reconstruct a useful image. Part of this answer must take into account
@@ -391,27 +400,19 @@ However, this is fundamentally a question that must address the
 requirements of the computational reconstruction algorithm used to
 assemble the image from the x-ray projections.
 
-Though the mathematical framework for solving this inverse problem had
-been formulated by Johann Radon in 1917 and a patent for what is
-essentially CT was filled in 1940 by Gabriel Frank, it was not until
-1967 that the work of Allan M. Cormack and Godfrey N. Hounsfield led
-to the first clinical CT scanner. For their work, Cormack and
-Housfield shared the 1979 Nobel Prize in Physiology and Medicine
-cite:hsieh_computed_2009.
-
-Optimization-based image reconstruction provides robust framework for
-reconstructing from projections acquired with the task-specific
+Optimization-based image reconstruction provides a robust framework
+for reconstructing from projections acquired with the task-specific
 imaging trajectories we studied . Unlike the analytic-based methods,
 such as FDK algorithm cite:feldkamp_practical_1984, optimization-based
-methods require no assumptions of the initial scanning trajectory. As
-such, there is greater flexibility in choosing a scanning trajectory
-for a given task for which an analytic inverse has yet to be derived.
-In this work, we investigate some of the task-specific scanning
-trajectories enabled by optimization-based methods.
+methods require no assumptions about the initial scanning trajectory.
+As such, there is greater flexibility in choosing a scanning
+trajectory for a given task for which an analytic inverse has yet to
+be derived. In this work, we investigate some of the task-specific
+scanning trajectories enabled by optimization-based methods.
 
 The use of optimization-based methods for tomographic image
 reconstruction is a natural extension of linearizing the x-ray
-transform imaging model of tomographic scan. Approaching the image
+transform imaging model of a tomographic scan. Approaching the image
 reconstruction problem as a linearized imaging model has existed since
 the first CT system built by Cormack and Hounsfield. For their initial
 image reconstructions, they utilized the algebraic reconstruction
@@ -421,18 +422,18 @@ angle cite:herman_art:_1973.
 
 Though the initial optimization-based image reconstruction with ART
 was successful in providing a solution to the inverse problem, the
-limited computation power available at the time proved to be an
+limited computational power available at the time proved to be an
 intractable limitation. This computational complexity was further
 increased when moving from two-dimension (2D), single-slice images to
-the three-dimensional (3D), volumetric images reconstruction which
+three-dimensional (3D), volumetric image reconstruction which
 introduce a greater number of unknowns. The computationally-intensive
-nature optimization-based reconstructions has been one of the biggest
-barriers preventing the widespread use of these reconstruction methods
-today cite:pan_why_2009. However, a recent renaissance of utilizing
-graphics processing units (GPUs) -- technology once solely in the
-purview of video games -- for scientific computation has made these
-optimization-based methods temporally competitive with analytic-based
-methods cite:xu_accelerating_2005,sharp_gpu-based_2007.
+nature of optimization-based reconstructions has been one of the
+biggest barriers preventing widespread use today cite:pan_why_2009.
+However, a recent renaissance of utilizing graphics processing units
+(GPUs) -- technology once solely in the purview of video games -- for
+scientific computation has made these optimization-based methods
+temporally competitive with analytic-based methods
+cite:xu_accelerating_2005,sharp_gpu-based_2007.
 
 ** Background: Cone-beam computed tomography
    :PROPERTIES:
@@ -465,8 +466,8 @@ cite:barrett_foundations_2003.
 #+BEGIN_SRC asymptote :file figures/opt/analytic.pdf :exports results :tangle no
 settings.multisample=0;
 settings.outformat="pdf";
-settings.prc = false;
-settings.render = 0;
+// settings.prc = false;
+// settings.render = 0;
 
 import graph3;
 import geometry;
@@ -475,210 +476,63 @@ import three;
 
 // view configuration
 size(10cm);
-currentprojection=orthographic(-15,10,20,up=Y);
+// currentprojection=orthographic(-15,10,20,up=Y);
 // currentprojection=perspective(-15,5,13,up=Y);
 // currentlight=White;
 
-// Draw axis
-real ax_scale=15;
-draw(Label("$z$",position=EndPoint,align=N),(0,0,0)--(0,ax_scale,0),black,Arrow3);
-draw(Label("$x$",position=EndPoint,align=S),(0,0,0)--(ax_scale,0,0),black,Arrow3);
-draw(Label("$y$",position=EndPoint,align=SW),(0,0,0)--(0,0,-ax_scale),black,Arrow3);
-
-// show gantry angle
-draw(Label("$\theta_{g}$", (2, -0.5, 0)), arc((0, 0, 0), (ax_scale/3, 0, 0), (0, -ax_scale/3, 0)), red, arrow=Arrow3);
-
-// kV schematic
-real dlat=0, dlng=0, dvrt=50;
-triple det_cent=(dvrt,dlat,dlng);
-real ulen=40.0, vlen=30.0;
-
-path3 detector=plane((0,ulen,0), (0,0,vlen), det_cent-(0,ulen/2,vlen/2));
-
-triple det0 = det_cent-(0,ulen/2,vlen/2);
-triple u = (det0+ax_scale/2*(0,1,0));
-triple v = (det0+ax_scale/2*(0,0,1));
-triple w = (det0+ax_scale/2*(-1,0,0));
-
-// detector norm
-triple dnorm = (det_cent+ax_scale*(-1,0,0));
-
-// detector coordinate system
-draw(det0--u,black,Arrow3,L=Label("$u$", position=EndPoint, align=W));
-draw(det0--v,black,Arrow3,L=Label("$v$", position=EndPoint, align=N));
-draw(det0--w,black,Arrow3,L=Label("$w$", position=EndPoint, align=N));
-
-draw(detector, black);
-
-// labels
-//From Charles Staats's tutorial
-//Direction of a point toward the camera.
-triple cameradirection(triple pt, projection P=currentprojection) {
-  if (P.infinity) {
-    return unit(P.camera);
-  } else {
-    return unit(P.camera - pt);
-  }
-}
-
-//Move a point closer to the camera.
-triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
-  return pt + distance * cameradirection(pt, P);
-}
-
-// source
-real slat=0, slng=0, svrt=-100;
-triple src=(svrt,slat, slng);
-
-// lines from source to detector edges
-draw(src..det_cent-(0,-ulen/2,-vlen/2),black+opacity(0.15));
-draw(src..det_cent-(0,-ulen/2,vlen/2),black+opacity(0.15));
-draw(src..det_cent-(0,ulen/2,vlen/2),black+opacity(0.15));
-draw(src..det_cent-(0,ulen/2,-vlen/2),black+opacity(0.15));
-
-// ray connecting the source to the detector
-triple ray_sd = det_cent-src;
-draw(L=Label("$\vec{r}_{sd}$", position=EndPoint, align=E), src--det_cent, blue, Arrow3);
-
-// dot product of ray onto normal vecotr
-real along = dot(ray_sd, dnorm);
-
-// detector projection operator
-transform3 proj=planeproject(detector);
-
-// show pierecing point
-triple pierce = proj*src;
-
-draw(L=Label("$\vec{p}$", position=EndPoint, align=NW),src--pierce,blue+dashed,arrow=Arrow3);
-draw(L=Label("$\vec{p}_{uv}$", position=EndPoint, align=SE),det0--pierce,red+dashed,arrow=Arrow3);
-// draw(src--pierce,red+dotted, arrow=Arrow3);
-
-///////////////////////////////////
-
-settings.render = 0;
-import geometry;
-// size(8cm,0);
-// unitsize(1cm)
-
-// Affichage du repère par défaut (O,vec{i},vec_{j})
-// show(defaultcoordsys);
-// show(currentcoordsys);
-
 // detector
-real dlat=0, dlng=0, dvrt=50;
+real dlat=0, dvrt=50;
 point det=(dvrt,dlat);
 
 real ulen=40.0, vlen=30.0;
 
-draw((dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat),black);
+path detector=(dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat);
+point det_cent=(dvrt,0);
 
 // source
-real slat=0, slng=0, svrt=-100;
+real slat=0, svrt=-100;
 point src=(svrt,slat);
 
-draw(src--(dvrt, 0), dashed+red);
-draw(src--(dvrt, -ulen/2+dlat), dashed+black);
-draw(src--(dvrt, ulen/2+dlat), dashed+black);
-dot("Source", src, N, red);
+// rotate sys and draw
+real theta=-45.;
+
+draw(rotate(theta)*detector, black);
+draw(rotate(theta)*src--rotate(theta)*det_cent, dashed+red,Arrow(TeXHead));
+// draw(src--(dvrt, -ulen/2+dlat), dashed+black);
+// draw(src--(dvrt, ulen/2+dlat), dashed+black);
 
 addMargins(0.5cm, 0.5cm);
 
-// dot("Detector",det,N,5bp+.5blue);
-// dot("Source",src,N,5bp+.5red);
+// Draw axis
+real ax_scale=30;
+draw(Label("$x$",position=EndPoint),(-ax_scale,0)--(ax_scale,0),black,Arrow(TeXHead));
+draw(Label("$y$",position=EndPoint),(0,-ax_scale)--(0,ax_scale),black,Arrow(TeXHead));
 
-// dot("Source", src)
+// show gantry angle
+draw(Label("$\theta$",position=MidPoint,E), arc((0, 0), r=ax_scale/2, angle1=0, angle2=theta), red, arrow=Arrow(TeXHead));
 
-// real a=5, b=4, theta=-70, poids=3;
-// ellipse el = ellipse(origin, a, b);
-// arc     ar = arc(el,(0,-b),(a,0),CCW);
-// path p = (0,-b-1)--ar--(a+1,0)--(a+1,-b-1)--cycle;
-// point pO = (0,0), pM=angpoint(ar,90+theta);
-// abscissa abscM = nodabscissa(el,pM);
-// real     timeM = abscM.x;
-// vector utangM = -dir(el,timeM),
-//        unormM = rotate(90)*utangM,
-//        vpoids=(0,-poids),
-//        vreactionN = -dot(vpoids,unormM)*unormM,
-//        vfrottement = -dot(vpoids,utangM)*utangM;
-
-// filldraw(p,lightgray,blue);
-// draw(pO--pM,dashed);
-// markangle("$\theta$",1.5cm,pM,origin,(1,0));
-
-// coordsys R=cartesiansystem(pM,i=utangM,j=unormM);
-// show("$M$", "$\vec{u_{\theta}}$", "$\vec{u_{r}}$", R, xpen=invisible);
-
-// point RpM=changecoordsys(R, pM);
-// show(Label("$\vec{f}$",EndPoint),RpM+vfrottement);
-// show(Label("$\vec{R}$",EndPoint),RpM+vreactionN);
-// show(Label("$\vec{P}$",EndPoint),RpM+vpoids);
-
-// // size3(140,80,15);
-// currentprojection=perspective(1,-1,1,up=Z);
-// currentlight=White;
-
-// // detector surface
-// // path3 g=(1,0,0)..(0,1,0)..(-1,0,0)..(0,-1,0)..cycle;
-// // draw(g);
-
-// draw(O--X,red+dashed,Arrow3);
-// draw(O--Y,red+dashed,Arrow3);
-// draw(O--Z,red+dashed,Arrow3);
-
-// // draw detector
-// draw(((-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle));
-
-// real a=-0.4;
-// real b=0.95;
-// real y1=-5;
-// real y2=-3y1/2;
-// path A=(a,0){dir(10)}::{dir(89.5)}(0,y2);
-// path B=(0,y1){dir(88.3)}::{dir(20)}(b,0);
-// real c=0.5*a;
-// pair z=(0,2.5);
-// transform t=scale(1,15);
-// transform T=inverse(scale(t.yy,t.xx));
-// path[] g=shift(0,1.979)*scale(0.01)*t*
-//   texpath(Label("{\it symptote}",z,0.25*E+0.169S,fontsize(24pt)));
-// pair w=(0,1.7);
-// pair u=intersectionpoint(A,w-1--w);
-
-// real h=0.25*linewidth();
-// real hy=(T*(h,h)).x;
-// g.push(t*((a,hy)--(b,hy)..(b+hy,0)..(b,-hy)--(a,-hy)..(a-hy,0)..cycle));
-// g.push(T*((h,y1)--(h,y2)..(0,y2+h)..(-h,y2)--(-h,y1)..(0,y1-h)..cycle));
-// g.push(shift(0,w.y)*t*((u.x,hy)--(w.x,hy)..(w.x+hy,0)..(w.x,-hy)--(u.x,-hy)..(u.x-hy,0)..cycle));
-// real f=0.75;
-// g.push(point(A,0)--shift(-f*hy,f*h)*A--point(A,1)--shift(f*hy,-f*h)*reverse(A)--cycle);
-// g.push(point(B,0)--shift(f*hy,-f*h)*B--point(B,1)--shift(-f*hy,f*h)*reverse(B)--cycle);
-
-// triple H=-0.1Z;
-// material m=material(lightgray,shininess=1.0);
-
-// for(path p : g)
-//   draw(extrude(p,H),m);
-
-// surface s=surface(g);
-// draw(s,red,nolight);
-// draw(shift(H)*s,m);
+// generic object
+real obj_scale=10;
+path obj=(-obj_scale,-obj_scale){dir(45)}..(obj_scale,0)..(obj_scale,obj_scale)..(0,obj_scale)..cycle;
+draw(Label("$f$",(obj_scale,obj_scale),NE),obj, black);
 #+END_SRC
 
-#+CAPTION: Schematic representation of weighting factor
+#+CAPTION: Single-view projection geometry for the TrueBeam kV imaging system.
 #+ATTR_LaTeX: :width \textwidth
 #+RESULTS: fig:opt_analytic
 [[file:figures/opt/analytic.pdf]]
 
-In the 1980s, a lot of work was done to directly solve the inverse
-problem for the cone-beam geometry. By modeling the projection
-formation process as a Radon transform or an X-ray transform,
-reconstruction algorithms were formulated by finding an analytic-based
-inverse to the transform. However, for the inverse to be exact, it
-needed to meet strict requirements such as Tuy's condition which
-states that every plane through the object must intersect the source
-trajectory cite:tuy_inversion_1983. While some exceptions to this
-requirement were found, it demonstrates the strict requirements on the
-types of scanning trajectories for which an exact inverse could be
-found.
+In the 1980s, work was done to directly solve the inverse problem for
+the cone-beam geometry cite:parker_optimal_1982-1,finch_cone_1985. By
+modeling the projection formation process as a Radon transform or an
+X-ray transform, reconstruction algorithms were formulated by finding
+an analytic-based inverse to the transform. However, for the inverse
+to be exact, it needed to meet strict requirements such as Tuy's
+condition which states that every plane through the object must
+intersect the source trajectory cite:tuy_inversion_1983. While some
+exceptions to this requirement were found, it demonstrates the strict
+requirements on the types of scanning trajectories for which an exact
+inverse could be found.
 
 The circular scanning trajectory that is ubiquitous in the clinic for
 CBCT is one trajectory that fails to meet Tuy's condition. The most
@@ -710,23 +564,23 @@ that are amplified in the filtration process.
     :END:
 Analytic-based reconstruction algorithms are problematic in that they
 require a fixed trajectory in formulating the inverse. When
-approximations are made for the inverse as in FDK, deviations from
+approximations are made for the inverse, as in FDK, deviations from
 where these approximations are valid lead to inconsistencies in the
 model and subsequently artifacts in the reconstruction. For FDK, at
-larger cone angles (edges of the FOV at the axial extremes), the
+larger cone angles (i.e., edges of the FOV at the axial extremes), the
 assumption of quasi redundancy for planes other than that of the
 source's circular trajectory becomes increasingly invalid at larger
-cone angles leading to cone-angle artifacts.  In contrast to these
+cone angles leading to cone-angle artifacts. In contrast to these
 analytic models, optimization-based reconstruction algorithms have
-demonstrated more robust model of the image formation process reducing
-the artifacts that arise from these analytic-based methods
+demonstrated a more robust model of the image formation process
+reducing the artifacts that arise from these analytic-based methods
 cite:shepp_maximum_1982,han_optimization-based_2012,sidky_image_2008,sidky_accurate_2006,bian_evaluation_2010.
 
 Optimization-based reconstruction algorithms are more robust as they
 more accurately model this DD imaging system. The X-ray transform of
 the object function can be represented as the linear system
 \begin{equation}
-  \label{eq:ddsys}
+  \label{eq:opt_ddsys}
   \mathbf{g}=\mathcal{H}\mathbf{f},
 \end{equation}
 where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
@@ -747,13 +601,12 @@ algorithm, and the convergence criteria are all important factors in
 determining the properties of the reconstructed image and subsequently
 its utility.
 
-In applying optimization-based reconstruction to reconstruct
-non-circular trajectories, we focus primarily on the well-understood
+In applying optimization-based reconstruction to non-circular
+trajectories, we focus primarily on the well-understood
 maximum-likelihood expectation maximization (MLEM)
 cite:shepp_maximum_1982,dempster_maximum_1977. Previous work has shown
-that these iterative algorithms are able to reconstruct clinically
-useful images under scanning conditions for which analytic-based FDK
-fails
+that these iterative algorithms can reconstruct clinically useful
+images under scanning conditions for which analytic-based FDK fails
 cite:han_optimization-based_2012,sidky_image_2007,sidky_accurate_2006.
 The reconstruction work from sparse-view data
 cite:bian_evaluation_2010 alone suggests that views could be
@@ -774,7 +627,7 @@ reconstruction.
     :PROPERTIES:
     :ID:       6293da29-e448-4614-84b6-065af1cc6be9
     :END:
-In IGRT, linac-mounted CBCT imaging systems such as Variant's TrueBeam
+In IGRT, linac-mounted CBCT imaging systems such as Varian's TrueBeam
 kV-imaging system now routinely provide patient image information.
 These images are used to check the patient alignment before delivering
 the radiation treatment. The circular rotation of the linac gantry
@@ -792,18 +645,18 @@ limited cite:pearson_non-circular_2010. The reason why the limited FOV
 has not been addressed by increasing the detector size is partially
 due to the industry reliance on the approximate FDK algorithm
 cite:pan_why_2009. For increasingly large cone angles at the ends of
-the axial FOV, the approximation in the algorithm becomes increasingly
-worse resulting in cone-angle artifacts cite:feldkamp_practical_1984.
+the axial FOV, the approximation in the algorithm results in worse
+cone-angle artifacts cite:feldkamp_practical_1984.
 
-Another problem with the current circular imaging trajectory is
+Another problem with the current circular imaging trajectory is the
 potential linac collisions with the patient
 cite:hua_practical_2004,nioutsikou_patient-specific_2003. Cases arise
 when the patient is positioned in the treatment position, a CBCT image
 cannot be acquired due to part of the patient being in the path of the
-linac's trajectory. As the current FDK algorithm requires a trajectory
-with sufficient angular coverage, the patient must be moved to a
-position where the gantry can make an uninterrupted rotation around
-the patient.
+linac's trajectory (i.e., gantry clearance cannot be achieved). As the
+current FDK algorithm requires a trajectory with sufficient angular
+coverage, the patient must be moved to a position where the gantry can
+make an uninterrupted rotation around the patient.
 
 In both of these examples, the default circular trajectory prescribed
 by FDK is insufficient for obtaining the desired tomographic
@@ -818,6 +671,9 @@ optimization-based reconstruction could alleviate the complications
 imposed by the standard circular scan required by FDK.
 
 *** General trajectories
+    :PROPERTIES:
+    :ID:       bb0f7766-83f0-44ba-986a-5062e9532a01
+    :END:
 Though there has been previous work in developing analytic methods for
 addressing the reconstruction from some novel trajectories
 cite:katsevich_theoretically_2002,katsevich_image_2004,katsevich_image_2005,katsevich_formulation_2006,
@@ -828,32 +684,16 @@ imaging trajectory would then vary on a per patient basis. As such,
 deriving the analytic inverse for each patient's scanning trajectory
 would be impractical in a clinical work flow.
 
-Optimization-based reconstruction algorithms provide a straightforward
-means of enabling reconstruction from patient-specific collision
-avoiding trajectories
-cite:han_optimization-based_2012,bian_optimization-based_2013. The
-imaging model is formulated as the linear transform
-\begin{equation}
-  \label{eq:linmodel}
-  \mathbf{g}=\mathcal{H}\mathbf{f},
-\end{equation}
-where $\mathbf{g}$ is the discrete $M$ pixel sampled projection on the
-detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
-transform, and $\mathbf{f}$ is the object function represented on a N
-voxel basis. As the direct inversion of Equation ([[ref:eq:linmodel][linear model]]) is
-impractical due to both its size and inconsistencies from factors such
-as noise, optimization techniques are used to solve this system for an
-estimate of the object $\mathbf{f^{*}}$.
-
-This approach allows for a generalized reconstruction framework that
-allows for greater flexibility in reconstructing from projections
+Optimization-based reconstruction provides a generalized framework
+enabling greater flexibility in reconstructing from projections
 acquired with non-circular trajectories. Provided the geometry of each
-view is correctly incorporated into the system matrix $\mathcal{H}$,
-clinically useful reconstructions can be obtained from acquisitions
-for which an analytic inverse may not be available. As the collision
-zone for a given patient would be patient specific, this robust
-approach enables tomographic imaging from collision-avoiding
-trajectories that would accommodate the patient's specific needs.
+view is correctly incorporated into the system matrix $\mathcal{H}$ in
+Equation ([[ref:eq:opt_ddsys]]), clinically useful reconstructions can be
+obtained from acquisitions for which an analytic inverse may not be
+available. As the potential collision zone for a given patient would
+be patient specific, this robust approach enables tomographic imaging
+from collision-avoiding trajectories that would accommodate the
+patient's specific needs.
 
 The increased flexibility in choosing different scanning trajectories
 allowed by optimization-based reconstruction methods provided two
@@ -868,45 +708,46 @@ currently being used.
 For the problem of the limited axial coverage, the current clinical
 method of extending the FOV is to acquire two different circular scans
 at different axial positions and reconstruct each circle independently
-using FDK before stitching the two volumes together. Unfortunately,
-the increased distortion from cone-angle artifacts at large cone
-angles limits the axial separation between these two circles. This
-restricted separation distance is much less than what would be
+using FDK before stitching the two volumes together
+cite:forthmann_adaptive_2009. Unfortunately, the increased distortion
+from cone-angle artifacts at large cone angles limits the axial
+separation between these two circles. This restricted separation
+distance *% reduction estimate* is much less than what would be
 expected based simply on the coverage expected from the geometry of
 the kV detector.
 
 The use of the two circles alone provides one interesting example of a
-trajectory were optimization-based reconstruction provides an
-interesting advantage to the stacked-FDK method currently used. Unlike
-stitching two separate reconstructions together, it is possible to
-reconstruct the entire volume at once provided the system matrix is
-correctly calculated to reflect the acquisition of two circles in
-planes located at different axial positions relative to the patient.
-In addition to the reduced cone-angle artifacts already seen in
-optimization-based methods *CITE*, reconstructing both volumes
-together provides additional information about the overlapping region
-between the circles that further helps to reduce the cone-angle
-artifacts.
+trajectory where optimization-based reconstruction provides an
+advantage to the stacked-FDK method currently used. Unlike stitching
+two separate reconstructions together, it is possible to reconstruct
+the entire volume at once provided the system matrix is correctly
+calculated to reflect the acquisition of two circles in planes located
+at different axial positions relative to the patient. In addition to
+the reduced cone-angle artifacts already seen in optimization-based
+methods cite:davis_extended_2013,davis_verifying_2013, reconstructing
+both volumes together provides additional information about the
+overlapping region between the circles that further helps to reduce
+the cone-angle artifacts.
 
 In addition to improving the use of the two circles, the
 optimization-based framework then allows for trajectories that can
-deviate beyond the circles that are still needed for FDK. Given that
-there needs to be a relative axial translation between the kV-imaging
-system and the patient, we investigated if there any advantages to
-acquiring some of the projection views during the axial translation
-to. With the optimization-based approach, any such trajectory where
-some of the views were acquired during the translation stage could be
-reconstructed provided the positions of these views are accurately
-represented in the system matrix.
+deviate beyond the circles required by FDK. Given that there needs to
+be a relative axial translation between the kV-imaging system and the
+patient, we investigated if there were any advantages to acquiring
+some of the projection views during the axial translation. Such
+trajectories that included an axial translation stage have been
+studied before and have the potential to further reduce the impact of
+cone-angle artifacts with both analtyic-based
+cite:zeng_cone-beam_1992,noo_stable_1996,johnson_feldkamp_1998,katsevich_image_2004
+and optimization-based cite:davis_we-g-brf-07:_2014.
 
 In the case of potential patient collisions with the linac gantry, a
-simple change in the scanning trajectory when such a collision arose
-would be sufficient to prevent a collision. Much like the extended
-axial FOV case, optimization-based reconstruction is able to handle
-variations in the acquisition trajectory provided it is accurately
-reflected in the system matrix. As such, there are two different ways
-we studied where the scanning trajectory could be modified to avoid a
-collision.
+simple change in the scanning trajectory would be sufficient to
+prevent a collision. Much like the extended axial FOV case,
+optimization-based reconstruction is able to handle variations in the
+acquisition trajectory provided it is accurately reflected in the
+system matrix. As such, there are two different ways we studied where
+the scanning trajectory could be modified to avoid a collision.
 
 If the patient collision were to occur with the kV detector (the
 closest component of the CBCT system to the patient), one possible way
@@ -921,12 +762,12 @@ the patient.
 As with the change in magnification, the change in the patient
 position does not prevent reconstruction with the optimization-based
 methods provided the patient motion is correctly modeled. Moving the
-patient also provides a solution to patient collisions that occur with
-the linac treatment head. The MV treatment head on Varian's TrueBeam
-system is actually closer to the patient than the kV detector. Unlike
-the kV detector, it is not possible to change the position of the
-treatment head. In this case, moving the patient would be the only
-viable trajectory to avoid a collision.
+patient also provides a solution to avoid potential patient collisions
+that occur with the linac treatment head. The MV treatment head on
+Varian's TrueBeam system is actually closer to the patient than the kV
+detector. Unlike the kV detector, it is not possible to change the
+position of the treatment head. In this case, moving the patient would
+be the only viable trajectory to avoid a collision.
 
 ** Algorithms                                :noexport:
 *** MLEM
@@ -1179,7 +1020,7 @@ instead of $\mathbf{f}$ and solved with the MLEM algorithm in Equation
      :PROPERTIES:
      :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
      :END:
-To study these trajectories with a clinical, kV-imaging system, we
+To study these trajectories on a clinical, kV-imaging system, we
 acquired some of them on Varian's TrueBeam system. The TrueBeam
 Developer Mode provides control of the kV imaging system to allow for
 motion control that is unavailable in clinical modes. Developer Mode
@@ -1241,8 +1082,6 @@ kV beam direction orthogonal to the MV treatment beam.
     :PROPERTIES:
     :ID:       9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1
     :END:
-
-
 *table of header parameters hnd/xim*
 ** ideas                                     :noexport:
 Given that part of the robust nature of optimization-based algorithms
