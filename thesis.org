@@ -130,7 +130,7 @@ cite:hsieh_computed_2009.
 [[file:figures/intro/1st_gen_ct.png]]
 
 The algorithms for reconstructing the tomographic image from these
-x-ray projections at different angle evolved concurrently with the
+x-ray projections at different angles evolved concurrently with the
 different iterations of CT-scanner hardware. The projection data
 acquired from the first-generation scanner was necessarily digitized
 as the reconstructed image was computed by solving a linear system of
@@ -146,13 +146,16 @@ Though the first-generation CT system was a groundbreaking
 achievement, the rasterized scanning of the pencil beam at multiple
 angles required approximately 4.5 minutes to acquire the projection
 information to reconstruct a single two-dimensional (2D) slice of the
-scanned object cite:hsieh_computed_2009. The second generation of CT
-scanners significantly reduced this acquisition time to about 30
-seconds by replacing the pencil beam of x-rays with a fan beam and a
-detector array with around 30 detector elements. This new design,
-shown in Figure ([[ref:fig:intro_hist_2nd_gen]]), still required the
-source and detector to acquire projections using a linear translation
-before rotating to a new angular position and repeating the process
+scanned object cite:hsieh_computed_2009. Long scan times are
+problematic they increase the possibility of motion during scan which
+creates motion contamination artifacts in the reconstruction. The
+second generation of CT scanners significantly reduced this
+acquisition time to about 30 seconds by replacing the pencil beam of
+x-rays with a fan beam and a detector array with around 30 detector
+elements. This new design, shown in Figure
+([[ref:fig:intro_hist_2nd_gen]]), still required the source and detector
+to acquire projections using a linear translation before rotating to a
+new angular position and repeating the process
 cite:buzug_thorston_m._milestones_2008.
 
 #+CAPTION: Second-generation CT scanner. Though similar to the first-generation scanner in Figure ([[ref:fig:intro_hist_1st_gen]]), a significant reduction in acquisition time was achieved by replacing the pencil beam and single detector with a fan beam and an array of detector elements. The acquistion method remained the same in that the source and detector first acquired multiple projections via a linear translation before rotating to a new angular position and repeating the translation.
@@ -174,22 +177,22 @@ scanners were designed to reduce the acquisition time to under 20
 seconds in order to image a patient's abdomen in a single breath hold
 cite:buzug_thorston_m._milestones_2008.
 
-#+CAPTION: Third-generation CT scanner. This design kept the fan-beam x-ray source seen in the second generation of scanners, but the linear detector array was curved. This new design no longer required the source and detector to acquire a linear translation before rotating to a new scanning angle. Instead, this generation of scanners simply acquire a single projection at each angle which significantly reduces the acquisition time.
+#+CAPTION: Third-generation CT scanner. This design kept the fan-beam x-ray source seen in the second generation of scanners, but the detector size was increased to illuminate the entire patient. This new design no longer required the source and detector to acquire a linear translation before rotating to a new scanning angle. Instead, this generation of scanners simply acquire a single projection at each angle which significantly reduces the acquisition time.
 #+ATTR_LaTeX: :width 0.7\textwidth
 #+LABEL: fig:intro_hist_3rd_gen
 [[file:figures/intro/3rd_gen_ct.png]]
 
 The third generation of CT scanners, shown in Figure
-([[ref:fig:intro_hist_3rd_gen]]), would soon become the most popular
-generation of CT scanners. This remains true today as most modern
-diagnostic CT imaging systems, such as the one shown in Figure
-([[ref:fig:intro_ct_scan]]), are still based on the third generation
-design. Unlike the earlier generations of scanners, this design
-removed the need for the linear translation of the source and detector
-by replacing the flat array of detector elements with a curved array
-of detector elements. By doing this, it was only necessary to acquire
-a single projection at each rotation angle which significantly reduced
-the acquisition time cite:hsieh_computed_2009.
+([[ref:fig:intro_hist_3rd_gen]]), would soon become the dominant scanner
+design. This remains true today as most modern diagnostic CT imaging
+systems, such as the one shown in Figure ([[ref:fig:intro_ct_scan]]), are
+still based on the third generation design. Unlike the earlier
+generations of scanners, this design removed the need for the linear
+translation of the source and detector by increasing the size of the
+detector so that the entire patient could be illuminated at a given
+angle. By doing this, it was only necessary to acquire a single
+projection at each rotation angle which significantly reduced the
+acquisition time cite:hsieh_computed_2009.
 
 The evolution from the first generation of scanners to the second and
 third generations of scanners was enabled by advances in both computer
@@ -227,8 +230,8 @@ from misalignment of the moving detector. With a stationary ring of
 detectors, these ring artifacts are eliminated. However, with the
 advent of multi-slice detector technology which will be discussed in
 [[id:f84fb81e-a07d-4945-9653-fd1544703733][Cone-beam CT and new scanning trajectories]], the engineering and cost
-requirements will likely result in the fourth-generation scanners
-being phased out cite:hsieh_computed_2009.
+requirements has led to fourth-generation scanners being phased out
+cite:hsieh_computed_2009.
 
 #+CAPTION: Fourth-generation CT scanner. In this design, only the x-ray source rotates inside a ring of fixed detector elements.
 #+ATTR_LaTeX: :width 0.5\textwidth
@@ -309,21 +312,25 @@ useful reconstruction from a circular scanning trajectory on a CBCT
 system.
 
 ** Image-guided radiation therapy
+   :PROPERTIES:
+   :ID:       bbf164a1-25cd-4b35-b4ae-eb2b642d9d18
+   :END:
 X-ray technology is unique in how rapidly it was applied to the field
 of medicine following the discovery of x-rays by Wilhelm
 R\text{\"o}ntgen in 1895. The next year in Chicago, Emil Grubbe built
 his own x-ray device which he began to use for therapeutic purposes
 cite:mukherjee_emperor_2010. Both diagnostic and therapeutic uses of
 radiation developed in concert throughout the 20^th century culminating
-in radiation treatment devices that combine low-energy CT imaging with
-high-energy treatment beams in image-guide radiation therapy. These
-image-guided radiation therapy (IGRT) linear accelerators (linacs)
-allow for the delivery of powerful megavoltage (MV) treatment beams to
-diseased tissue while using kilovoltage (kV) CT techniques to both
-localize the tissue and evaluate the tissues response to therapy
+in radiation treatment devices that combine low-energy CT imaging or
+magnetic resonance imaging (MRI) with high-energy treatment beams in
+image-guide radiation therapy. These image-guided radiation therapy
+(IGRT) linear accelerators (linacs) allow for the delivery of powerful
+megavoltage (MV) treatment beams to diseased tissue while using
+kilovoltage (kV) CT techniques to both localize the tissue and
+evaluate the tissues response to therapy
 cite:oldham_cone-beam-ct_2005,xing_overview_2006,saw_performance_2007.
 
-#+CAPTION: Annotated image of a TrueBeam linac. On the treatment couch is the CIRS torso phantom aligned at the mechanical isocenter using the laser guidance system. Above the torso phantom to the left is the round MV treatment head with the metallic accessory mount and beam exit window. Below the table to the left is the kV source which provides the kV x-rays for the kV-CBCT imaging system. Above the phantom to the right is the kV detector panel which acquires the projections through the phantom for the kV-CBCT imaging system. Both the kV source and kV detector are mounted on robotic position arms. Below the phantom to the right is the MV EPID, which is retracted in this image, for acquiring MV projections from the MV treatment beam. Finally all of these components are mounted on a rotating gantry which can rotate $360^{\circ}$ around the mechanical isocenter for a single rotation. A subsequent rotation must occur in the opposite direction as the gantry lacks the ability to make multiple rotations in the same direction like a diagntostic-CT system due to the complexity of the MV linac design.
+#+CAPTION: Annotated image of a TrueBeam linac. On the treatment couch is the CIRS torso phantom aligned at the mechanical isocenter using the laser guidance system. Above the torso phantom to the left is the round MV treatment head with the metallic accessory mount and beam exit window. Below the table to the left is the kV source which provides the kV x-rays for the kV-CBCT imaging system. Above the phantom to the right is the kV detector panel which acquires the projections through the phantom for the kV-CBCT imaging system. Both the kV source and kV detector are mounted on robotic position arms. Below the phantom to the right is the MV electronic portal imaging device, which is retracted in this image, for acquiring MV projections from the MV treatment beam. Finally all of these components are mounted on a rotating gantry which can rotate $360^{\circ}$ around the mechanical isocenter for a single rotation. A subsequent rotation must occur in the opposite direction as the gantry lacks the ability to make multiple rotations in the same direction like a diagnostic CT system due to the complexity of the MV linac design.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:intro_linac
 [[file:figures/intro/annotated_linac.png]]
@@ -335,8 +342,8 @@ cite:jaffray_flat-panel_2002,letourneau_cone-beam-ct_2005,rahman_linac:_2015
 helped this modality become the most popular form of image-guided
 radiation therapy (IGRT)
 cite:xing_overview_2006,bissonnette_quality_2012,dawson_advances_2007.
-Figure ([[ref:fig:intro_linac]]) shows an annotated image of a TrueBeam
-linac (Varian Medical Systems, Palo Alto, CA). The tomographic
+Figure ([[ref:fig:intro_linac]]) shows an annotated image of a Varian
+rueBeam linac (Varian Medical Systems, Palo Alto, CA). The tomographic
 information provided in the kV energy range improves soft-tissue
 contrast resolution over that provided by the MV electronic portal
 imaging device (EPID) alone cite:jaffray_radiographic_1999. The
@@ -362,10 +369,10 @@ potential use for a variety of other CBCT applications.
    :PROPERTIES:
    :ID:       252a18dd-1210-4360-b082-fce5510334ab
    :END:
-In this work, we will discuss the optimization-based,
+In this work, we will discuss an optimization-based,
 image-reconstruction framework that enables the use of these new
 scanning trajectories. In particular, we will focus on how this
-approach was developed to address the two clinical bottlenecks of
+approach was developed to address the two clinical shortcomings of
 limited axial FOV coverage and potential patient collisions with the
 linac gantry. By using these two examples, we will not only show the
 feasibility of using these non-circular trajectories, but also a
