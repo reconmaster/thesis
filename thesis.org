@@ -407,6 +407,14 @@ However, this is fundamentally a question that must address the
 requirements of the computational reconstruction algorithm used to
 assemble the image from the x-ray projections.
 
+There are two main classes of reconstruction algorithms.
+Analytic-based algorithms represent an approximate solution to the
+inverse imaging problem, i.e. calculating the object function from its
+projections. Optimization-based algorithms represent the forward
+imaging problem as a linear system, and attempt to iteratively invert
+this system to find an object function that is consistent with the
+observed projections.
+
 Optimization-based image reconstruction provides a robust framework
 for reconstructing from projections acquired with the task-specific
 imaging trajectories we studied . Unlike the analytic-based methods,
@@ -554,6 +562,8 @@ of this assumption which leads to cone-angle artifacts. These
 artifacts become more severe at larger cone angles where this
 assumption is less applicable.
 
+*show example of cone-angle artifacts*
+
 The presence of cone-angle artifacts in FDK reconstructions from the
 incomplete data acquired with circular scanning trajectories led to
 research into inverse algorithms for cone-beam scans from
@@ -615,12 +625,11 @@ cite:shepp_maximum_1982,dempster_maximum_1977. Previous work has shown
 that these iterative algorithms can reconstruct clinically useful
 images under scanning conditions for which analytic-based FDK fails
 cite:han_optimization-based_2012,sidky_image_2007,sidky_accurate_2006.
-The reconstruction work from sparse-view data
-cite:bian_evaluation_2010 alone suggests that views could be
-distributed at different axial positions to acquire additional scan
-information without imparting more dose than the dense set of angular
-views used in current clinical circular scans with analytic-based
-reconstruction.
+Though a variety of optimization-based reconstruction programs exist,
+we used the MLEM program to limit the number of parameters introduced
+by the reconstruction program as the introduction of new scanning
+trajectories introduce additional parameters that impact the
+projection data and resulting tomographic reconstruction.
 
 # constrained, total-variation (TV) minimization by adaptive steepest
 # descent-projection onto convex sets (ASD-POCS)
@@ -647,13 +656,15 @@ Due to engineering and cost restrictions, the kV detector has a
 limited size. This restricts the FOV that can be imaged in a
 traditional circular scan. While the offset detector technique
 cite:bian_optimization-based_2013,cho_cone-beam_1995 is commonly used
-to increase the transaxial FOV, the axial coverage is still very
-limited cite:pearson_non-circular_2010. The reason why the limited FOV
-has not been addressed by increasing the detector size is partially
-due to the industry reliance on the approximate FDK algorithm
-cite:pan_why_2009. For increasingly large cone angles at the ends of
-the axial FOV, the approximation in the algorithm results in worse
-cone-angle artifacts cite:feldkamp_practical_1984.
+to increase the transaxial FOV (an increase in FOV diameter from 26.7
+cm to 44.0 cm on the TrueBeam system with a 13 cm offset), the axial
+coverage is still very limited cite:pearson_non-circular_2010. The
+reason why the limited FOV has not been addressed by increasing the
+detector size is partially due to the industry reliance on the
+approximate FDK algorithm cite:pan_why_2009. For increasingly large
+cone angles at the ends of the axial FOV, the approximation in the
+algorithm results in worse cone-angle artifacts
+cite:feldkamp_practical_1984.
 
 Another problem with the current circular imaging trajectory is the
 potential linac collisions with the patient
@@ -686,10 +697,11 @@ addressing the reconstruction from some novel trajectories
 cite:katsevich_theoretically_2002,katsevich_image_2004,katsevich_image_2005,katsevich_formulation_2006,
 it could be clinically useful to enable reconstruction from an
 arbitrary, collision-avoiding trajectory. As the collision region (if
-one arises) is contingent on the patient's treatment position, the
-imaging trajectory would then vary on a per patient basis. As such,
-deriving the analytic inverse for each patient's scanning trajectory
-would be impractical in a clinical work flow.
+one arises) is contingent on the patient's size and the patient's
+treatment position, the imaging trajectory would then vary on a per
+patient basis. As such, deriving the analytic inverse for each
+patient's scanning trajectory would be impractical in a clinical work
+flow.
 
 Optimization-based reconstruction provides a generalized framework
 enabling greater flexibility in reconstructing from projections
@@ -723,6 +735,10 @@ distance *% reduction estimate* is much less than what would be
 expected based simply on the coverage expected from the geometry of
 the kV detector.
 
+#+CAPTION: Schematic of the limited axial FOV from stacking FDK volumes
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:opt_axial_fov_limit
+
 The use of the two circles alone provides one interesting example of a
 trajectory where optimization-based reconstruction provides an
 advantage to the stacked-FDK method currently used. Unlike stitching
@@ -737,14 +753,13 @@ overlapping region between the circles that further helps to reduce
 the cone-angle artifacts.
 
 In addition to improving the use of the two circles, the
-optimization-based framework then allows for trajectories that can
-deviate beyond the circles required by FDK. Given that there needs to
-be a relative axial translation between the kV-imaging system and the
-patient, we investigated if there were any advantages to acquiring
-some of the projection views during the axial translation. Such
-trajectories that included an axial translation stage have been
-studied before and have the potential to further reduce the impact of
-cone-angle artifacts with both analtyic-based
+optimization-based framework then allows for noncircular trajectories.
+Given that there needs to be a relative axial translation between the
+kV-imaging system and the patient, we investigated if there were any
+advantages to acquiring some of the projection views during the axial
+translation. Such trajectories that included an axial translation
+stage have been studied before and have the potential to further
+reduce the impact of cone-angle artifacts with both analtyic-based
 cite:zeng_cone-beam_1992,noo_stable_1996,johnson_feldkamp_1998,katsevich_image_2004
 and optimization-based cite:davis_we-g-brf-07:_2014.
 
@@ -759,22 +774,26 @@ the scanning trajectory could be modified to avoid a collision.
 If the patient collision were to occur with the kV detector (the
 closest component of the CBCT system to the patient), one possible way
 to avoid that collision would be to move the kV detector away from the
-patient at the collision region. This effectively changes the
-magnification for that region, but the reconstruction framework is
-able to reconstruct from all the views at both magnifications provided
-that it is accurately modeled in the reconstruction problem. The other
-trajectory modification that could solve this problem would be to move
-the patient.
+patient at the collision region. Since the detector is mounted on a
+robotic arm, it should be possible to move the detector outward from
+the isocenter radially, increasing the diameter of both the
+collision-free region and of the scanning trajectory. This effectively
+changes the magnification for that region, but the reconstruction
+framework is able to reconstruct from all the views at both
+magnifications provided that everything is accurately modeled in the
+reconstruction problem. The other trajectory modification that could
+solve this problem would be to move the patient.
 
 As with the change in magnification, the change in the patient
 position does not prevent reconstruction with the optimization-based
-methods provided the patient motion is correctly modeled. Moving the
-patient also provides a solution to avoid potential patient collisions
-that occur with the linac treatment head. The MV treatment head on
-Varian's TrueBeam system is actually closer to the patient than the kV
-detector. Unlike the kV detector, it is not possible to change the
-position of the treatment head. In this case, moving the patient would
-be the only viable trajectory to avoid a collision.
+methods provided the patient motion is correctly incorporated into the
+system matrix $\mathcal{H}$. Moving the patient also provides a
+solution to avoid potential patient collisions that occur with the
+linac treatment head. The MV treatment head on Varian's TrueBeam
+system is actually closer to the patient than the kV detector. Unlike
+the kV detector, it is not possible to change the position of the
+treatment head. In this case, moving the patient would be the only
+viable trajectory modification to avoid a collision.
 
 ** Algorithms                                :noexport:
 *** MLEM
@@ -837,7 +856,7 @@ image estimate for the reconstructions was $\mathbf{f}^{(0)}=1$. The
 $M\times M$ diagonal matrix $\mathcal{W}$ weights the corresponding
 data entries cite:bian_optimization-based_2013.
 
-** Additional reconstruction parameters
+** Additional reconstruction parameters      :noexport:
 *** Iterations and stopping criteria
     :PROPERTIES:
     :ID:       03857328-5d45-4133-b4a0-eff3fd941eaa
@@ -962,6 +981,9 @@ addMargins(0.5cm, 0.5cm);
  #+RESULTS: fig:opt_weighting
  [[file:figures/opt/weighting.pdf]]
 ** Generalized trajectory framework
+   :PROPERTIES:
+   :ID:       ad13bdd9-4298-4534-979d-a019d80311a5
+   :END:
 To find an estimate of the object $\mathbf{f^{*}}$ as an approximate
 solution to Equation ([[ref:eq:linmodel]]), we choose a reconstruction
 program that can be solved with the well-understood maximum-likelihood
@@ -971,9 +993,10 @@ Here, our reconstruction program is formulated as
   \mathbf{f^{*}} = \text{argmin}D_{KL} \left(\mathbf{f}\right)
   \label{eq:opt_kl}
 \end{equation}
-where $D_{KL}(\mathbf{f})$ is the KL divergence between $\mathbf{g}$ and
-$\mathcal{H}\mathbf{f}$ cite:barrett_foundations_2003. The KL
-divergence is minimized with the MLEM algorithm
+where $D_{KL}(\mathbf{f})$ is the Kullback-Leibler (KL) divergence
+between $\mathbf{g}$ and $\mathcal{H}\mathbf{f}$
+cite:barrett_foundations_2003. The KL divergence, which is also known
+as relative entropy, is minimized with the MLEM algorithm
 \begin{equation}
 f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}
   \label{eq:opt_mlem}
