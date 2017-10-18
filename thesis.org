@@ -2179,15 +2179,13 @@ geometric calibration consistently improves image quality.
    :END:
 # What question (problem) was studied?
 A major limitation of linac-mounted CBCT kV-imaging systems is their
-limited axial coverage. This is partially due to the detector size
-which is restricted due to engineering concerns. Another reason for
-this limited coverage is the prevalence of analytic-based
-reconstruction algorithms in the clinic cite:pan_why_2009. These
-algorithms, such as FDK cite:feldkamp_practical_1984, are known to
-suffer from cone-angle artifacts at the axial extremes of the
-reconstruction volume. The increasing severity of these artifacts at
-the axial extremes is partially why developing larger kV detectors
-have not been pursued.
+limited axial coverage. This is partially due to the prevalence of
+analytic-based reconstruction algorithms in the clinic
+cite:pan_why_2009. These algorithms, such as FDK
+cite:feldkamp_practical_1984, are known to suffer from cone-angle
+artifacts at the axial extremes of the reconstruction volume. Another
+major reason for this limited coverage is to the detector size which
+is restricted due to both cost and engineering concerns.
 
 With the robust trajectory framework allowed by optimization-based
 algorithms, we are no longer bound to the strict trajectory
@@ -2218,12 +2216,12 @@ kV-imaging systems with a limited axial coverage that, as in our
 TrueBeam system, can be half the size of the MV-treatment beam FOV.
 This limitation can be problematic for patients with treatment volumes
 that have axial coverage beyond what is visible in a single circular
-acquisition cite:voong_dosimetric_2014. Using optimization-based
-reconstruction, we studied some potential trajectories and then
-compared the subsequent extended-axial images to the clinical FDK
-standard. The hypothesis is that there can be extensive gains in
-clinical utility for these extended volume images provided that the
-image quality is comparable to the current clinical standard.
+acquisition cite:voong_dosimetric_2014. We studied some potential
+trajectories and then compared the subsequent extended-axial images to
+the clinical FDK standard. The hypothesis is that there can be
+extensive gains in clinical utility for these extended volume images
+provided that the image quality is comparable to the current clinical
+standard.
 
 ** Methods
    :PROPERTIES:
@@ -2656,7 +2654,6 @@ sufficient redundancy is available to reconstruct this volume.
  #+LABEL: fig:take_rmse
  file:./img/take/central_cbct_rmse.pdf
 
-
 ** Results
    :PROPERTIES:
    :ID:       b2a353e8-8531-4a0e-8337-9f702ecf02f8
@@ -2820,8 +2817,8 @@ the methods are often insufficient for standard CBCT imaging because
 they generally seek to avoid collisions preventing ideal treatment
 positions and preventing complete collection of tomographic image
 information. A generalized imaging framework such as the one we use
-may allow for collision avoidance while also collecting all the
-necessary tomographic information.
+may allow for the use of patient-specific collision-avoiding CBCT
+trajectories..
 
 Collision avoiding trajectories may be of particular concern in breast
 and lung cancer patients where the arm position increases the
@@ -2863,7 +2860,7 @@ acquire a complete circular scan in the treatment position.
 To avoid collisions with the LINAC head, it might be desirable to move
 the patient away from the gantry by translating the couch. To avoid
 collisions with the imaging panel, the patient might also be moved
-away from the panel. As some linac-mounted, kV-imaging panels have
+away from the panel. As many linac-mounted, kV-imaging panels have
 motion capabilities, another solution would be to move the imager away
 from the patient in the collision zone, which changes the imaging
 magnification for that portion of the scan. Given that the clearance
@@ -2871,20 +2868,16 @@ distance of the kV-imaging panel is not much larger than that of the
 MV-treatment head, a collision avoidance solution should account for
 both of these components.
 
-Here, we investigate trajectories that would allow the acquisition of
+Here, we investigate trajectories that could allow the acquisition of
 sufficient projection information for a clinically useful image while
-avoiding a potential patient collision with the gantry. As the gantry
-rotates, there are two components of the linac that are potential
-sources of patient collisions. These are the MV-treatment head, shown
-in Figure ([[ref:fig:col_barbie_collision]]), and the kV-CBCT detector.
-
-One trajectory that would avoid a patient collision with the
-MV-treatment head is a virtual isocenter trajectory. This trajectory
-avoids such a collision by increasing the effective source-to-axis
-distance (SAD) for all gantry angles. By using this increased SAD for
-an imaging trajectory, the clearance between the patient and the
-MV-treatment head as the gantry rotates is increased and the collision
-is avoided.
+avoiding a potential patient collision with the gantry such as those
+shown in Figure ([[ref:fig:col_barbie_collision]]). One trajectory that
+would avoid a patient collision with the MV-treatment head is a
+virtual isocenter trajectory, which increases the effective
+source-to-axis distance (SAD) for all gantry angles. By using this
+increased SAD for an imaging trajectory, the clearance between the
+patient and the MV-treatment head as the gantry rotates is increased
+and the collision is avoided.
 
 The virtual isocenter trajectory utilizes synchronized gantry rotation
 and couch translation to maintain a fixed distance (``virtual SAD'')
@@ -2929,8 +2922,8 @@ acquisition. Again, optimization-based reconstruction methods can
 readily handle such a change in magnification provided the projection
 information is correctly incorporated into the system matrix.
 
-Finally, we study a trajectory that combines both virtual isocenter
-and dynamic magnification trajectories to create a hybrid scanning
+Finally, we study a trajectory that combines virtual isocenter and
+dynamic magnification trajectories to create a hybrid scanning
 acquisition that could alleviate collisions with both the MV-treatment
 head and the kV-CBCT detector. With such a trajectory, the potential
 collisions with both the linac head and the kV detector panel are
@@ -2983,18 +2976,19 @@ illumination.
 
 To increase the clearance between the kV detector and the patient, we
 increased the radius of the kV detector with accompanying increase in
-magnification of the kV imaging system. To create projection datasets
-where the detector distance changes during a scan, we acquired
-multiple scans using different detector positions and subsequently
-spliced these together to create the sinograms of interest with the
-corresponding system matrix $\mathcal{H}$. This allowed us to create
-different dynamic magnification scan datasets. We acquired both
-circular and virtual isocenter trajectories with detector positions of
-50 cm, 60 cm and 70 cm away from the mechanical isocenter for
-magnifications of 1.5X, 1.6X and 1.7X respectively. In each case, the
-detector cover is 5 cm closer to the patient than the CsI layer,
-potentially leading to collisions with the limits shown in the first
-plot in Figure ([[ref:fig:col_collision_zones]]).
+magnification of the kV imaging system. Currently, the detector
+positioning arm cannot be moved while the gantry rotates. Thus, to
+create projection datasets where the detector distance changes during
+a scan, we acquired multiple scans using different detector positions
+and subsequently spliced these together to create the sinograms of
+interest with the corresponding system matrix $\mathcal{H}$. This
+allowed us to create different dynamic magnification scan datasets. We
+acquired both circular and virtual isocenter trajectories with
+detector positions of 50 cm, 60 cm and 70 cm away from the mechanical
+isocenter for magnifications of 1.5X, 1.6X and 1.7X respectively. In
+each case, the detector cover is 5 cm closer to the patient than the
+CsI layer, potentially leading to collisions with the limits shown in
+the first plot in Figure ([[ref:fig:col_collision_zones]]).
 
 #+CAPTION: Collision zones in the patient image space for the kV detector cover and the MV treatment head accessory mount. The left figure shows the increasing radius of the kV-detector collision zone with an increase in magnification. The middle figure shows the increased radius of the kV-detector collision zone for the two dynamic magnification trajectories utilizing a $45^{\circ}$ bump at a higher magnification. The right figure shows the increased radius of the MV-treatment-head collision zone when using the virtual isocenter scanning trajectory.
 #+ATTR_LaTeX: :width \textwidth :float multicolumn
@@ -3132,8 +3126,8 @@ the pixel values in the respective regions.
 The last metric we evaluated was the reproducibility of the CT numbers
 between the circular and virtual isocenter scan, and the different
 combinations of magnification bumps. For this we used the mean and
-standard deviations in ROIs for all the material insert the Catphan
-CTP 404 sensitometry module in addition to the polystyrene and
+standard deviations in ROIs for all the material inserts of the
+Catphan CTP 404 sensitometry module in addition to the polystyrene and
 background ROIs used for the low-contrast CNR calculations. We also
 evaluated three additional ROIs of the water-like background for a
 total of four background ROIs.
@@ -3149,21 +3143,9 @@ deviations were calculated.
     :END:
 The addition of couch motion to the imaging trajectory does increase
 the degrees of freedom for which proper geometric calibration must be
-acquired. Using Varian's Isocal calibration phantom, we developed an
-optimization-based calibration protocol that allows us to extract
-calibration offsets for improving our estimate of the system matrix
-$\mathcal{H'}$. Using same scanning trajectory to image the Isocal
-phantom, the nominal scanning metadata from the TrueBeam projections
-provided an initial estimate of the imaging geometry. We then used the
-Nelder-Mead simplex program to search for the geometric offsets for
-the source, detector, and treatment couch positions at each view, as
-well as the phantom pose to account for possible setup errors. The
-cost function of this optimization used the $L_{2}-\text{norm}$ between
-the projected fiducials in the real data sinogram and the simulated
-projection of the fiducials using the current estimate of the system
-geometry. We used the estimated offsets that minimized the cost
-function to refine our system matrix $\mathcal{H'}$ that we
-subsequently used in the MLEM reconstruction program.
+acquired. Using the methods described in the chapter [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric
+calibration]], we computed corrections to the nominal reported couch,
+source and detector positions for each of the tested trajectories.
 
 We reconstructed all of these fixed magnification and dynamic
 magnification scans from circular and virtual isocenter trajectories
