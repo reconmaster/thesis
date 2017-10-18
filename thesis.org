@@ -330,7 +330,7 @@ cite:oldham_cone-beam-ct_2005,xing_overview_2006,saw_performance_2007.
 
 The addition of a linac-mounted, kV-imaging, cone-beam computed
 tomography (CBCT) system to the gantry-mounted clinical linear
-accelerator (linac)
+accelerator
 cite:jaffray_flat-panel_2002,letourneau_cone-beam-ct_2005,rahman_linac:_2015
 helped this modality become the most popular form of image-guided
 radiation therapy (IGRT)
@@ -2779,29 +2779,29 @@ From the results shown in Figure (\ref{fig:})
    :END:
 Given the clinical benefits provided by the linac-mounted CBCT sytem,
 it is detrimental when adequate tomographic information cannot be
-obtained from the kV-imaging CBCT system. One situation in which this
-can occur is when a collision between the patient and the machine
-arises. While there is has been substantial work done on the detection
-and avoidance of collisions in treatment delivery
+obtained from the kV-imaging CBCT system. One such situation is when a
+collision between the patient and the machine arises. While there has
+been substantial work done aimed at the detection and avoidance of
+collisions in treatment delivery
 cite:humm_collision_1995,chao_image_2001,tsiakalos_graphical_2001,nioutsikou_patient-specific_2003,hua_practical_2004,becker_collision_2013,padilla_patient-specific_2014,padilla_collision_2015,
 the methods are often insufficient for standard CBCT imaging because
-they generally seek to resolve collisions preventing ideal treatment
-positions without attempting obtain tomographic image information. A
-generalized imaging framework such as the one we use hered may allow
-for some of these techniques to also acquire tomographic information
-at the same time.
+they generally seek to avoid collisions preventing ideal treatment
+positions and preventing complete collection of tomographic image
+information. A generalized imaging framework such as the one we use
+may allow for collision avoidance while also collecting all the
+necessary tomographic information.
 
-These may be of particular concern in breast and lung cancer patients
-where the arm position leads to a possible collision as shown in
-Figure ([[ref:fig:col_barbie_collision]]). Collisions also present a
-problem in treatment of posterior and lateral lesions in stereotactic
-body radiosurgery (SBRT). Similarly in prone breast treatments, where
-the target is near the couch top and a lateral couch translation is
-needed to bring the target to isocenter, collision with the
-contralateral side of the patient may occur. When collisions do occur,
-the angular range available for scanning is restricted and it is not
-possible to acquire a complete circular scan in the treatment
-position.
+Collision avoiding trajectories may be of particular concern in breast
+and lung cancer patients where the arm position increases the
+likelihood of potential collisions as shown in Figure
+([[ref:fig:col_barbie_collision]]). Collisions also present a problem in
+treatment of posterior and lateral lesions in stereotactic body
+radiosurgery (SBRT). Similarly in prone breast treatments, where the
+target is near the couch top and a lateral couch translation is needed
+to bring the target to isocenter, collision with the contralateral
+side of the patient may occur. When collisions do occur, the angular
+range available for scanning is restricted and it is not possible to
+acquire a complete circular scan in the treatment position.
 
 #+BEGIN_EXPORT latex
 \begin{figure*}
@@ -2828,45 +2828,45 @@ position.
 \end{figure*}
 #+END_EXPORT
 
-To avoid collisions with the treatment head, it could be desirable to
-move the patient away from the gantry as it approaches a collision,
-simply by translating the couch. To avoid collisions with the imaging
-panel, the patient might also be moved away from the panel as a
-collision approaches. As some linac-mounted, kV-imaging panels have
+To avoid collisions with the LINAC head, it might be desirable to move
+the patient away from the gantry by translating the couch. To avoid
+collisions with the imaging panel, the patient might also be moved
+away from the panel. As some linac-mounted, kV-imaging panels have
 motion capabilities, another solution would be to move the imager away
 from the patient in the collision zone, which changes the imaging
 magnification for that portion of the scan. Given that the clearance
 distance of the kV-imaging panel is not much larger than that of the
-MV-treatment head, a collision avoidance solution needs to take into
-account both of these components.
+MV-treatment head, a collision avoidance solution should account for
+both of these components.
 
-Here, we investigate examples of potential scanning trajectories that
-would allow the acquisition of sufficient projection information for a
-clinically useful image while avoiding a potential patient collision
-with the gantry. As the gantry rotates, there are two components of
-the linac that are potential sources of patient collisions. These are
-the MV-treatment head, shown in Figure ([[ref:fig:col_barbie_collision]]),
-and the kV-CBCT detector.
+Here, we investigate trajectories that would allow the acquisition of
+sufficient projection information for a clinically useful image while
+avoiding a potential patient collision with the gantry. As the gantry
+rotates, there are two components of the linac that are potential
+sources of patient collisions. These are the MV-treatment head, shown
+in Figure ([[ref:fig:col_barbie_collision]]), and the kV-CBCT detector.
 
 One trajectory that would avoid a patient collision with the
 MV-treatment head is a virtual isocenter trajectory. This trajectory
 avoids such a collision by increasing the effective source-to-axis
-distance (SAD). By using this increased SAD for an imaging trajectory,
-the clearance between the patient and the MV-treatment head as the
-gantry rotates is increased and the collision is avoided.
+distance (SAD) for all gantry angles. By using this increased SAD for
+an imaging trajectory, the clearance between the patient and the
+MV-treatment head as the gantry rotates is increased and the collision
+is avoided.
 
 The virtual isocenter trajectory utilizes synchronized gantry rotation
 and couch translation to maintain a fixed distance (``virtual SAD'')
 between the MV source and a chosen center of rotation (``virtual
-isocenter'') in the patient. At the beginning of the scan, the patient
+isocenter'') in the patient as shown by the red circle in Figure
+([[ref:fig:col_virtual_iso]]). At the beginning of the scan, the patient
 is moved away from the linac head along the MV beam direction. As the
 gantry rotates, the couch moves continuously to maintain the specified
 separation as shown in Figure ([[ref:fig:col_virtual_iso]]). The virtual
-SAD can be chosen large enough so that collisions as shown in Figure
+SAD can be chosen large enough such that collisions as shown in Figure
 ([[ref:fig:col_barbie_mv]]) are avoided; at this point in the trajectory,
 the couch would have moved far enough to the left to avoid the
 collision. Note that it is only the distance to the linac head that is
-increased in the plain virtual SAD technique; the distance from the kV
+increased in the virtual SAD technique; the distance from the kV
 source and detector to the patient and to each other are unchanged.
 
 #+BEGIN_EXPORT latex
@@ -2899,10 +2899,12 @@ information is correctly incorporated into the system matrix.
 
 Finally, we study a trajectory that combines both virtual isocenter
 and dynamic magnification trajectories to create a hybrid scanning
-acquisition that would alleviate collisions with both the MV-treatment
-head and the kV-CBCT detector. We use such a trajectory as an example
-of a patient-specific scanning trajectory designed to avoid a
-collision that would arise with a particular treatment position.
+acquisition that could alleviate collisions with both the MV-treatment
+head and the kV-CBCT detector. With such a trajectory, the potential
+collisions with both the linac head and the kV detector panel are
+resolved. We use such a trajectory as an example of a patient-specific
+scanning trajectory that could be implemented to resolve potential
+collisions with two components of the linac treatment system.
 
 ** Methods and Materials
    :PROPERTIES:
@@ -2940,12 +2942,12 @@ target point within the treatment volume (the "virtual isocenter"),
 rather than the mechanical SAD of 100 cm as shown in Figure
 ([[ref:fig:col_virtual_iso]]). We generated all of the scanning
 trajectories in this study using the Developer Mode 2.0 XML schema to
-create control points for the gantry, the kV imaging arms, and the
-patient treatment table. Imaging control points were placed along the
-trajectory to acquire kV-projection images during the scan. We used a
-half-fan detector configuration with a 13 cm offset for the circular
-acquisition, and an equivalent offset for the virtual isocenter to
-obtain the same illumination.
+define the positions of the gantry, the kV imaging arms, and the
+patient treatment table. The schema was also used to enable
+kV-projection imaging during the scan. We used a half-fan detector
+configuration with a 13 cm offset for the circular acquisition, and an
+equivalent offset for the virtual isocenter to obtain the same
+illumination.
 
 To increase the clearance between the kV detector and the patient, we
 increased the radius of the kV detector with accompanying increase in
@@ -2971,34 +2973,33 @@ To create the combined sinogram of a hypothetical collision-avoiding
 dynamic magnification scan, we replaced a $45^{\circ}$ region of the 1.5X
 circular scan with the corresponding angular range from scans at
 different magnifications. We chose this region to be centered on the
-angular position where the mannequin's elbow is in Figure
+angular position corresponding to the mannequin's elbow in Figure
 ([[ref:fig:col_barbie_collision]]). Increasing the magnification in this
 region corresponds to increasing the clearance between the kV-detector
-and the patient. Increasing the magnification to 1.6X provides an
-additional 10 cm of clearance, and to 1.7X an additional 20 cm of
-clearance. We also created an additional $35^{\circ}$ 1.7X bump
-magnification with $5^{\circ}$ transitions at a 1.6X magnification. The
-kV-detector collision zones of these dynamic magnification
-trajectories are shown in the middle plot shown in Figure
-([[ref:fig:col_collision_zones]]).
+and the patient. Increasing the magnification to 1.6X and 1.7X
+provides an additional 10 cm and 20 cm of clearance respectively. We
+also created an additional $35^{\circ}$ 1.7X bump magnification with
+$5^{\circ}$ transitions at a 1.6X magnification. The kV-detector
+collision zones of these dynamic magnification trajectories are shown
+in the middle plot shown in Figure ([[ref:fig:col_collision_zones]]).
 
-For the collision with the MV treatment head accessory mount shown in
-Figure ([[ref:fig:col_barbie_collision]]), using the virtual isocenter
-imaging trajectory would alleviate this problem. The radius of the
-accessory mount from the mechanical isocenter is 41.7 cm. For the
-virtual isocenter used in this study, there is a 12 cm increase in the
-radius of this collision zone as shown in the last plot in Figure
-([[ref:fig:col_collision_zones]]). Utilizing a different virtual SAD would
-allow for additional clearance if necessary.
+The virtual isocenter imaging trajectory would alleviate the potential
+collision with the MV treatment head accessory mount shown in Figure
+([[ref:fig:col_barbie_mv]]). The radius of the accessory mount from the
+mechanical isocenter is 41.7 cm. Using a virtual isocenter would
+increase the radius of the collision zone by 12cm to alleviate
+potential collisions (as shown in ([[ref:fig:col_collision_zones]])).
+Utilizing a different virtual SAD would allow for additional clearance
+if necessary.
 
 The last set of trajectories we studied combines the dynamic
 magnification with the virtual isocenter trajectory. As the collision
 radius with the MV treatment head and the kV detector are similar for
-the current clinical scan, collisions with both could arise. By
-combining the change in magnification with the virtual isocenter
-trajectory, both collision zones could be avoided. Table
-([[ref:tab:col_trajectories]]) shows the different scans investigated in this
-study.
+the current clinical scan trajectories, collisions with either could
+arise. By combining the change in magnification with the virtual
+isocenter trajectory, both collision zones could be avoided. Table
+([[ref:tab:col_trajectories]]) shows the different scans investigated in
+this study.
 
 # +ATTR_LATEX: :environment longtable
 #+CAPTION: Scanning trajectories
@@ -3018,52 +3019,6 @@ study.
 |-------------------+------------------------------------------|
 **** figures                                 :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb]]
-*** Reconstruction
-    :PROPERTIES:
-    :ID:       d0eac288-37d6-4cef-97c8-7896dcc67733
-    :END:
-The addition of couch motion to the imaging trajectory does increase
-the degrees of freedom for which proper geometric calibration must be
-acquired. Using Varian's Isocal calibration phantom, we developed an
-optimization-based calibration protocol that allows us to extract
-calibration offsets for improving our estimate of the system matrix
-$\mathcal{H'}$. Using same scanning trajectory to image the Isocal
-phantom, the nominal scanning metadata from the TrueBeam projections
-provided an initial estimate of the imaging geometry. We then used the
-Nelder-Mead simplex program to search for the geometric offsets for
-the source, detector, and treatment couch positions at each view, as
-well as the phantom pose to account for possible setup errors. The
-cost of this optimization used the $L_{2}-\text{norm}$ between the
-projected fiducials in the real data sinogram and the simulated
-projection of the fiducials using the current estimate of the system
-geometry. We used the estimated offsets that minimized the cost
-function to refine our system matrix $\mathcal{H'}$ that we
-subsequently used in the MLEM reconstruction program.
-
-We reconstructed all of these fixed magnification and dynamic
-magnification scans from circular and virtual isocenter trajectories
-into the patient image space described by the imaging model in
-Equation ([[ref:eq:opt_linmodel_patient]]). The Catphan scans were
-reconstructed onto an isotropic voxel size of 0.473 mm. The CIRS torso
-scans were reconstructed onto an isotropic voxel size of 0.836 mm. As
-the circular acquisition with 1.5X magnification is the typical
-clinical acquisition trajectory, this provides a clinical reference
-volume for the reconstructions from the other scanning configurations.
-
-#+CAPTION: Plot of the Catphan's edge-spread function MTF at 50% and 25% as well as the MTF AUC for the clinical circular 1.5X half-fan scan.
-#+ATTR_LaTeX: :width 0.8\textwidth
-#+LABEL: fig:col_mtf_vs_iteration
-[[file:figures/col/edge_spread_mtf_iteration.pdf]]
-
-Figure ([[ref:fig:mtf_vs_iteration]]) shows the 25% and 50% MTF crossing
-spatial frequencies and the MTF AUC of the edge spread function from
-the MLEM reconstruction of the Catphan phantom acquired with a
-circular scan at 1.5X magnification, vs. iteration number. Based on
-this result from a typical scanning configuration, we chose to use 200
-iterations of the MLEM algorithm for all reconstructions, using
-approximately 900 projection views for each scan.
-**** figs                                    :noexport:
-***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb")][truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb]]
 *** Metric Evaluation
     :PROPERTIES:
     :ID:       bbb809be-d901-4945-b045-bb886cf349bd
@@ -3075,6 +3030,8 @@ phantom. Using metrics that quantify these image qualities, we
 compared the different magnifications of both the circular and virtual
 isocenter scans to the MLEM reconstruction of a standard circular
 scan.
+
+*catphan schematic?*
 
 There are a number of ways to evaluate the spatial resolution from
 images of the Catphan phantom in a CT image. The CTP528 module
@@ -3094,17 +3051,15 @@ and disadvantages. The point source method can provide 3D directional
 estimates of the point-spread function (PSF), however it can also be
 sensitive to the location of the bead relative to the image grid with
 significant difference between a bead located totally within a single
-voxel or on the interface of many.
-
-The bar pattern based evaluation is a clear complement to the visual
-analysis, however the orientation of the bars relative to the grid
-will affect some frequencies differently than others which can result
-in atypical appearing MTF curves. Using an edge spread analysis on the
-circular phantom boundary provides many samples, at varying directions
-to the image grid which can be averaged out. It can be impacted by
-scatter or saturation in the air region near the phantom boundary,
-however this has not proven to be a significant factor in the images
-we have analyzed.
+voxel or on the interface of many. The bar pattern based evaluation is
+a clear complement to the visual analysis, however the orientation of
+the bars relative to the grid will affect some frequencies differently
+than others which can result in atypical appearing MTF curves. Using
+an edge spread analysis on the circular phantom boundary provides many
+samples, at varying directions to the image grid which can be averaged
+out. It can be impacted by scatter or saturation in the air region
+near the phantom boundary, however this has not proven to be a
+significant factor in the images we have analyzed.
 
 The image slice for analysis, the central slice here, is first
 thresholded based on the image intensity, the connected component with
@@ -3156,10 +3111,60 @@ corresponding to aorta, liver and spleen in the abdomen of the CIRS
 torso phantom. For each of the magnifications from both the circular
 and virtual isocenter trajectories, the mean HU values and standard
 deviations were calculated.
+*** Reconstruction
+    :PROPERTIES:
+    :ID:       d0eac288-37d6-4cef-97c8-7896dcc67733
+    :END:
+The addition of couch motion to the imaging trajectory does increase
+the degrees of freedom for which proper geometric calibration must be
+acquired. Using Varian's Isocal calibration phantom, we developed an
+optimization-based calibration protocol that allows us to extract
+calibration offsets for improving our estimate of the system matrix
+$\mathcal{H'}$. Using same scanning trajectory to image the Isocal
+phantom, the nominal scanning metadata from the TrueBeam projections
+provided an initial estimate of the imaging geometry. We then used the
+Nelder-Mead simplex program to search for the geometric offsets for
+the source, detector, and treatment couch positions at each view, as
+well as the phantom pose to account for possible setup errors. The
+cost function of this optimization used the $L_{2}-\text{norm}$ between
+the projected fiducials in the real data sinogram and the simulated
+projection of the fiducials using the current estimate of the system
+geometry. We used the estimated offsets that minimized the cost
+function to refine our system matrix $\mathcal{H'}$ that we
+subsequently used in the MLEM reconstruction program.
+
+We reconstructed all of these fixed magnification and dynamic
+magnification scans from circular and virtual isocenter trajectories
+into the patient image space described by the imaging model in
+Equation ([[ref:eq:opt_linmodel_patient]]). The Catphan scans were
+reconstructed onto an isotropic voxel size of 0.473 mm. The CIRS torso
+scans were reconstructed onto an isotropic voxel size of 0.836 mm. As
+the circular acquisition with 1.5X magnification is the typical
+clinical acquisition trajectory, this provides a clinical reference
+volume for the reconstructions from the other scanning configurations.
+
+#+CAPTION: Plot of the Catphan's edge-spread function MTF at 50% and 25% as well as the MTF AUC for the clinical circular 1.5X half-fan scan. The effectie plateau in these spatial resolution metrics at 200 iterations is why we selected this as the fixed iteration number for all of our reconstructions.
+#+ATTR_LaTeX: :width 0.8\textwidth
+#+LABEL: fig:col_mtf_vs_iteration
+[[file:figures/col/edge_spread_mtf_iteration.pdf]]
+
+
+For the number of iterations in our reconstruction program, we
+selected 200 iterations as subsequent improvements in spatial
+resolution with further iterations were diminished. This is shown in
+Figure ([[ref:fig:col_mtf_vs_iteration]]) which plots as a function of
+iteration numnber the 25% and 50% crossing spatial frequencies of the
+modular transfer function (MTF) and the area under the curve (AUC) of
+the MTF. The MTF was found using the edge spread function from the
+MLEM reconstruction of the Catphan phantom acquired with a circular
+scan at 1.5X magnification.
+**** figs                                    :noexport:
+***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb")][truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb]]
 *** analysis                                 :noexport:
  - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"161213_virtiso_circ_half_dynmag_catphan_isocal/collision_avoidance.ipynb")][collisions figures]]
  - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170126_virtiso_circ_half_dynmag_ed/ed_images.ipynb")][ed analysis]]
 ** Results
+   SCHEDULED: <2017-10-18 Wed>
    :PROPERTIES:
    :ID:       28832b04-7d26-4ef8-83f2-08db94493ab9
    :END:
@@ -3194,13 +3199,13 @@ different trajectories.
 #+LABEL: fig:col_catphan_cnr
 [[file:figures/col/catphanCNR_ps.pdf]]
 
-Figure ([[ref:fig:catphan_cnr]]) shows the low-contrast CNR from the
+Figure ([[ref:fig:col_catphan_cnr]]) shows the low-contrast CNR from the
 Catphan with these different imaging configurations which are also in
 good agreement with each other. In addition to using the material rods
 in the CTP 404 sensitometry module to calculate the CNR, we also
 compared mean values from each of the materials for the different
 scanning trajectories and magnifications. Figure
-([[ref:fig:catphan_rois]]) shows the ROI means for these different
+([[ref:fig:col_catphan_rois]]) shows the ROI means for these different
 scanning configurations. The height of the bar represents the standard
 deviation of the ROI. The first four bars for each material are from
 the circular scans, and the remaining four from the virtual isocenter
@@ -3926,6 +3931,8 @@ return('figures/ed_comparison_iter_{0:03d}.png'.format(iter))
    :PROPERTIES:
    :ID:       5d03aa38-f620-4ad1-a60d-f02d5000ea97
    :END:
+*summarize experiment and results in first discussion paragraph*
+
 As mentioned earlier, the virtual isocenter trajectory is designed to
 increase the distance between the gantry head and the patient by
 synchronized table translation and gantry motion. The geometry of the
@@ -3969,7 +3976,7 @@ Virtual isocenter trajectories and dynamic magnification are
 potentially useful as collision-avoiding alternatives to standard
 isocentric rotation, both in cases where arc treatments are being
 delivered and in cases where CBCT scanning is desirable, but a normal
-isocentric scan would cause gantry-patient collisions. Using
+isocentric scan could cause gantry-patient collisions. Using
 optimization-based reconstruction methods, patient-specific, collision
 avoiding imaging trajectories that utilize virtual isocenter CBCT
 scans and different kV-detector magnifications can be reconstructed by
