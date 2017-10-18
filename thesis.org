@@ -1187,7 +1187,7 @@ rely on a known calibration phantom, which is typically a set of
 highly attenuating fiducials arranged in a specific pattern. After
 scanning the phantom with the system of interest, the detected
 fiducials are then compared to predicted positions based on the known
-geometry of the phantom and the nominal projection geometry In the
+geometry of the phantom and the nominal projection geometry. In the
 analytic-based approach, the view parameters are determined by solving
 for parameters that would transform the projection of the phantom to
 match the observed projection. In the optimization-based approach,
@@ -1307,7 +1307,7 @@ than that of our original phantom.
   \label{fig:geo_isocal_proj}
 \end{subfigure}
 \caption{(a) shows a projection of our first calibration phantom
-  consisting of a single spiral of fiducials around the acryllic tube.
+  consisting of a single spiral of fiducials around the acrylic tube.
   (b) shows a projection of Varian's isocal calibration phantom. The
   additional fiducials seen in each projection, and their unambiguous
   layout in the projection help prevent local minima when searching
@@ -1315,6 +1315,7 @@ than that of our original phantom.
 \label{fig:geo_cal_sens_cost}
 \end{figure}
 #+END_EXPORT
+
 *** Calibration method
     :PROPERTIES:
     :ID:       F53F4B5A-83EB-4B16-9B6D-F557D3E441C2
@@ -1683,7 +1684,8 @@ homogeneous coordinate projection matrix is
   \boldsymbol{P} = \begin{bmatrix}
     1 & 0 & 0 & 0 \\
     0 & 1 & 0 & 0 \\
-    0 & 0 & 1 &\frac{1}{L}
+    0 & 0 & \frac{1}{L} & 0 \\
+    0 & 0 & 0 & 0
   \end{bmatrix}.
   \label{eq:geo_pmat}
 \end{equation}
@@ -1694,7 +1696,7 @@ position vectors, the combined transform is then
   \label{eq:geo_magicmat}
 \end{equation}
 which transforms a room coordinate point into the detector basis, and
-then projects it onto the detector plane
+then projects it onto the detector plane.
 
 Finally, this information can be combined to create a single transform
 of the fiducials in the global image coordinate system to the
@@ -2098,8 +2100,8 @@ described in the literature could be adopted to some of these
 trajectories cite:noo_analytic_2000,smekal_geometric_2004, the benefit
 of the optimization-based framework for both reconstruction and
 geometric calibration comes from freedom to easily model and
-reconstruct from trajectories as well as geometric offsets that
-deviate from the analytically prescribed model.
+reconstruct from any desired trajectories as well as geometric offsets
+that deviate from the analytically prescribed model.
 
 *estimate of the calibration time*
 
