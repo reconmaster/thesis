@@ -2076,6 +2076,10 @@ trajectories is quite comparable, as is the spatial resolution.
 - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
 **** notes                                   :noexport:
 - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
+** Discussion
+   :PROPERTIES:
+   :ID:       CAB89A8B-FC4B-4F9A-A52A-68E17ED2885C
+   :END:
 ** Conclusion
    :PROPERTIES:
    :ID:       fd41d566-a4b3-4dcd-9f8c-7417276ad25c
@@ -2779,6 +2783,7 @@ From the results shown in Figure (\ref{fig:})
 **** notebooks                               :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/fov/em_vs_fdk.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/fov/em_vs_fdk.ipynb]]
 
+** Discussion
 ** Conclusion
    :PROPERTIES:
    :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
@@ -3178,7 +3183,6 @@ scan at 1.5X magnification.
  - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"161213_virtiso_circ_half_dynmag_catphan_isocal/collision_avoidance.ipynb")][collisions figures]]
  - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170126_virtiso_circ_half_dynmag_ed/ed_images.ipynb")][ed analysis]]
 ** Results
-   SCHEDULED: <2017-10-18 Wed>
    :PROPERTIES:
    :ID:       28832b04-7d26-4ef8-83f2-08db94493ab9
    :END:
