@@ -421,9 +421,10 @@ imaging trajectories we studied . Unlike the analytic-based methods,
 such as FDK algorithm cite:feldkamp_practical_1984, optimization-based
 methods require no assumptions about the initial scanning trajectory.
 As such, there is greater flexibility in choosing a scanning
-trajectory for a given task for which an analytic inverse has yet to
-be derived. In this work, we investigate some of the task-specific
-scanning trajectories enabled by optimization-based methods.
+trajectory for a given task for which an analytic inverse may not yet
+have been derived. In this work, we investigate some of the
+task-specific scanning trajectories enabled by optimization-based
+methods.
 
 The use of optimization-based methods for tomographic image
 reconstruction is a natural extension of linearizing the x-ray
@@ -457,6 +458,7 @@ cite:xu_accelerating_2005,sharp_gpu-based_2007.
 *** Analytic-based reconstruction
     :PROPERTIES:
     :ID:       04DD4E55-A20B-4A27-BBDD-BB493DD82674
+    :ORDERED:  t
     :END:
 Analytic-based reconstruction algorithms are formulated by explicitly
 finding an inverse to the X-ray transform
@@ -509,10 +511,12 @@ real slat=0, svrt=-100;
 point src=(svrt,slat);
 
 // rotate sys and draw
-real theta=-45.;
+real theta=30;
 
-draw(rotate(theta)*detector, black);
-draw(rotate(theta)*src--rotate(theta)*det_cent, dashed+red,Arrow(TeXHead));
+draw(Label("$g\left(\mathbf{r}_{0}, \hat{\theta}\right)$",position=MidPoint),rotate(theta)*detector, black);
+draw(Label("$\mathbf{r}_0$",position=BeginPoint,black),rotate(theta)*src--rotate(theta)*det_cent, dashed+red,Arrow(TeXHead));
+
+// label("\mathbf(r)_0", src)
 // draw(src--(dvrt, -ulen/2+dlat), dashed+black);
 // draw(src--(dvrt, ulen/2+dlat), dashed+black);
 
@@ -524,15 +528,15 @@ draw(Label("$x$",position=EndPoint),(-ax_scale,0)--(ax_scale,0),black,Arrow(TeXH
 draw(Label("$y$",position=EndPoint),(0,-ax_scale)--(0,ax_scale),black,Arrow(TeXHead));
 
 // show gantry angle
-draw(Label("$\theta$",position=MidPoint,E), arc((0, 0), r=ax_scale/2, angle1=0, angle2=theta), red, arrow=Arrow(TeXHead));
+draw(Label("$\theta$",position=MidPoint,E), arc((0, 0), r=2*ax_scale/3, angle1=0, angle2=theta), red, arrow=Arrow(TeXHead));
 
 // generic object
 real obj_scale=10;
 path obj=(-obj_scale,-obj_scale){dir(45)}..(obj_scale,0)..(obj_scale,obj_scale)..(0,obj_scale)..cycle;
-draw(Label("$f$",(obj_scale,obj_scale),NE),obj, black);
+draw(Label("$f$",position=Relative(0.7)),obj,black);
 #+END_SRC
 
-#+CAPTION: Single-view projection geometry for the TrueBeam kV imaging system.
+#+CAPTION: Single-view schematic of the x-ray transform of an object $f$ from an x-ray source at $\mathbf{r}_{0}$ illuminating the detector in the direction of $\hat{\theta}$ to produce the detector response $g\left(\mathbf{r}_{0}, \hat{\theta}\right)$. The source and detector geometry is that of Varian's TrueBeam kV-imaging system.
 #+ATTR_LaTeX: :width \textwidth
 #+RESULTS: fig:opt_analytic
 [[file:figures/opt/analytic.pdf]]
