@@ -20,7 +20,7 @@
 \department{Committee on Medical Physics}
 \division{Biological Sciences}
 \degree{Ph. D.}
-\date{October, 2017}
+\date{December, 2017}
 
 %% Use these commands to set a dedication and epigraph text
 \dedication{Dedication Text}
@@ -559,14 +559,46 @@ popular reconstruction algorithm for the circular CBCT trajectory is
 the filtered-backprojection (FBP) algorithm proposed by Feldkamp,
 Davis, and Kress (FDK) cite:feldkamp_practical_1984 which is still the
 industry standard. FDK is only an exact inversion to the Radon
-transform on the midplane containing the circular source
-trajectory. For transaxial planes other than the midplane, a
-quasi-redundancy in the scanning data is assumed. It is the violation
-of this assumption which leads to cone-angle artifacts. These
-artifacts become more severe at larger cone angles where this
-assumption is less applicable.
+transform on the midplane containing the circular source trajectory.
+For transaxial planes other than the midplane, a quasi-redundancy in
+the scanning data is assumed. It is the violation of this assumption
+which leads to cone-angle artifacts, an example of which is shown in
+Figure ([[ref:fig:opt_defrise_fdk]]). These artifacts become more severe
+at larger cone angles where this assumption is less applicable.
 
-*show example of cone-angle artifacts*
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[width=\textwidth]{figures/opt/defrise_fdk_sag.jpg}
+  \caption{}
+  \label{fig:opt_defrise_fdk}
+\end{subfigure}
+~ %add desired spacing between images, e. g. ~, \quad, \qquad,
+% \hfill etc.
+% (or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[width=\textwidth]{figures/opt/defrise_mlem_sag.jpg}
+  \caption{}
+  \label{fig:opt_defrise_mlem}
+\end{subfigure}
+\caption{Example of cone-angle artifacts seen in the sagittal view of
+  a reconstructed Defrise-style phantom. On the left is an FDK
+  reconstruction, and on the right is an MLEM reconstruction (200
+  iterations). Such a phantom design of alternating high-contrast
+  densities along the longitudinal direction is explicitly identified
+  by the FDK authors as being a case where their assumptions breakdown
+  at larger cone angles. In the middle of image that corresponds to
+  the plane of the source orbit, there are sharp boundaries between
+  the alternating disks can be seen. However at the edges of the
+  image, corresponding to larger cone angles, the breakdown of these
+  assumptions and the cone-angle artifacts produced can be seen. The
+  cone-angle artifacts at the larger cone angles are less severe in
+  the optimization-based reconstruction ([0, 0.3] cm$^{-1}$ display
+  window).}
+\label{fig:opt_defrise}
+\end{figure}
+#+END_EXPORT
 
 The presence of cone-angle artifacts in FDK reconstructions from the
 incomplete data acquired with circular scanning trajectories led to
@@ -584,22 +616,26 @@ that are amplified in the filtration process.
     :ID:       07e91084-61be-43d3-a905-65ef0ab997a4
     :END:
 Analytic-based reconstruction algorithms are problematic in that they
-require a fixed trajectory in formulating the inverse. When
+require a fixed scanning trajectory to formulate the inverse. When
 approximations are made for the inverse, as in FDK, deviations from
 where these approximations are valid lead to inconsistencies in the
-model and subsequently artifacts in the reconstruction. For FDK, at
-larger cone angles (i.e., edges of the FOV at the axial extremes), the
-assumption of quasi redundancy for planes other than that of the
-source's circular trajectory becomes increasingly invalid at larger
-cone angles leading to cone-angle artifacts. In contrast to these
-analytic models, optimization-based reconstruction algorithms have
-demonstrated a more robust model of the image formation process
-reducing the artifacts that arise from these analytic-based methods
+model and subsequently artifacts in the reconstruction. For FDK, one
+example of this is cone-angle artifacts such as those shown in Figure
+([[ref:fig:opt_defrise_fdk]]) which become more severe with an increasing
+cone angle. In contrast to these analytic-based methods,
+optimization-based reconstruction algorithms have demonstrated a more
+robust model of the image formation process reducing the artifacts
+that arise from these analytic-based methods
 cite:shepp_maximum_1982,han_optimization-based_2012,sidky_image_2008,sidky_accurate_2006,bian_evaluation_2010.
+As Figure ([[ref:fig:opt_defrise_mlem]]) shows, this can help reduce 
+artifacts such as the cone-angle artifacts.
 
-Optimization-based reconstruction algorithms are more robust as they
-more accurately model this DD imaging system. The X-ray transform of
-the object function can be represented as the linear system
+Optimization-based reconstruction algorithms provide a more accurate
+model of the DD imaging system that comprises both the digitized
+projection images from the kV-imaging detector and the digitized
+tomographic image calculated by the reconstruction program. The X-ray
+transform of the object function can be represented as the linear
+system
 \begin{equation}
   \label{eq:opt_ddsys}
   \mathbf{g}=\mathcal{H}\mathbf{f},
@@ -610,17 +646,19 @@ transform, and $\mathbf{f}$ is the object function represented on a N
 voxel basis. As direct inversion of $\mathcal{H}$ is impractical due
 to both its size and inconsistencies from factors such as noise,
 optimization techniques are used to solve this system for an estimate
-of the object $\widetilde{\mathbf{f}}$.
+of the object $\mathbf{f^{*}}$.
 
 The optimization problem for these iterative reconstruction algorithms
 is formulated as an objective function based on the actual data
 $\mathbf{g}$ and the image model $\mathcal{H}\mathbf{f}$. An
 optimization algorithm is then used to iteratively update the estimate
-of $\widetilde{\mathbf{f}}$ until a suitable convergence criterion has
+of $\mathbf{f^{*}}$ until a suitable convergence criterion has
 been met. The parameters of the optimization problem, the optimization
 algorithm, and the convergence criteria are all important factors in
 determining the properties of the reconstructed image and subsequently
 its utility.
+
+*iteration number converge surrogate and resolution selection*
 
 In applying optimization-based reconstruction to non-circular
 trajectories, we focus primarily on the well-understood
@@ -670,6 +708,123 @@ cone angles at the ends of the axial FOV, the approximation in the
 algorithm results in worse cone-angle artifacts
 cite:feldkamp_practical_1984.
 
+*weighting factor & schematic*
+
+ #+LABEL: fig:opt_weighting
+ #+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results :tangle no
+settings.render = 0;
+import geometry;
+// size(8cm,0);
+// unitsize(1cm)
+
+// Affichage du repère par défaut (O,vec{i},vec_{j})
+// show(defaultcoordsys);
+// show(currentcoordsys);
+
+// detector
+real dlat=0, dlng=0, dvrt=50;
+point det=(dvrt,dlat);
+
+real ulen=40.0, vlen=30.0;
+
+draw((dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat),black);
+
+// source
+real slat=0, slng=0, svrt=-100;
+point src=(svrt,slat);
+
+draw(src--(dvrt, 0), dashed+red);
+draw(src--(dvrt, -ulen/2+dlat), dashed+black);
+draw(src--(dvrt, ulen/2+dlat), dashed+black);
+dot("Source", src, N, red);
+
+addMargins(0.5cm, 0.5cm);
+
+// dot("Detector",det,N,5bp+.5blue);
+// dot("Source",src,N,5bp+.5red);
+
+// dot("Source", src)
+
+// real a=5, b=4, theta=-70, poids=3;
+// ellipse el = ellipse(origin, a, b);
+// arc     ar = arc(el,(0,-b),(a,0),CCW);
+// path p = (0,-b-1)--ar--(a+1,0)--(a+1,-b-1)--cycle;
+// point pO = (0,0), pM=angpoint(ar,90+theta);
+// abscissa abscM = nodabscissa(el,pM);
+// real     timeM = abscM.x;
+// vector utangM = -dir(el,timeM),
+//        unormM = rotate(90)*utangM,
+//        vpoids=(0,-poids),
+//        vreactionN = -dot(vpoids,unormM)*unormM,
+//        vfrottement = -dot(vpoids,utangM)*utangM;
+
+// filldraw(p,lightgray,blue);
+// draw(pO--pM,dashed);
+// markangle("$\theta$",1.5cm,pM,origin,(1,0));
+
+// coordsys R=cartesiansystem(pM,i=utangM,j=unormM);
+// show("$M$", "$\vec{u_{\theta}}$", "$\vec{u_{r}}$", R, xpen=invisible);
+
+// point RpM=changecoordsys(R, pM);
+// show(Label("$\vec{f}$",EndPoint),RpM+vfrottement);
+// show(Label("$\vec{R}$",EndPoint),RpM+vreactionN);
+// show(Label("$\vec{P}$",EndPoint),RpM+vpoids);
+
+// // size3(140,80,15);
+// currentprojection=perspective(1,-1,1,up=Z);
+// currentlight=White;
+
+// // detector surface
+// // path3 g=(1,0,0)..(0,1,0)..(-1,0,0)..(0,-1,0)..cycle;
+// // draw(g);
+
+// draw(O--X,red+dashed,Arrow3);
+// draw(O--Y,red+dashed,Arrow3);
+// draw(O--Z,red+dashed,Arrow3);
+
+// // draw detector
+// draw(((-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle));
+
+// real a=-0.4;
+// real b=0.95;
+// real y1=-5;
+// real y2=-3y1/2;
+// path A=(a,0){dir(10)}::{dir(89.5)}(0,y2);
+// path B=(0,y1){dir(88.3)}::{dir(20)}(b,0);
+// real c=0.5*a;
+// pair z=(0,2.5);
+// transform t=scale(1,15);
+// transform T=inverse(scale(t.yy,t.xx));
+// path[] g=shift(0,1.979)*scale(0.01)*t*
+//   texpath(Label("{\it symptote}",z,0.25*E+0.169S,fontsize(24pt)));
+// pair w=(0,1.7);
+// pair u=intersectionpoint(A,w-1--w);
+
+// real h=0.25*linewidth();
+// real hy=(T*(h,h)).x;
+// g.push(t*((a,hy)--(b,hy)..(b+hy,0)..(b,-hy)--(a,-hy)..(a-hy,0)..cycle));
+// g.push(T*((h,y1)--(h,y2)..(0,y2+h)..(-h,y2)--(-h,y1)..(0,y1-h)..cycle));
+// g.push(shift(0,w.y)*t*((u.x,hy)--(w.x,hy)..(w.x+hy,0)..(w.x,-hy)--(u.x,-hy)..(u.x-hy,0)..cycle));
+// real f=0.75;
+// g.push(point(A,0)--shift(-f*hy,f*h)*A--point(A,1)--shift(f*hy,-f*h)*reverse(A)--cycle);
+// g.push(point(B,0)--shift(f*hy,-f*h)*B--point(B,1)--shift(-f*hy,f*h)*reverse(B)--cycle);
+
+// triple H=-0.1Z;
+// material m=material(lightgray,shininess=1.0);
+
+// for(path p : g)
+//   draw(extrude(p,H),m);
+
+// surface s=surface(g);
+// draw(s,red,nolight);
+// draw(shift(H)*s,m);
+ #+END_SRC
+
+ #+CAPTION: Schematic representation of weighting factor
+ #+ATTR_LaTeX: :width \textwidth
+ #+RESULTS: fig:opt_weighting
+ [[file:figures/opt/weighting.pdf]]
+
 Another problem with the current circular imaging trajectory is the
 potential linac collisions with the patient
 cite:hua_practical_2004,nioutsikou_patient-specific_2003. Cases arise
@@ -683,7 +838,7 @@ make an uninterrupted rotation around the patient.
 In both of these examples, the default circular trajectory prescribed
 by FDK is insufficient for obtaining the desired tomographic
 information. Furthermore, the disruption to the clinical workflow
-created by these limitation introduces bottlenecks into clinical
+created by these limitations introduces bottlenecks into clinical
 efficiency which affects both the clinical staff as well as the
 patient's comfort in the procedure. In the case of a potential patient
 collision, the inability to acquire the required trajectory can even
@@ -799,197 +954,12 @@ the kV detector, it is not possible to change the position of the
 treatment head. In this case, moving the patient would be the only
 viable trajectory modification to avoid a collision.
 
-** Algorithms                                :noexport:
-*** MLEM
-    :PROPERTIES:
-    :ID:       e0a24b69-d136-4f9a-9e85-dc42e1d114a9
-    :END:
-To utilize optimization-based methods for image reconstruction, the
-image formation process is modeled as the linear system
-#+BEGIN_LaTeX
-\begin{equation}
-  \label{eq:ddsys}
-  \mathbf{g}=\mathcal{H}\mathbf{f},
-\end{equation}
-#+END_LaTeX
-where $\mathbf{g}$ is the discrete $M$-pixel sampled projection on the
-detector, $\mathcal{H}$ is the $M\times N$ discrete form of the X-ray
-transform, and $\mathbf{f}$ is the object function represented on a
-$N$-voxel basis. As direct inversion of $\mathcal{H}$ is impractical
-due to both its size and inconsistencies from factors such as noise,
-optimization techniques are used to solve this system for an estimate
-of the object $\widetilde{\mathbf{f}}$.
-
-The optimization problem for this approach is then framed as an
-objective function based on the actual data $\mathbf{g}$ and the image
-model $\mathcal{H}\mathbf{f}$. An optimization algorithm is then used
-to iteratively update the estimate of $\widetilde{\mathbf{f}}$ until a
-suitable convergence criterion has been met.
-
-Where, we used the maximum-likelihood expectation maximization (MLEM)
-algorithm cite:dempster_maximum_1977. As we are interested in using
-optimization-based methods to enable reconstruction from novel
-trajectories, we selected an algorithm that is well understood and has
-relatively few parameters. However, the freedom in calculating the
-system matrix by modeling the image formation process as a linear
-system does not limit the algorithm choice to MLEM alone.
-
-The reconstruction program for solving Equation (\ref{eq:ddsys}) using
-MLEM can be formulated as
-#+BEGIN_LaTeX
-\begin{equation}
-  D_{KL}(\mathbf{f})\leq \epsilon_{KL}
-  \label{eq:kl}
-\end{equation}
-#+END_LaTeX
-where $D_{KL}(\mathbf{f})$ is the Kullback-Leibler (KL) divergence
-between $\mathbf{g}$ and $\mathcal{H}\mathbf{f}$
-cite:barrett_foundations_2003 and $\epsilon_{KL}>0$ is the upper bound for the
-KL divergence. The KL divergence can be minimized with the MLEM
-algorithm
-#+BEGIN_LaTeX
-\begin{equation}
-  f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}}
-    \label{eq:mlem}
-\end{equation}
-#+END_LaTeX
-where $f_{j}^{n}$ is $j$-th voxel value at iteration $n$ and
-$\mathcal{H}_{ij}$ is the element of the system matrix at the $i$-th
-row and $j$-th column for $i=1,2,...,M$ and $j=1,2,...,N$. The initial
-image estimate for the reconstructions was $\mathbf{f}^{(0)}=1$. The
-$M\times M$ diagonal matrix $\mathcal{W}$ weights the corresponding
-data entries cite:bian_optimization-based_2013.
-
-** Additional reconstruction parameters      :noexport:
-*** Iterations and stopping criteria
-    :PROPERTIES:
-    :ID:       03857328-5d45-4133-b4a0-eff3fd941eaa
-    :END:
-*** Resolution
-*** Detector weighting
-    :PROPERTIES:
-    :ID:       cc6bcac6-a445-4dfb-8815-a95e31f517ed
-    :END:
- #+LABEL: fig:opt_weighting
- #+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results :tangle no
-settings.render = 0;
-import geometry;
-// size(8cm,0);
-// unitsize(1cm)
-
-// Affichage du repère par défaut (O,vec{i},vec_{j})
-// show(defaultcoordsys);
-// show(currentcoordsys);
-
-// detector
-real dlat=0, dlng=0, dvrt=50;
-point det=(dvrt,dlat);
-
-real ulen=40.0, vlen=30.0;
-
-draw((dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat),black);
-
-// source
-real slat=0, slng=0, svrt=-100;
-point src=(svrt,slat);
-
-draw(src--(dvrt, 0), dashed+red);
-draw(src--(dvrt, -ulen/2+dlat), dashed+black);
-draw(src--(dvrt, ulen/2+dlat), dashed+black);
-dot("Source", src, N, red);
-
-addMargins(0.5cm, 0.5cm);
-
-// dot("Detector",det,N,5bp+.5blue);
-// dot("Source",src,N,5bp+.5red);
-
-// dot("Source", src)
-
-// real a=5, b=4, theta=-70, poids=3;
-// ellipse el = ellipse(origin, a, b);
-// arc     ar = arc(el,(0,-b),(a,0),CCW);
-// path p = (0,-b-1)--ar--(a+1,0)--(a+1,-b-1)--cycle;
-// point pO = (0,0), pM=angpoint(ar,90+theta);
-// abscissa abscM = nodabscissa(el,pM);
-// real     timeM = abscM.x;
-// vector utangM = -dir(el,timeM),
-//        unormM = rotate(90)*utangM,
-//        vpoids=(0,-poids),
-//        vreactionN = -dot(vpoids,unormM)*unormM,
-//        vfrottement = -dot(vpoids,utangM)*utangM;
-
-// filldraw(p,lightgray,blue);
-// draw(pO--pM,dashed);
-// markangle("$\theta$",1.5cm,pM,origin,(1,0));
-
-// coordsys R=cartesiansystem(pM,i=utangM,j=unormM);
-// show("$M$", "$\vec{u_{\theta}}$", "$\vec{u_{r}}$", R, xpen=invisible);
-
-// point RpM=changecoordsys(R, pM);
-// show(Label("$\vec{f}$",EndPoint),RpM+vfrottement);
-// show(Label("$\vec{R}$",EndPoint),RpM+vreactionN);
-// show(Label("$\vec{P}$",EndPoint),RpM+vpoids);
-
-// // size3(140,80,15);
-// currentprojection=perspective(1,-1,1,up=Z);
-// currentlight=White;
-
-// // detector surface
-// // path3 g=(1,0,0)..(0,1,0)..(-1,0,0)..(0,-1,0)..cycle;
-// // draw(g);
-
-// draw(O--X,red+dashed,Arrow3);
-// draw(O--Y,red+dashed,Arrow3);
-// draw(O--Z,red+dashed,Arrow3);
-
-// // draw detector
-// draw(((-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle));
-
-// real a=-0.4;
-// real b=0.95;
-// real y1=-5;
-// real y2=-3y1/2;
-// path A=(a,0){dir(10)}::{dir(89.5)}(0,y2);
-// path B=(0,y1){dir(88.3)}::{dir(20)}(b,0);
-// real c=0.5*a;
-// pair z=(0,2.5);
-// transform t=scale(1,15);
-// transform T=inverse(scale(t.yy,t.xx));
-// path[] g=shift(0,1.979)*scale(0.01)*t*
-//   texpath(Label("{\it symptote}",z,0.25*E+0.169S,fontsize(24pt)));
-// pair w=(0,1.7);
-// pair u=intersectionpoint(A,w-1--w);
-
-// real h=0.25*linewidth();
-// real hy=(T*(h,h)).x;
-// g.push(t*((a,hy)--(b,hy)..(b+hy,0)..(b,-hy)--(a,-hy)..(a-hy,0)..cycle));
-// g.push(T*((h,y1)--(h,y2)..(0,y2+h)..(-h,y2)--(-h,y1)..(0,y1-h)..cycle));
-// g.push(shift(0,w.y)*t*((u.x,hy)--(w.x,hy)..(w.x+hy,0)..(w.x,-hy)--(u.x,-hy)..(u.x-hy,0)..cycle));
-// real f=0.75;
-// g.push(point(A,0)--shift(-f*hy,f*h)*A--point(A,1)--shift(f*hy,-f*h)*reverse(A)--cycle);
-// g.push(point(B,0)--shift(f*hy,-f*h)*B--point(B,1)--shift(-f*hy,f*h)*reverse(B)--cycle);
-
-// triple H=-0.1Z;
-// material m=material(lightgray,shininess=1.0);
-
-// for(path p : g)
-//   draw(extrude(p,H),m);
-
-// surface s=surface(g);
-// draw(s,red,nolight);
-// draw(shift(H)*s,m);
- #+END_SRC
-
- #+CAPTION: Schematic representation of weighting factor
- #+ATTR_LaTeX: :width \textwidth
- #+RESULTS: fig:opt_weighting
- [[file:figures/opt/weighting.pdf]]
 ** Generalized trajectory framework
    :PROPERTIES:
    :ID:       ad13bdd9-4298-4534-979d-a019d80311a5
    :END:
 To find an estimate of the object $\mathbf{f^{*}}$ as an approximate
-solution to Equation ([[ref:eq:linmodel]]), we choose a reconstruction
+solution to Equation ([[ref:eq:opt_ddsys]]), we choose a reconstruction
 program that can be solved with the well-understood maximum-likelihood
 expectation maximization (MLEM) algorithm cite:dempster_maximum_1977.
 Here, our reconstruction program is formulated as
