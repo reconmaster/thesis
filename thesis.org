@@ -311,7 +311,7 @@ or FDK cite:feldkamp_practical_1984 (which we will discuss further in
 useful reconstruction from a circular scanning trajectory on a CBCT
 system.
 
-** Image-guided radiation therapy
+** TODO Image-guided radiation therapy
    :PROPERTIES:
    :ID:       bbf164a1-25cd-4b35-b4ae-eb2b642d9d18
    :END:
@@ -724,123 +724,6 @@ cone angles at the ends of the axial FOV, the approximation in the
 algorithm results in worse cone-angle artifacts
 cite:feldkamp_practical_1984.
 
-*weighting factor & schematic*
-
- #+LABEL: fig:opt_weighting
- #+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results :tangle no
-settings.render = 0;
-import geometry;
-// size(8cm,0);
-// unitsize(1cm)
-
-// Affichage du repère par défaut (O,vec{i},vec_{j})
-// show(defaultcoordsys);
-// show(currentcoordsys);
-
-// detector
-real dlat=0, dlng=0, dvrt=50;
-point det=(dvrt,dlat);
-
-real ulen=40.0, vlen=30.0;
-
-draw((dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat),black);
-
-// source
-real slat=0, slng=0, svrt=-100;
-point src=(svrt,slat);
-
-draw(src--(dvrt, 0), dashed+red);
-draw(src--(dvrt, -ulen/2+dlat), dashed+black);
-draw(src--(dvrt, ulen/2+dlat), dashed+black);
-dot("Source", src, N, red);
-
-addMargins(0.5cm, 0.5cm);
-
-// dot("Detector",det,N,5bp+.5blue);
-// dot("Source",src,N,5bp+.5red);
-
-// dot("Source", src)
-
-// real a=5, b=4, theta=-70, poids=3;
-// ellipse el = ellipse(origin, a, b);
-// arc     ar = arc(el,(0,-b),(a,0),CCW);
-// path p = (0,-b-1)--ar--(a+1,0)--(a+1,-b-1)--cycle;
-// point pO = (0,0), pM=angpoint(ar,90+theta);
-// abscissa abscM = nodabscissa(el,pM);
-// real     timeM = abscM.x;
-// vector utangM = -dir(el,timeM),
-//        unormM = rotate(90)*utangM,
-//        vpoids=(0,-poids),
-//        vreactionN = -dot(vpoids,unormM)*unormM,
-//        vfrottement = -dot(vpoids,utangM)*utangM;
-
-// filldraw(p,lightgray,blue);
-// draw(pO--pM,dashed);
-// markangle("$\theta$",1.5cm,pM,origin,(1,0));
-
-// coordsys R=cartesiansystem(pM,i=utangM,j=unormM);
-// show("$M$", "$\vec{u_{\theta}}$", "$\vec{u_{r}}$", R, xpen=invisible);
-
-// point RpM=changecoordsys(R, pM);
-// show(Label("$\vec{f}$",EndPoint),RpM+vfrottement);
-// show(Label("$\vec{R}$",EndPoint),RpM+vreactionN);
-// show(Label("$\vec{P}$",EndPoint),RpM+vpoids);
-
-// // size3(140,80,15);
-// currentprojection=perspective(1,-1,1,up=Z);
-// currentlight=White;
-
-// // detector surface
-// // path3 g=(1,0,0)..(0,1,0)..(-1,0,0)..(0,-1,0)..cycle;
-// // draw(g);
-
-// draw(O--X,red+dashed,Arrow3);
-// draw(O--Y,red+dashed,Arrow3);
-// draw(O--Z,red+dashed,Arrow3);
-
-// // draw detector
-// draw(((-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle));
-
-// real a=-0.4;
-// real b=0.95;
-// real y1=-5;
-// real y2=-3y1/2;
-// path A=(a,0){dir(10)}::{dir(89.5)}(0,y2);
-// path B=(0,y1){dir(88.3)}::{dir(20)}(b,0);
-// real c=0.5*a;
-// pair z=(0,2.5);
-// transform t=scale(1,15);
-// transform T=inverse(scale(t.yy,t.xx));
-// path[] g=shift(0,1.979)*scale(0.01)*t*
-//   texpath(Label("{\it symptote}",z,0.25*E+0.169S,fontsize(24pt)));
-// pair w=(0,1.7);
-// pair u=intersectionpoint(A,w-1--w);
-
-// real h=0.25*linewidth();
-// real hy=(T*(h,h)).x;
-// g.push(t*((a,hy)--(b,hy)..(b+hy,0)..(b,-hy)--(a,-hy)..(a-hy,0)..cycle));
-// g.push(T*((h,y1)--(h,y2)..(0,y2+h)..(-h,y2)--(-h,y1)..(0,y1-h)..cycle));
-// g.push(shift(0,w.y)*t*((u.x,hy)--(w.x,hy)..(w.x+hy,0)..(w.x,-hy)--(u.x,-hy)..(u.x-hy,0)..cycle));
-// real f=0.75;
-// g.push(point(A,0)--shift(-f*hy,f*h)*A--point(A,1)--shift(f*hy,-f*h)*reverse(A)--cycle);
-// g.push(point(B,0)--shift(f*hy,-f*h)*B--point(B,1)--shift(-f*hy,f*h)*reverse(B)--cycle);
-
-// triple H=-0.1Z;
-// material m=material(lightgray,shininess=1.0);
-
-// for(path p : g)
-//   draw(extrude(p,H),m);
-
-// surface s=surface(g);
-// draw(s,red,nolight);
-// draw(shift(H)*s,m);
- #+END_SRC
-
- #+CAPTION: Schematic representation of weighting factor
- #+ATTR_LaTeX: :width \textwidth
- #+RESULTS: fig:opt_weighting
- [[file:figures/opt/weighting.pdf]]
-
 Another problem with the current circular imaging trajectory is the
 potential linac collisions with the patient
 cite:hua_practical_2004,nioutsikou_patient-specific_2003. Cases arise
@@ -985,8 +868,9 @@ Here, our reconstruction program is formulated as
 \end{equation}
 where $D_{KL}(\mathbf{f})$ is the Kullback-Leibler (KL) divergence
 between $\mathbf{g}$ and $\mathcal{H}\mathbf{f}$
-cite:barrett_foundations_2003. The KL divergence, which is also known
-as relative entropy, is minimized with the MLEM algorithm
+cite:kullback_information_1951,barrett_foundations_2003. The KL
+divergence, which is also known as relative entropy, is minimized with
+the MLEM algorithm
 \begin{equation}
 f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}
   \label{eq:opt_mlem}
@@ -1000,6 +884,9 @@ the corresponding data entries as is typically done for a standard
 half-fan detector configuration for a circular scan
 cite:bian_optimization-based_2013.
 
+We define a scanning trajectory as the sequence of source and detector
+positions used to acquire each projection view. The coordinates of the
+trajectory are then defined relative to a fixed origin in the patient.
 In a traditional scanning configuration where the patient is
 stationary, the system matrix $\mathcal{H}_{ij}$ projects the object
 $\mathbf{f}$ from image space to the data space of $\mathbf{g}$. When
@@ -1011,14 +898,15 @@ imaging arms and subsequently built $\mathcal{H}_{ij}$ as the projective
 transform from image space in the IEC coordinate system to the data
 space of the kV detector.
 
-For a virtual isocenter-scanning trajectory, the image space
-$(\mathbf{f}_{\text{patient}})$ is moving relative to the room coordinate
-system for each projection view. As such, a change of basis for the
-columns space of $\mathcal{H}$ is necessary so that the new system
-matrix represents a transform from the image space of the patient to
-the data space of the detector represented as $\mathcal{H'}$. As the
-acquisition system also reports the couch position, we used this to
-build the required transformation matrix
+When the patient is no longer fixed relative to the room-coordinate
+system, (e.g. moving the treatment couch as the gantry rotates), the
+image space $(\mathbf{f}_{\text{patient}})$ is moving relative to the
+room coordinate system for each projection view. As such, a change of
+basis for the columns space of $\mathcal{H}$ is necessary so that the
+new system matrix represents a transform from the image space of the
+patient to the data space of the detector represented as
+$\mathcal{H'}$. As the acquisition system also reports the couch
+position, we used this to build the required transformation matrix
 $\mathcal{T}_{\text{IEC,patient}$ for each projection view. The
 imaging model in Equation ([[ref:eq:linmodel]]) then becomes
 \begin{equation}
@@ -1039,6 +927,124 @@ instead of $\mathbf{f}$ and solved with the MLEM algorithm in Equation
     :PROPERTIES:
     :ID:       81d9f135-01c3-4415-a699-1f364e8c9ce3
     :END:
+
+*weighting factor & schematic*
+
+ #+LABEL: fig:opt_weighting
+ #+BEGIN_SRC asymptote :file figures/opt/weighting.pdf :exports results :tangle no
+settings.render = 0;
+import geometry;
+// size(8cm,0);
+// unitsize(1cm)
+
+// Affichage du repère par défaut (O,vec{i},vec_{j})
+// show(defaultcoordsys);
+// show(currentcoordsys);
+
+// detector
+real dlat=0, dlng=0, dvrt=50;
+point det=(dvrt,dlat);
+
+real ulen=40.0, vlen=30.0;
+
+draw((dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat),black);
+
+// source
+real slat=0, slng=0, svrt=-100;
+point src=(svrt,slat);
+
+draw(src--(dvrt, 0), dashed+red);
+draw(src--(dvrt, -ulen/2+dlat), dashed+black);
+draw(src--(dvrt, ulen/2+dlat), dashed+black);
+dot("Source", src, N, red);
+
+addMargins(0.5cm, 0.5cm);
+
+// dot("Detector",det,N,5bp+.5blue);
+// dot("Source",src,N,5bp+.5red);
+
+// dot("Source", src)
+
+// real a=5, b=4, theta=-70, poids=3;
+// ellipse el = ellipse(origin, a, b);
+// arc     ar = arc(el,(0,-b),(a,0),CCW);
+// path p = (0,-b-1)--ar--(a+1,0)--(a+1,-b-1)--cycle;
+// point pO = (0,0), pM=angpoint(ar,90+theta);
+// abscissa abscM = nodabscissa(el,pM);
+// real     timeM = abscM.x;
+// vector utangM = -dir(el,timeM),
+//        unormM = rotate(90)*utangM,
+//        vpoids=(0,-poids),
+//        vreactionN = -dot(vpoids,unormM)*unormM,
+//        vfrottement = -dot(vpoids,utangM)*utangM;
+
+// filldraw(p,lightgray,blue);
+// draw(pO--pM,dashed);
+// markangle("$\theta$",1.5cm,pM,origin,(1,0));
+
+// coordsys R=cartesiansystem(pM,i=utangM,j=unormM);
+// show("$M$", "$\vec{u_{\theta}}$", "$\vec{u_{r}}$", R, xpen=invisible);
+
+// point RpM=changecoordsys(R, pM);
+// show(Label("$\vec{f}$",EndPoint),RpM+vfrottement);
+// show(Label("$\vec{R}$",EndPoint),RpM+vreactionN);
+// show(Label("$\vec{P}$",EndPoint),RpM+vpoids);
+
+// // size3(140,80,15);
+// currentprojection=perspective(1,-1,1,up=Z);
+// currentlight=White;
+
+// // detector surface
+// // path3 g=(1,0,0)..(0,1,0)..(-1,0,0)..(0,-1,0)..cycle;
+// // draw(g);
+
+// draw(O--X,red+dashed,Arrow3);
+// draw(O--Y,red+dashed,Arrow3);
+// draw(O--Z,red+dashed,Arrow3);
+
+// // draw detector
+// draw(((-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle));
+
+// real a=-0.4;
+// real b=0.95;
+// real y1=-5;
+// real y2=-3y1/2;
+// path A=(a,0){dir(10)}::{dir(89.5)}(0,y2);
+// path B=(0,y1){dir(88.3)}::{dir(20)}(b,0);
+// real c=0.5*a;
+// pair z=(0,2.5);
+// transform t=scale(1,15);
+// transform T=inverse(scale(t.yy,t.xx));
+// path[] g=shift(0,1.979)*scale(0.01)*t*
+//   texpath(Label("{\it symptote}",z,0.25*E+0.169S,fontsize(24pt)));
+// pair w=(0,1.7);
+// pair u=intersectionpoint(A,w-1--w);
+
+// real h=0.25*linewidth();
+// real hy=(T*(h,h)).x;
+// g.push(t*((a,hy)--(b,hy)..(b+hy,0)..(b,-hy)--(a,-hy)..(a-hy,0)..cycle));
+// g.push(T*((h,y1)--(h,y2)..(0,y2+h)..(-h,y2)--(-h,y1)..(0,y1-h)..cycle));
+// g.push(shift(0,w.y)*t*((u.x,hy)--(w.x,hy)..(w.x+hy,0)..(w.x,-hy)--(u.x,-hy)..(u.x-hy,0)..cycle));
+// real f=0.75;
+// g.push(point(A,0)--shift(-f*hy,f*h)*A--point(A,1)--shift(f*hy,-f*h)*reverse(A)--cycle);
+// g.push(point(B,0)--shift(f*hy,-f*h)*B--point(B,1)--shift(-f*hy,f*h)*reverse(B)--cycle);
+
+// triple H=-0.1Z;
+// material m=material(lightgray,shininess=1.0);
+
+// for(path p : g)
+//   draw(extrude(p,H),m);
+
+// surface s=surface(g);
+// draw(s,red,nolight);
+// draw(shift(H)*s,m);
+ #+END_SRC
+
+ #+CAPTION: Schematic representation of weighting factor
+ #+ATTR_LaTeX: :width \textwidth
+ #+RESULTS: fig:opt_weighting
+ [[file:figures/opt/weighting.pdf]]
+
 ** Framework implementation with Varian TrueBeam kV-CBCT system
 *** TrueBeam linac with Developer Mode
      :PROPERTIES:
@@ -2486,30 +2492,34 @@ cite:pan_why_2009. These algorithms, such as FDK
 cite:feldkamp_practical_1984, are known to suffer from cone-angle
 artifacts at the axial extremes of the reconstruction volume. Another
 major reason for this limited coverage is to the detector size which
-is restricted due to both cost and engineering concerns.
+is restricted due to both cost and engineering concerns. Given these
+limitations, we investigated if it is possible to address the limited
+axial FOV problem using current linac-mounted kV-imaging with the
+robust trajectory framework described in [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory
+framework]].
 
-With the robust trajectory framework allowed by optimization-based
-algorithms, we are no longer bound to the strict trajectory
-limitations imposed by analytic-based reconstruction methods. Provided
-that the correct geometry of the acquisition trajectory is well
-understood, the system matrix of the image formation process can be
-calculated for arbitrary CBCT scanning configurations. These new
-trajectories are no longer limited to the few cases of non-circular
-trajectories for which analytic inverse formulations exist such as the
-line cite:sidky_volume_2005, circle and line
+Unlike analytic-based reconstruction methods, there is no imposition
+of a prescribed trajectory when using optimization-based methods.
+Provided that the correct geometry of the acquisition trajectory is
+well understood and properly calibrated (e.g. using a calibration
+method such as that discussed in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]), the system
+matrix of the image formation process can be calculated for arbitrary
+CBCT scanning configurations. These new trajectories are no longer
+limited to the few cases of non-circular trajectories for which
+analytic inverse formulations exist such as the line
+cite:sidky_volume_2005, circle and line
 cite:zeng_cone-beam_1992,katsevich_image_2004, circle and arcs
 cite:zou_image_2005-1,katsevich_image_2005, and non-planar orbits
 cite:kudo_derivation_1994
 
-With some of the trajectories enabled by these optimization-based
-algorithms, we can address the problem of the limited axial coverage
-for these kV-imaging systems. For trajectories where the source and
-detector move in the axial direction relative to the patient,
-projection data can be obtained for axial positions beyond what is
-acquired with a traditional circular trajectory. Optimization-based
-reconstruction algorithms make it possible to formulate an imaging
-trajectory that can provide extended axial coverage beyond what is
-currently possible with circle trajectories and analytic-based FDK.
+Using some of the trajectories enabled by optimization-based methods,
+we can address the problem of the limited axial coverage for
+linac-mounted CBCT kV-imaging systems. Rather than increasing the size
+of the detector, the source and detector motion can be extended in the
+axial direction. For these trajectories where the source and detector
+move in the axial direction relative to the patient, projection data
+can be obtained for axial positions beyond what is illuminated with
+current detector sizes and a circular scanning trajectory.
 
 In this chapter, we study a few different trajectories that can
 address the limited axial coverage provided by linac-mounted
@@ -2517,12 +2527,13 @@ kV-imaging systems with a limited axial coverage that, as in our
 TrueBeam system, can be half the size of the MV-treatment beam FOV.
 This limitation can be problematic for patients with treatment volumes
 that have axial coverage beyond what is visible in a single circular
-acquisition cite:voong_dosimetric_2014. We studied some potential
-trajectories and then compared the subsequent extended-axial images to
-the clinical FDK standard. The hypothesis is that there can be
-extensive gains in clinical utility for these extended volume images
-provided that the image quality is comparable to the current clinical
-standard.
+acquisition cite:voong_dosimetric_2014. For the case of the TrueBeam
+system, the axial coverage of the treatment FOV is 40 cm while the
+CBCT coverage from a single circle is only 20 cm. The trajectories we
+investigate in this chapter provide extended axial coverage. Our
+hypothesis is that there can be an increase in clinical utility from
+these extended volume images provided that the image quality is
+comparable to the current clinical standard.
 
 ** Methods
    :PROPERTIES:
@@ -2532,114 +2543,67 @@ standard.
     :PROPERTIES:
     :ID:       b16942be-e3d8-4fb2-a872-aa68fe6bd4fd
     :END:
- We define a scanning trajectory as the sequence of source and detector
- positions used to acquire each projection view. The coordinates of the
- trajectory are then defined relative to a fixed origin in the patient.
- Moving either the imaging arms or the patient, it is possible to
- create a component of axial translation that acquires projection views
- with information of the patient volume at extended axial positions.
- Moving either the imaging arms or the patient is equivalent provided
- the relative translation is correctly accounted for when developing
- the system matrix for the acquisition.
+In order to obtain additional axial tomographic information from a
+patient beyond what is covered by the detector, there must be a
+relative shift along that axis between the patient and the imaging
+system. As alluded to in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]] section,
+either the patient or the imaging system can shift along this
+direction to obtain the desired projection information as long as the
+motion is correctly reflected in the system matrix $\mathcal{H}$. With
+the additional projections along the axial direction, it is possible
+to extend the axial coverage of the tomographic image beyond that
+which is provided by the detector coverage alone.
 
- The current clinical method of obtaining an extended axial image
- involves stacking the FDK reconstructions of two circular scans at
- different axial positions. For this reason, the first trajectory we
- wanted to study was the dual-circle trajectory show in Figure ([[ref:fig:traj_dcirc][double
- circle]]). This provided a direct comparison between the clinical
- practice of using analytic-based to optimization-based reconstruction
- of the entire image volume using all the dual-circle projection data
- at once.
+The current clinical method of obtaining an extended axial image
+involves stacking the FDK reconstructions of two circular scans at
+different axial positions. For this reason, the first class of
+trajectories we wanted to study was a dual-circle trajectory shown on
+the left in Figure ([[ref:fig:fov_3d_trajectories]]). As is the current
+clinical practice, this trajectory extends the axial coverage by
+obtaining an additional circular scan at a different axial position.
+As the linac is only able to make one complete rotation of the gantry,
+this is implemented by acquiring a circular trajectory scan, effecting
+and axial shift, and then acquiring a second circle by rotating the
+gantry in the opposite direction.
 
- In addition to the dual circle trajectory, we studied two additional
- trajectories. One trajectory consists of two circles with a line
- connecting them in the axial direction shown in Figure ([[ref:fig:traj_clc][clc]]). We will
- refer to this as the circle-line-circle (CLC) trajectory. The other
- trajectory is a smooth trajectory that translates the source in the
- axial direction while the gantry rotation is slowing and reversing
- direction before acquiring the second circle show in Figure ([[ref:fig:traj_smth][smooth]]).
+#+CAPTION: Source trajectories of the three classes of extended axial-FOV trjaectories we studied. For all of these trajectories the detector moves in diametric opposition to the kV-imagin source. All of these trajectories are plotted in the image coordinate space described in the section [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates]]. On the left is the double circle trajectory that is equivalent to the double circle scan currently used in the clinic to obtain extended axial coverage. In the middle is the circle-line-cirlce trajectory that acquires additional projection information as the source and detector translate from the axail position of the first circle to that of the second. The last trajectory on the right is the smooth trajectory in which the translation component occurs during the rotation of the two circles.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:fov_3d_trajectories
+[[file:figures/fov/3d_trajectories.pdf]]
 
-#+BEGIN_LaTeX
-\begin{figure*}
-  \centering
-  \begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{img/traject/dual_circle_20cm.png}
-    \caption{Dual circle}
-    \label{fig:traj_dcirc}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{img/traject/dual_circle_line_20cm.png}
-    \caption{Circle line circle}
-    \label{fig:traj_clc}}
-\end{subfigure}
-~
-\begin{subfigure}[b]{0.3\textwidth}
-  \includegraphics[width=\textwidth]{img/traject/dual_smth_20cm.png}
-  \caption{Smooth}
-  \label{fig:traj_smth}}
-\end{subfigure}
-~
-\caption{The left image shows the dual circle trajectory. The center
-  image shows the circle-line-circle trajectory. The right image shows
-  the smooth trajectory. These diagrams of the source trajectory do
-  not show the opposing trajectory of the detector around the digital
-  patient.}
-\label{fig:poly}
-\end{figure*}
-#+END_LaTeX
+Another class of trajectories we studied was the circle-line-circle
+(CLC) trajectory shown in the middle of Figure
+([[ref:fig:fov_3d_trajectories]]). Like th double circle trajectory, this
+trajectory also consists of two circles at different axial positions.
+The difference between these being that for the CLC trajectory,
+projections are acquired during the linear shift between the two
+different axial positions of the circles. As with the double circle,
+this is implemented by first acquiring a circle, effecting an axial
+translation (only now acquiring projection information during this
+shift), and then obtaining a second circle when the gantry reverses
+direction.
 
-**** Trajectories
-     :PROPERTIES:
-     :ID:       4787aeca-bdf3-4b8b-bfda-6c7248cb01d4
-     :END:
- After simulation, we then wanted to see how well combining these
- trajectories with optimization-based reconstruction could extend the
- axial FOV with real projection data. Based on the simulation results,
- we acquired a scans from spacings of 17, 18,19, and 20 cm between the
- two circular planes of these trajectories. These larger spacings
- provided data for potential axial FOV's of 37, 38, 39, and 40 cm
- respectively.
-
- For each of these spacings, we acquired the same three trajectories
- mentioned in the simulation study. First the dual-circle trajectory
- was acquired by moving the c-arms and acquiring circular scans at two
- different axial positions. We then acquired the CLC trajectory with
- the c-arms by also acquiring projection data as they translated along
- the axial direction from the plane of the first circle to the plane of
- the second circle. Finally, the smooth trajectory was acquired by
- having the treatment couch move relative to the source and detector as
- the gantry rotated. *maybe cut this last sentence?* While we would
- like to demonstrate this motion while moving only the c-arms during
- the gantry rotation, this is unfortunately not possible with our
- TrueBeam model due to hardware limitations.
-
- #+NAME: tab:disk_trajects
- | Trajectory | Axial gap [cm] | Detector configuration | Air scan  | lognorm | Notes                      |
- |------------+----------------+------------------------+-----------+---------+----------------------------|
- | Circle     |                | Full                   |           | x       |                            |
- | Circle     |                | Half                   |           | x       |                            |
- |------------+----------------+------------------------+-----------+---------+----------------------------|
- | CLLC       |             20 | Full                   | 20 cm air | x       |                            |
- | CLLC       |             19 | Full                   | ""        | x       |                            |
- | CLLC       |             18 | Full                   | ""        | x       |                            |
- | CLLC       |             17 | Full                   | ""        | x       |                            |
- |------------+----------------+------------------------+-----------+---------+----------------------------|
- | CLLC       |             18 | Half                   |           | x       | 2 of these for some reason |
- |------------+----------------+------------------------+-----------+---------+----------------------------|
- | SMTH       |             20 | Full                   |           | x       |                            |
- | SMTH       |             19 | Full                   |           | x       |                            |
- | SMTH       |             18 | Full                   |           | x       |                            |
- | SMTH       |             17 | Full                   |           | x       |                            |
- |------------+----------------+------------------------+-----------+---------+----------------------------|
- | SMTH       |             18 | Half                   |           | x       |                            |
- |------------+----------------+------------------------+-----------+---------+----------------------------|
+The last class of trajectories we studied will be referred to as the
+smooth trajectory which is shown the right of Figure
+([[ref:fig:fov_3d_trajectories]]). It is similar to the CLC trajectory in
+that it predominately consists of two circles at two different axial
+positions with projections acquired along the axial shift component.
+Unlike the double circle and CLC trajectories, this trajectory does
+not have a complete circle at either of the two axial positions. The
+gantry motion is the same in that it performs two rotations in the
+opposite direction. The difference here is that the axial shift
+component is introduced before the first gantry rotation is complete,
+and the second gantry rotation begins before the axial shift is
+complete.
 
 **** Phantoms
      :PROPERTIES:
      :ID:       cd67b907-804c-4212-bf45-6ca6daad766c
      :END:
 
+**** notebooks                               :noexport:
+***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170816_circ_clc_smth_catphans/matlab/em/trajectories.ipynb")][170816_circ_clc_smth_catphans/matlab/em/trajectories.ipynb]]
+- plots of trajectories from real scan data
 *** Simulation
     :PROPERTIES:
     :ID:       C07F2BE3-413C-490F-B171-0ADB82B939EA
@@ -2954,6 +2918,53 @@ sufficient redundancy is available to reconstruct this volume.
  #+ATTR_LaTeX: :width \textwidth
  #+LABEL: fig:take_rmse
  file:./img/take/central_cbct_rmse.pdf
+
+**** fragments                               :noexport:
+***** Trajectories
+      :PROPERTIES:
+      :ID:       4787aeca-bdf3-4b8b-bfda-6c7248cb01d4
+      :END:
+  After simulation, we then wanted to see how well combining these
+  trajectories with optimization-based reconstruction could extend the
+  axial FOV with real projection data. Based on the simulation results,
+  we acquired a scans from spacings of 17, 18,19, and 20 cm between the
+  two circular planes of these trajectories. These larger spacings
+  provided data for potential axial FOV's of 37, 38, 39, and 40 cm
+  respectively.
+
+  For each of these spacings, we acquired the same three trajectories
+  mentioned in the simulation study. First the dual-circle trajectory
+  was acquired by moving the c-arms and acquiring circular scans at two
+  different axial positions. We then acquired the CLC trajectory with
+  the c-arms by also acquiring projection data as they translated along
+  the axial direction from the plane of the first circle to the plane of
+  the second circle. Finally, the smooth trajectory was acquired by
+  having the treatment couch move relative to the source and detector as
+  the gantry rotated. *maybe cut this last sentence?* While we would
+  like to demonstrate this motion while moving only the c-arms during
+  the gantry rotation, this is unfortunately not possible with our
+  TrueBeam model due to hardware limitations.
+
+  #+NAME: tab:disk_trajects
+  | Trajectory | Axial gap [cm] | Detector configuration | Air scan  | lognorm | Notes                      |
+  |------------+----------------+------------------------+-----------+---------+----------------------------|
+  | Circle     |                | Full                   |           | x       |                            |
+  | Circle     |                | Half                   |           | x       |                            |
+  |------------+----------------+------------------------+-----------+---------+----------------------------|
+  | CLLC       |             20 | Full                   | 20 cm air | x       |                            |
+  | CLLC       |             19 | Full                   | ""        | x       |                            |
+  | CLLC       |             18 | Full                   | ""        | x       |                            |
+  | CLLC       |             17 | Full                   | ""        | x       |                            |
+  |------------+----------------+------------------------+-----------+---------+----------------------------|
+  | CLLC       |             18 | Half                   |           | x       | 2 of these for some reason |
+  |------------+----------------+------------------------+-----------+---------+----------------------------|
+  | SMTH       |             20 | Full                   |           | x       |                            |
+  | SMTH       |             19 | Full                   |           | x       |                            |
+  | SMTH       |             18 | Full                   |           | x       |                            |
+  | SMTH       |             17 | Full                   |           | x       |                            |
+  |------------+----------------+------------------------+-----------+---------+----------------------------|
+  | SMTH       |             18 | Half                   |           | x       |                            |
+  |------------+----------------+------------------------+-----------+---------+----------------------------|
 
 ** Results
    :PROPERTIES:
