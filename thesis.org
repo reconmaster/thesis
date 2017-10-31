@@ -652,13 +652,29 @@ The optimization problem for these iterative reconstruction algorithms
 is formulated as an objective function based on the actual data
 $\mathbf{g}$ and the image model $\mathcal{H}\mathbf{f}$. An
 optimization algorithm is then used to iteratively update the estimate
-of $\mathbf{f^{*}}$ until a suitable convergence criterion has
-been met. The parameters of the optimization problem, the optimization
+of $\mathbf{f^{*}}$ until a suitable convergence criterion has been met.
+The parameters of the optimization problem, the optimization
 algorithm, and the convergence criteria are all important factors in
 determining the properties of the reconstructed image and subsequently
-its utility.
+its utility. When the reconstruction program is not run to
+convergence, the number of iterations of the reconstruction program
+sometimes serves as a surrogate parameter which must be chosen with
+some justification if convergence is not the stopping criteria.
 
-*iteration number converge surrogate and resolution selection*
+In selecting the parameters for the reconstruction program,
+consideration must be given to the impact each parameter will have on
+the reconstructed image quality. As we investigate using
+optimization-based reconstruction for non-circular scanning
+trajectories, we selected parameters of our reconstruction program to
+mimic the relevant clinically-utilized parameters where applicable.
+For instance, our reconstruction resolution sizes are chosen as to
+provide the same voxel sizes used with by the clinical reconstruction
+software. However, these parameter choices are only made only to
+provide comparisons to the current clinical workflow. This does not
+mean that these values are optimally selected, and for any clinically
+relevant evaluation, rigorous parameter optimization must be done for
+the clinical imaging task
+cite:metz_basic_1978,xia_optimization-based_2016-2.
 
 In applying optimization-based reconstruction to non-circular
 trajectories, we focus primarily on the well-understood
@@ -1019,6 +1035,10 @@ in Equation ([[ref:eq:kl]]) can be reformulated with $\mathbf{f_{\text{patient}}
 instead of $\mathbf{f}$ and solved with the MLEM algorithm in Equation
 ([[ref:eq:mlem]]) using $\mathcal{H'}$ instead of $\mathcal{H}$.
 
+*** Detector weighting
+    :PROPERTIES:
+    :ID:       81d9f135-01c3-4415-a699-1f364e8c9ce3
+    :END:
 ** Framework implementation with Varian TrueBeam kV-CBCT system
 *** TrueBeam linac with Developer Mode
      :PROPERTIES:
@@ -1086,7 +1106,310 @@ kV beam direction orthogonal to the MV treatment beam.
     :PROPERTIES:
     :ID:       9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1
     :END:
-*table of header parameters hnd/xim*
+In order to reconstruct from the different scanning trajectories
+implemented in Developer mode, the different coordinate systems the
+imaging and motion components of the treatment system must be unified. 
+
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\begin{subfigure}[b]{.3\textwidth}
+\includegraphics[width=\textwidth]{figures/opt/coords_rad.pdf}
+\caption{}
+\label{fig:opt_coords_rad}
+\end{subfigure}
+~ %add desired spacing between images, e. g. ~, \quad, \qquad,
+% \hfill etc.
+% (or a blank line to force the subfigure onto a new line)
+
+\begin{subfigure}[b]{.3\textwidth}
+\includegraphics[width=\textwidth]{figures/opt/coords_iec.pdf}
+\caption{}
+\label{fig:opt_coords_iec}
+\end{subfigure}
+~
+
+\begin{subfigure}[b]{.3\textwidth}
+\includegraphics[width=\textwidth]{figures/opt/coords_img.pdf}
+\caption{}
+\label{fig:opt_coords_var}
+\end{subfigure}
+
+\caption{Axes showing the three different coordinate systems employed
+  in controlling and reporting the motion in the TrueBeam kV-imaging
+  system an couch motion. The left coordinate system is the radiation
+  coordinate system describing the position of the kV source and
+  detector position at each projection view regardless of the gantry
+  rotation. The middle figure shows the IEC coordinate system axes in
+  which all trajectory calculations are made once the imaging
+  components are converted from the radiation coordinate system (a) to
+  the IEC room-coordinate system (b). Incidentally, the radiation
+  coordinate system is also used to describe the couch position in the
+  IEC coordinate system as the mapping of radiation coordinates for
+  the source and detector is the same as that of the couch at the
+  initial angle $\theta_{\text{gantry}}=0^{\circ}$. The final coordinate system
+  shown on the right represents the image reconstruction space. This
+  is effectively the patient coordinate system that incorporates all
+  the relative motion of the imaging source and detector as well as
+  the motion of the couch and gantry relative to the point of interest
+  in the patient.
+}
+
+\label{fig:opt_coords}
+\end{figure}
+#+END_EXPORT
+**** code                                    :noexport:
+#+LABEL: fig:opt_coords_rad
+#+BEGIN_SRC asymptote :file figures/opt/coords_rad.pdf :exports none
+settings.multisample=0;
+settings.outformat="pdf";
+settings.prc = false;
+settings.render = 0;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+// view configuration
+size(5cm);
+addMargins(0.5cm, 0.5cm);
+
+// view configuration
+currentprojection=orthographic(-15,5,13,up=Z);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// shift different axes along x in IEC
+// real ax_shift = 10;
+real ax_scale=20;
+
+// Draw axis
+// rad
+draw(Label("lng",1),(0,0,0)--(0,ax_scale,0),Arrow3);
+draw(Label("vrt",1),(0,0,0)--(ax_scale,0,0),Arrow3);
+draw(Label("lat",1),(0,0,0)--(0,0,ax_scale),Arrow3);
+
+// // kV schematic
+real dlat=0, dlng=0, dvrt=50;
+triple det_cent=(dvrt,dlat,dlng);
+real ulen=40.0, vlen=30.0;
+
+path3 detector=plane((0,vlen,0), (0,0,ulen), det_cent-(0,vlen/2,ulen/2));
+triple det0 = det_cent-(0,ulen/2,vlen/2);
+
+// real s=5;
+// triple u = (det0+s*(0,1,0));
+// triple v = (det0+s*(0,0,1));
+// triple w = (det0+s*(-1,0,0));
+
+// // detector coordinate system
+// draw(det0--u,blue,Arrow3,L=Label("$u$", position=EndPoint, align=W));
+// draw(det0--v,blue,Arrow3,L=Label("$v$", position=EndPoint, align=N));
+// draw(det0--w,blue,Arrow3,L=Label("$w$", position=EndPoint, align=S));
+
+draw(detector, blue);
+
+// // path3 det180 = rot180*detector;
+// // path3 det270 = rot270*detector;
+
+// // uncal detector coordinate system
+// transform3 det_pitch=rotate(-5, det_cent, det_cent+(-1,0,0));
+// transform3 det_roll=rotate(-5, det_cent, det_cent+(0,0,1));
+// transform3 det_yaw=rotate(5, det_cent, det_cent+(0,-1,0));
+// transform3 det_shift=shift(5, -8, 2);
+
+// path3 detector_uncal = det_pitch*det_roll*det_yaw*det_shift*detector;
+// path3 det_cent_uncal = det_pitch*det_roll*det_yaw*det_shift*det_cent;
+// // path3 detector_uncal = det_shift*detector;
+// // path3 det_cent_uncal = det_shift*det_cent;
+// real op_uncal=0.35;
+// draw(detector_uncal, red+opacity(op_uncal));
+
+// // labels
+// //From Charles Staats's tutorial
+// //Direction of a point toward the camera.
+// triple cameradirection(triple pt, projection P=currentprojection) {
+//   if (P.infinity) {
+//     return unit(P.camera);
+//   } else {
+//     return unit(P.camera - pt);
+//   }
+// }
+
+// //Move a point closer to the camera.
+// triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
+//   return pt + distance * cameradirection(pt, P);
+// }
+
+// // label("$\theta=0^{\circ}$",red,align=S,position=towardcamera((det_cent-(0, ulen/2, -vlen/2))));
+
+// source
+real slat=0, slng=0, svrt=-100;
+triple src=(svrt,slat, slng);
+
+// // lines from source to detector edges
+draw(src..det_cent-(0,-vlen/2,-ulen/2),blue+opacity(0.15));
+draw(src..det_cent-(0,-vlen/2,ulen/2),blue+opacity(0.15));
+draw(src..det_cent-(0,vlen/2,ulen/2),blue+opacity(0.15));
+draw(src..det_cent-(0,vlen/2,-ulen/2),blue+opacity(0.15));
+
+// draw(Label("$X_{\theta_g=0^{\circ}}$", 1),src--det_cent-(110,0,0), blue, arrow=Arrow3);
+
+// // transformed frame vectors
+// triple det0_uncal = point(detector_uncal, 0);
+// triple u_p = point(detector_uncal, 1) - det0_uncal;
+// triple v_p = point(detector_uncal, 3) - det0_uncal;
+
+// // unit vectors
+// triple uhat_p = u_p / length(u_p);
+// triple vhat_p = v_p / length(v_p);
+// triple what_p = cross(uhat_p, -vhat_p);
+
+// // scale
+// triple u_p = s*uhat_p + det0_uncal;
+// triple v_p = s*vhat_p + det0_uncal;
+// triple w_p = s*what_p + det0_uncal;
+
+// // uncalibrated detector coordinate system
+// draw(det0_uncal--u_p,red,Arrow3,L=Label("$u'$", position=EndPoint, align=SE));
+// draw(det0_uncal--v_p,red,Arrow3,L=Label("$v'$", position=EndPoint, align=S));
+// draw(det0_uncal--w_p,red,Arrow3,L=Label("$w'$", position=EndPoint, align=S));
+
+// // draw(point(detector_uncal, 1)--src, red+opacity(0.15));
+// // real arrowlength = 5
+// // vector v_p=new path(real x){
+// //     return point(detector_uncal, 1)--arrowlength*(-1)*point(detector_uncal, 2));
+// // };
+
+// // draw(v_p)
+// // draw(point(detector_uncal, 1)--point(detector_uncal, 2),red, arrow=Arrow3);
+
+// // // and for real projection
+// // draw(src_uncal..point(detector_uncal, 0), red+opacity(0.15));
+// // draw(src_uncal..point(detector_uncal, 1), red+opacity(0.15));
+// // draw(src_uncal..point(detector_uncal, 2), red+opacity(0.15));
+// // draw(src_uncal..point(detector_uncal, 3), red+opacity(0.15));
+
+// // draw(Label("$\mathcal{H}$", 1),src--det_cent_uncal, red, arrow=Arrow3);
+
+// // Draw cylinder
+// // cylinder(startpoint3d, radius, length, along_this_axis)
+// triple start = (0,0,-8);
+// real length = 16;
+// real radius = 11.3;
+// triple ax = (0,0,1);
+// revolution r = cylinder(start,radius,length,ax);
+// draw(r,black);
+
+// // isocal spots
+// triple[] isocal={(0,-11.3,-7.5),
+//                  (7.9903,-7.9903,-7.5),
+//                  (7.9903,7.9903,-7.5),
+//                  (-11.3,0.0,-7.5),
+//                  (-7.9903,7.9903,-5),
+//                  (11.3,0.0,-3),
+//                  (0,11.3,-2),
+//                  (-10.4398,4.3243,2),
+//                  (4.3243,10.4398,3),
+//                  (-10.4398,-4.3243,5),
+//                  (4.3243,-10.4398,5),
+//                  (10.4398,-4.3243,7.5),
+//                  (10.4398,4.3243,7.5),
+//                  (-4.3243,10.4398,7.5),
+//                  (-4.3243,-10.4398,7.5)
+// };
+
+// dot(isocal, black);
+
+// // project points
+// transform3 proj=planeproject(detector);
+// transform3 proj_uncal=planeproject(detector_uncal);
+// // transform3 proj090=planeproject(det090);
+// // transform3 proj180=planeproject(det180);
+// // transform3 proj270=planeproject(det270);
+
+// dot(proj*isocal,blue);
+// dot(proj_uncal*isocal,red+opacity(op_uncal));
+// // dot(proj090*isocal,red);
+// // dot(proj180*isocal,red);
+// // dot(proj270*isocal,red);
+#+END_SRC
+
+#+RESULTS: fig:opt_coords_rad
+[[file:figures/opt/coords_rad.pdf]]
+
+#+LABEL: fig:opt_coords_iec
+#+BEGIN_SRC asymptote :file figures/opt/coords_iec.pdf :exports none
+settings.multisample=0;
+settings.outformat="pdf";
+settings.prc = false;
+settings.render = 0;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+// view configuration
+size(2cm);
+addMargins(0.5cm, 0.5cm);
+
+// view configuration
+// currentprojection=orthographic(-15,5,13,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// shift different axes along x in IEC
+// real ax_shift = 10;
+real ax_scale=5;
+
+// Draw axis
+// iec
+draw(Label("$\text{Lng}$",1),(0,0,0)--(0,ax_scale,0),Arrow3);
+draw(Label("$\text{Vrt}$",1),(0,0,0)--(ax_scale,0,0),Arrow3);
+draw(Label("$\text{Lat}$",1),(0,0,0)--(0,0,ax_scale),Arrow3);
+#+END_SRC
+
+#+RESULTS: fig:opt_coords_iec
+[[file:figures/opt/coords_iec.pdf]]
+
+#+LABEL: fig:opt_coords_img
+#+BEGIN_SRC asymptote :file figures/opt/coords_img.pdf :exports none
+settings.multisample=0;
+settings.outformat="pdf";
+settings.prc = false;
+settings.render = 0;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+// view configuration
+size(2cm);
+addMargins(0.5cm, 0.5cm);
+
+// view configuration
+// currentprojection=orthographic(-15,5,13,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// shift different axes along x in IEC
+// real ax_shift = 10;
+real ax_scale=5;
+
+// Draw axis
+// var/img
+draw(Label("$z_{img}$",1),(0,0,0)--(0,ax_scale,0),Arrow3);
+draw(Label("$x_{img}$",1),(0,0,0)--(ax_scale,0,0),Arrow3);
+draw(Label("$y_{img}$",1),(0,0,0)--(0,0,-ax_scale),Arrow3);
+
+#+END_SRC
+
+#+RESULTS: fig:opt_coords_img
+[[file:figures/opt/coords_img.pdf]]
+
 ** ideas                                     :noexport:
 Given that part of the robust nature of optimization-based algorithms
 is the ability to handle the poorly-conditioned nature of the inverse
@@ -1838,9 +2161,9 @@ method]]).
 We reconstructed the Catphan scans from these two trajectories with
 and without the calibrations offsets. An isotropic image grid of 0.473
 mm was used for each reconstruction with application of the half-fan
-weighting described in Section ([[id:cc6bcac6-a445-4dfb-8815-a95e31f517ed][Detector weighting]]). For all
-reconstructions, 200 iterations of MLEM were used, as described in
-Section ([[id:e0a24b69-d136-4f9a-9e85-dc42e1d114a9][MLEM]]).
+weighting described in the section on [[id:81d9f135-01c3-4415-a699-1f364e8c9ce3][Detector weighting]]. For all
+reconstructions, 200 iterations of MLEM were used, as described in the
+[[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]] section.
 
 *metric analysis on these two scans w/ and w/o calibration*
 *** figures                                  :noexport:
@@ -2755,8 +3078,7 @@ From the results shown in Figure (\ref{fig:})
  reconstructions.
 
 **** notebooks                               :noexport:
-***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/fov/em_vs_fdk.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/fov/em_vs_fdk.ipynb]]
-
+***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170816_circ_clc_smth_catphans/matlab/em/metrics/catphans.ipynb")][170816_circ_clc_smth_catphans/matlab/em/metrics/catphans.ipynb]]
 ** Discussion
 ** Conclusion
    :PROPERTIES:
