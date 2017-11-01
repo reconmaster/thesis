@@ -1046,6 +1046,9 @@ addMargins(0.5cm, 0.5cm);
  [[file:figures/opt/weighting.pdf]]
 
 ** Framework implementation with Varian TrueBeam kV-CBCT system
+   :PROPERTIES:
+   :ID:       58A6E225-522B-4620-BEDB-F81AD30070C3
+   :END:
 *** TrueBeam linac with Developer Mode
      :PROPERTIES:
      :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
@@ -2498,6 +2501,19 @@ axial FOV problem using current linac-mounted kV-imaging with the
 robust trajectory framework described in [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory
 framework]].
 
+When an extended axial FOV is needed in the clinic, the current
+practice is to acquire two circular scans at different axial
+positions. Once each independent volume has been reconstructed with an
+analytic-based FBP algorithm such as FDK, the two volumes are stacked
+to create the extended image. Though this stacked image does extended
+the axial coverage beyond that provided by a single circular scan,
+there are some limitations to this approach. One such drawback is that
+by reconstructing the two circular volumes independently, neither
+volume is able to use information from the other reconstruction to
+help reduce artifacts in the region between the planes of the two
+circles which would be affected by the cone-angle artifacts of each
+independently reconstruction volume.
+
 Unlike analytic-based reconstruction methods, there is no imposition
 of a prescribed trajectory when using optimization-based methods.
 Provided that the correct geometry of the acquisition trajectory is
@@ -2596,42 +2612,23 @@ component is introduced before the first gantry rotation is complete,
 and the second gantry rotation begins before the axial shift is
 complete.
 
-**** Phantoms
-     :PROPERTIES:
-     :ID:       cd67b907-804c-4212-bf45-6ca6daad766c
-     :END:
-
 **** notebooks                               :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170816_circ_clc_smth_catphans/matlab/em/trajectories.ipynb")][170816_circ_clc_smth_catphans/matlab/em/trajectories.ipynb]]
 - plots of trajectories from real scan data
+
 *** Simulation
     :PROPERTIES:
     :ID:       C07F2BE3-413C-490F-B171-0ADB82B939EA
     :END:
-Clinical extended-axial-FOV images are obtained by stitching together
-two circular scans at different axial locations. We first wanted to
-find the maximum axial coverage that can be achieved with such a
-trajectory. That is, what would be the maximum axial spacing between
-the two planes of the source's trajectory for which a useful extended
-volume image could be reconstructed?
-
-When an extended axial FOV is needed in the clinic, in current
-practice two circular scans are acquired at different axial positions.
-Once each independent volume has been reconstructed with the
-analytic-based FDK, the two volumes are stacked to create the extended
-image. While this stacked image does have extended axial coverage,
-there are problems with this approach that can be alleviated with
-iterative reconstruction techniques. To evaluate this, we compared the
-simulated results of stacking FDK images from two circular scans to
-the iterative reconstruction from the combined projection data of the
-two circular scans treated as a single trajectory composed of two
-circles cite:davis_extended_2013.
-
-Simulating forward projections from this trajectory, we compared the
-images obtained from stitching together the independent FDK images to
-those obtained by reconstructing the two circles as a single
-trajectory with MLEM. We also compared stacked FDK images to
-reconstructions from the simulated *CLC* and smooth trajectories.
+As the current clinical procedure for obtaining an extended axial FOV
+CBCT is by stitching together the independently reconstructed images
+of two circular scans acquired at different axial locations, we first
+used simulations to determine the maximum axial spacing between the
+two circular trajectories allowed by this technique. To evaluate this,
+we compared the simulated results of stacking FDK images from two
+circular scans to the MLEM reconstruction from the combined projection
+data of the two circular scans treated as a single trajectory composed
+of two circles cite:davis_extended_2013.
 
 We simulated a Defrise-style phantom modeled with the 3D X-ray
 projection software TAKE cite:seger_matlab/c_2005. The phantom was
@@ -2639,56 +2636,52 @@ composed of a 15.2 cm outer diameter acrylic cylinder with alternating
 density disks of Delrin and cork 0.5 cm thick. This particular phantom
 with alternating density disks is acknowledged by the authors of FDK
 as being particularly susceptible to cone-angle artifacts
-cite:feldkamp_practical_1984.
+cite:feldkamp_practical_1984. We used the TAKE software to forward
+project the phantom as well as generate a digitized ''truth'' phantom
+for calculating comparison metrics. The projector generates a forward
+projection from a specified trajectory given a mathematical definition
+of the phantom as well as its material properties and the spectrum
+generated by the x-ray source.
 
-We used the TAKE software to forward project the phantom as well as
-generate a digitized ''truth'' phantom for calculating comparison
-metrics. The projector generates a forward projection from a specified
-trajectory given a mathematical definition of the phantom as well as
-its material properties and the spectrum generated by the x-ray
-source.
-
-We created projection data for a set of dual-circle trajectories that
-had an increasing amount of axial separation between the two circles.
-With a 1.5x magnification factor and a 30 cm detector size along the
-axial direction, a single circular scan has a maximum axial coverage
-of 20 cm in the image space. Furthermore, the maximum spacing between
-the two circles is 20 cm as any separation larger than this means the
+We created projection data for dual-circle trajectories that had
+variable axial separation between the two circles. With a 1.5x
+magnification factor and a 30 cm detector size along the axial
+direction (e.g., the equivalent geometry of the TrueBeam kV-imaging
+detector), a single circular scan has a maximum axial coverage of 20
+cm in the image space. Furthermore, the maximum spacing between the
+two circles is 20 cm as any separation larger than this means the
 independent image volumes from the two circles are no longer
 contiguous. We therefore created trajectories with 10, 12, 14, 16, 18,
-and 20 cm separations *only show the larger gaps that are of
-interest?* between the planes of the source's dual-circle trajectory.
+and 20 cm separations between the planes of the source's dual-circle
+trajectory.
 
-We uniformly distributed 600 views over the entire trajectory which is
-comparable to the total number of views used in a single clinical CBCT
-scan with the kV imaging system. For the other two trajectories with a
-component of projection views taken during the axial translation (CLC
-and smooth), 600 views were used with 20% of the views being
-distributed along the axial translation stage.
-
-*FIX*
-
-The reconstruction image space consisted of a $256\times256$ transverse
-grid of 1 mm isotropic voxels. As the spacing between the circles
-increased, the number of voxels in the axial direction also increased
-to accommodate the increasingly large FOV.
+In addition to the double circle trajectory, we also simulated
+projections from the CLC and smooth classes of trajectories also shown
+in Figure ([[ref:fig:fov_3d_trajectories]]) that have some of the
+projection views distributed over the source's axial translation
+component. We uniformly distributed 600 views over the entire
+trajectory which is comparable to the total number of views used in a
+single clinical CBCT scan with the kV imaging system. For the CLC and
+smooth trajectories, 600 views were also used with 20% of the views
+being distributed along the axial translation stage.
 
 For the extended-volume reconstruction using the stacked FDK, we
 independently reconstructed each circular scan with FDK using a
 standard Hann filter. To combine the two reconstructed volumes for an
 extended axial-coverage image at a given spacing, we used the midplane
 between the two planes of the source's circular trajectory to select
-how much of each reconstruction to put in the combined image.
+how much of each reconstruction to put in the combined image. The
+reconstruction image space consisted of a $256\times256$ transverse grid of
+1 mm isotropic voxels.
 
 For the MLEM reconstructions, we used all of the projection data
 simultaneously to reconstruct the extended volume. After defining the
 extended image volume, we computed the system matrix for each of the
 different spacings and trajectories based on the trajectory of the
-source and detector. We used 100 iterations *justify choice* of the
-MLEM algorithm to find an estimate for the image.
+source and detector. We used 100 iterations of the MLEM algorithm to
+find an estimate for the image.
 
-*FIX*
-
+**** fragments                               :noexport:
 Our initial evaluation of the images obtained from non-circular
 trajectories is simply a qualitative visual inspection which does
 provide an informative assessment of the variety of artifacts that
@@ -2699,13 +2692,56 @@ universal quality index (UQI) cite:wang_universal_2002 to provide a
 quantitative assessment of the image similarity between the reference
 image and the images from different trajectories.
 
+Simulating forward projections from this trajectory, we compared the
+images obtained from stitching together the independent FDK images to
+those obtained by reconstructing the two circles as a single
+trajectory with MLEM. We also compared stacked FDK images to
+reconstructions from the simulated *CLC* and smooth trajectories.
+
 *** Data
-After identifying potential benefits from using these non-circular
-trajectories with iterative reconstruction methods from simulations,
-we acquired experimental scan data with Varian's Trilogy OnBoard
-Imager. Though the Trilogy lacks the mechanical control features of
-the TrueBeam Developer Mode, we were able to acquire circular scans at
-different axial positions by translating the treatment couch.
+After identifying potential benefits of addressing the limited axial
+FOV using non-circular trajectories as described in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized
+trajectory framework]] section, we then wanted to evaluate how well this
+approach worked when implemented on our TrueBeam system using
+Developer mode as describe in the [[id:58A6E225-522B-4620-BEDB-F81AD30070C3][Framework implementation with Varian
+TrueBeam kV-CBCT system]] section. By using the Developer Mode XML
+control schema, we were able to create acquisition scripts that
+implemented gantry rotations with a component of axial
+
+Though the imaging framework is agnostic of what component of the
+system effects the relative motion between the patient and the imaging
+system, there are some engineering limitations of our version of the
+TrueBeam system that determine how we implement the axial translation
+component of these trajectories. The primary limitation with the
+TrueBeam kV-imaging robotic arms is that they cannot perform any
+translational movement while the gantry is rotating. As such, we
+implemented all of our axial translation by moving the treatment couch
+for all of the trajectories given that the smooth trajectory would
+require the robotic arms to translate while the gantry rotates.
+
+###################################
+
+After simulation, we then wanted to see how well combining these
+trajectories with optimization-based reconstruction could extend the
+axial FOV with real projection data. Based on the simulation results,
+we acquired a scans from spacings of 17, 18,19, and 20 cm between the
+two circular planes of these trajectories. These larger spacings
+provided data for potential axial FOV's of 37, 38, 39, and 40 cm
+respectively.
+
+For each of these spacings, we acquired the same three trajectories
+mentioned in the simulation study. First the dual-circle trajectory
+was acquired by moving the c-arms and acquiring circular scans at two
+different axial positions. We then acquired the CLC trajectory with
+the c-arms by also acquiring projection data as they translated along
+the axial direction from the plane of the first circle to the plane of
+the second circle. Finally, the smooth trajectory was acquired by
+having the treatment couch move relative to the source and detector as
+the gantry rotated. *maybe cut this last sentence?* While we would
+like to demonstrate this motion while moving only the c-arms during
+the gantry rotation, this is unfortunately not possible with our
+TrueBeam model due to hardware limitations.
+
 
 The image quality that results from using these trajectories with
 optimization-based algorithms must be quantitatively evaluated for the
@@ -2716,19 +2752,19 @@ wanted to characterize the low-contrast resolution as a function of
 axial position for the different trajectories and spacings.
 
 As the extended axial coverage we obtain with the kV imaging system
-using these methods is novel, the authors do not know of any standard
-phantom for characterizing low-contrast resolution as a function of
-axial position within a single scan. For this reason, we built a
-custom low-contrast disk phantoms that fit in an acrylic tube with
-extended axial coverage as shown in Figure ([[ref:fig:disk_tube][tube setup]]). The disks
-themselves, such as the one shown in Figure ([[ref:fig:lc_disk][low constrast disk]]) *get
-updated disk*, are designed to provide similar metrics such as those
-obtained with the Catphan (The Phantom Laboratory, Salem, NY)
-phantom's low-contrast module CTP515. Additionally, the largest holes
-are designed to hold the different electron density plugs from the
-Gammex (Middleton, WI) RMI tissue characterization phantom. By placing
-four of these disks in the tube, we can obtain these metrics as a
-function of axial position within a given reconstruction.
+using these methods is novel, there is not a standard phantom for
+characterizing low-contrast resolution as a function of axial position
+within a single scan. For this reason, we built a custom low-contrast
+disk phantoms that fit in an acrylic tube with extended axial coverage
+as shown in Figure ([[ref:fig:disk_tube][tube setup]]). The disks themselves, such as the one
+shown in Figure ([[ref:fig:lc_disk][low constrast disk]]) *get updated disk*, are designed
+to provide similar metrics such as those obtained with the Catphan
+(The Phantom Laboratory, Salem, NY) phantom's low-contrast module
+CTP515. Additionally, the largest holes are designed to hold the
+different electron density plugs from the Gammex (Middleton, WI) RMI
+tissue characterization phantom. By placing four of these disks in the
+tube, we can obtain these metrics as a function of axial position
+within a given reconstruction.
 
 #+BEGIN_LaTeX
 \begin{figure}
@@ -2924,28 +2960,7 @@ sufficient redundancy is available to reconstruct this volume.
       :PROPERTIES:
       :ID:       4787aeca-bdf3-4b8b-bfda-6c7248cb01d4
       :END:
-  After simulation, we then wanted to see how well combining these
-  trajectories with optimization-based reconstruction could extend the
-  axial FOV with real projection data. Based on the simulation results,
-  we acquired a scans from spacings of 17, 18,19, and 20 cm between the
-  two circular planes of these trajectories. These larger spacings
-  provided data for potential axial FOV's of 37, 38, 39, and 40 cm
-  respectively.
-
-  For each of these spacings, we acquired the same three trajectories
-  mentioned in the simulation study. First the dual-circle trajectory
-  was acquired by moving the c-arms and acquiring circular scans at two
-  different axial positions. We then acquired the CLC trajectory with
-  the c-arms by also acquiring projection data as they translated along
-  the axial direction from the plane of the first circle to the plane of
-  the second circle. Finally, the smooth trajectory was acquired by
-  having the treatment couch move relative to the source and detector as
-  the gantry rotated. *maybe cut this last sentence?* While we would
-  like to demonstrate this motion while moving only the c-arms during
-  the gantry rotation, this is unfortunately not possible with our
-  TrueBeam model due to hardware limitations.
-
-  #+NAME: tab:disk_trajects
+#+NAME: tab:disk_trajects
   | Trajectory | Axial gap [cm] | Detector configuration | Air scan  | lognorm | Notes                      |
   |------------+----------------+------------------------+-----------+---------+----------------------------|
   | Circle     |                | Full                   |           | x       |                            |
@@ -3091,6 +3106,10 @@ From the results shown in Figure (\ref{fig:})
 **** notebooks                               :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170816_circ_clc_smth_catphans/matlab/em/metrics/catphans.ipynb")][170816_circ_clc_smth_catphans/matlab/em/metrics/catphans.ipynb]]
 ** Discussion
+- limitation of the phantom metric location
+- blade at the edge of the FOV which exacerbates issues in the overlap
+  region
+- issue of moving the patient vs moving the imaging arms
 ** Conclusion
    :PROPERTIES:
    :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
