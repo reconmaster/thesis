@@ -790,11 +790,50 @@ cite:forthmann_adaptive_2009. Unfortunately, the increased distortion
 from cone-angle artifacts at large cone angles limits the axial
 separation between these two circles. This restricted separation
 distance is approximately half of what would be expected based simply
-on the coverage expected from the geometry of the kV detector.
+on the coverage expected from the geometry of the kV detector. In
+addition to the cone angle artifacts, the support allowed by
+analytic-based methods is restricted to the shaded regions
+illustrating this geometry support in Figure
+([[ref:fig:opt_fov_schematic]]).
 
-#+CAPTION: Schematic of the limited axial FOV from stacking FDK volumes
-#+ATTR_LaTeX: :width \textwidth
-#+LABEL: fig:opt_axial_fov_limit
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.9\textwidth}
+\includegraphics[width=\textwidth]{figures/opt/ax_fov_17cm.pdf}
+\caption{}
+\label{fig:opt_fov_17cm}
+\end{subfigure}
+~ %add desired spacing between images, e. g. ~, \quad, \qquad,
+% \hfill etc.
+% (or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.9\textwidth}
+\includegraphics[width=\textwidth]{figures/opt/ax_fov_20cm.pdf}
+\caption{Sagittal schematic of the axial FOV support for the
+  dual-circle trajectory using the TrueBeam kV-imaging system
+  geometry. In both figures, the upper half of the image (blue)
+  represents the projective geometry from two opposing views at
+  $\theta=0^{\circ}$ (dashed lines) and $\theta=180^{\circ}$ (solid lines) of the
+  superior scanning trajectory. The lower half of the image (red)
+  shows the inferior volume scanning configuration using the same
+  convention of opposing views. The shaded region in the top an bottom
+  portion represent the superior (red) and inferior (blue) volumes of
+  support of a single circle. The top schematic demonstrates an axial
+  separation $\left(d\right)$ of 10 cm, which for this geometry has
+  complete support for both FDK and optimization-based reconstruction
+  methods. The second schematic (b) shows an axial separation
+  $\left(d\right)$ of 20 cm. As it can be seen by comparing these two
+  images, the 20 cm spacing shown in (b) is the maximum axial coverage
+  allowed by the two circles for which the image volumes are
+  contiguous in the axial direction. For smaller axial offsets, there
+  will be redundancy in the volume support which is indicated by the
+  purple region in the top figure.}
+\label{fig:opt_fov_20cm}
+\end{subfigure}
+\caption{Schematic }
+\label{fig:opt_fov_schematic}
+\end{figure}
+#+END_EXPORT
 
 The use of the two circles alone provides one interesting example of a
 trajectory where optimization-based reconstruction provides an
@@ -851,6 +890,256 @@ system is actually closer to the patient than the kV detector. Unlike
 the kV detector, it is not possible to change the position of the
 treatment head. In this case, moving the patient would be the only
 viable trajectory modification to avoid a collision.
+
+**** figures                                 :noexport:
+***** 10 cm
+#+BEGIN_SRC asymptote :file figures/opt/ax_fov_17cm.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+// settings.prc = false;
+// settings.render = 0;
+
+import geometry;
+import solids;
+import three;
+
+defaultpen(fontsize(10pt));
+unitsize(1cm);
+
+// view configuration
+size(10cm);
+addMargins(0.5cm, 0.5cm);
+
+// line opacity
+real opl=0.5;
+real oplt=0.8;
+
+// area opacity
+real opa=0.1;
+
+// currentprojection=orthographic(-15,10,20,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// lngoffset from midplane
+real lng = 10/2.;
+
+// det lng len
+real vlen=30.0;
+
+// detector 1
+real dlng1=-lng, dvrt=50;
+point det1=(dvrt, dlng1);
+point det1_sup=(dvrt, dlng1+vlen/2);
+point det1_inf=(dvrt, dlng1-vlen/2);
+
+// detector 2
+real dlng2=lng;
+point det2=(dvrt, dlng2);
+point det2_sup=(dvrt, dlng2+vlen/2);
+point det2_inf=(dvrt, dlng2-vlen/2);
+
+// source
+real svrt=-100;
+point src1=(svrt, dlng1);
+point src2=(svrt, dlng2);
+
+// now the lines
+line detector1=line(det1_inf, false, det1_sup, false);
+line d1_iray=line(src1, false, det1_inf, false);
+line d1_sray=line(src1, false, det1_sup, false);
+
+line detector2=line(det2_inf, false, det2_sup, false);
+line d2_iray=line(src2, false, det2_inf, false);
+line d2_sray=line(src2, false, det2_sup, false);
+
+// draw source and detectors w/ rays connecting edge
+draw(detector1,red+opacity(opl));
+draw(d1_iray,red+opacity(opl));
+draw(d1_sray,red+opacity(opl));
+
+draw(Label("$\theta_{s}=0^{\circ}$", position=EndPoint, E),
+     detector2,blue+opacity(opl));
+draw(d2_iray,blue+opacity(opl));
+draw(d2_sray,blue+opacity(opl));
+
+// rotate by 180 and show opposing geometry
+point src1f=(-src1.x,src1.y);
+point det1f_inf=(-det1_inf.x,det1_inf.y);
+point det1f_sup=(-det1_sup.x,det1_sup.y);
+
+point src2f=(-src1.x,src2.y);
+point det2f_inf=(-det2_inf.x,det2_inf.y);
+point det2f_sup=(-det2_sup.x,det2_sup.y);
+
+line detector1f=line(det1f_inf, false, det1f_sup, false);
+line d1f_iray=line(src1f, false, det1f_inf, false);
+line d1f_sray=line(src1f, false, det1f_sup, false);
+
+line detector2f=line(det2f_inf, false, det2f_sup, false);
+line d2f_iray=line(src2f, false, det2f_inf, false);
+line d2f_sray=line(src2f, false, det2f_sup, false);
+
+draw(Label("$\theta_{i}=180^{\circ}$", position=BeginPoint, W),
+     detector1f,red+dashdotted+opacity(opl));
+draw(d1f_iray,red+dashdotted+opacity(opl));
+draw(d1f_sray,red+dashdotted+opacity(opl));
+
+draw(detector2f,blue+dashdotted+opacity(opl));
+draw(d2f_iray,blue+dashdotted+opacity(opl));
+draw(d2f_sray,blue+dashdotted+opacity(opl));
+
+// indicate offset
+Label L = Label("d", position=MidPoint);
+
+// distance(L, src1, src2, 0, black);
+draw(src1 -- src2, L=L, bar=Bars);
+
+// color in the regions of support
+fill(intersectionpoint(detector1f, d1_sray) --
+     intersectionpoint(d1_sray, d1f_sray) --
+     intersectionpoint(d1f_sray, detector1) --
+     intersectionpoint(detector1, d1f_iray) --
+     intersectionpoint(d1f_iray, d1_iray) --
+     intersectionpoint(d1_iray, detector1f) --
+     cycle, opacity(opa)+red);
+
+// color in the regions of support
+fill(intersectionpoint(detector2f, d2_sray) --
+     intersectionpoint(d2_sray, d2f_sray) --
+     intersectionpoint(d2f_sray, detector2) --
+     intersectionpoint(detector2, d2f_iray) --
+     intersectionpoint(d2f_iray, d2_iray) --
+     intersectionpoint(d2_iray, detector2f) --
+     cycle, opacity(opa)+blue);
+#+END_SRC
+
+#+RESULTS:
+[[file:figures/opt/ax_fov_17cm.pdf]]
+***** 20 cm
+#+BEGIN_SRC asymptote :file figures/opt/ax_fov_20cm.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+// settings.prc = false;
+// settings.render = 0;
+
+import geometry;
+import solids;
+import three;
+
+defaultpen(fontsize(10pt));
+unitsize(1cm);
+
+// view configuration
+size(10cm);
+addMargins(0.5cm, 0.5cm);
+
+// line opacity
+real opl=0.5;
+real oplt=0.8;
+
+// area opacity
+real opa=0.1;
+
+// currentprojection=orthographic(-15,10,20,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// lngoffset from midplane
+real lng = 20/2.;
+
+// det lng len
+real vlen=30.0;
+
+// detector 1
+real dlng1=-lng, dvrt=50;
+point det1=(dvrt, dlng1);
+point det1_sup=(dvrt, dlng1+vlen/2);
+point det1_inf=(dvrt, dlng1-vlen/2);
+
+// detector 2
+real dlng2=lng;
+point det2=(dvrt, dlng2);
+point det2_sup=(dvrt, dlng2+vlen/2);
+point det2_inf=(dvrt, dlng2-vlen/2);
+
+// source
+real svrt=-100;
+point src1=(svrt, dlng1);
+point src2=(svrt, dlng2);
+
+// now the lines
+line detector1=line(det1_inf, false, det1_sup, false);
+line d1_iray=line(src1, false, det1_inf, false);
+line d1_sray=line(src1, false, det1_sup, false);
+
+line detector2=line(det2_inf, false, det2_sup, false);
+line d2_iray=line(src2, false, det2_inf, false);
+line d2_sray=line(src2, false, det2_sup, false);
+
+// draw source and detectors w/ rays connecting edge
+draw(detector1,red+opacity(opl));
+draw(d1_iray,red+opacity(opl));
+draw(d1_sray,red+opacity(opl));
+
+draw(Label("$\theta_{s}=0^{\circ}$", position=EndPoint, E),
+     detector2,blue+opacity(opl));
+draw(d2_iray,blue+opacity(opl));
+draw(d2_sray,blue+opacity(opl));
+
+// rotate by 180 and show opposing geometry
+point src1f=(-src1.x,src1.y);
+point det1f_inf=(-det1_inf.x,det1_inf.y);
+point det1f_sup=(-det1_sup.x,det1_sup.y);
+
+point src2f=(-src1.x,src2.y);
+point det2f_inf=(-det2_inf.x,det2_inf.y);
+point det2f_sup=(-det2_sup.x,det2_sup.y);
+
+line detector1f=line(det1f_inf, false, det1f_sup, false);
+line d1f_iray=line(src1f, false, det1f_inf, false);
+line d1f_sray=line(src1f, false, det1f_sup, false);
+
+line detector2f=line(det2f_inf, false, det2f_sup, false);
+line d2f_iray=line(src2f, false, det2f_inf, false);
+line d2f_sray=line(src2f, false, det2f_sup, false);
+
+draw(Label("$\theta_{i}=180^{\circ}$", position=BeginPoint, W),
+     detector1f,red+dashdotted+opacity(opl));
+draw(d1f_iray,red+dashdotted+opacity(opl));
+draw(d1f_sray,red+dashdotted+opacity(opl));
+
+draw(detector2f,blue+dashdotted+opacity(opl));
+draw(d2f_iray,blue+dashdotted+opacity(opl));
+draw(d2f_sray,blue+dashdotted+opacity(opl));
+
+// indicate offset
+Label L = Label("d", position=MidPoint);
+
+// distance(L, src1, src2, 0, black);
+draw(src1 -- src2, L=L, bar=Bars);
+
+// color in the regions of support
+fill(intersectionpoint(detector1f, d1_sray) --
+     intersectionpoint(d1_sray, d1f_sray) --
+     intersectionpoint(d1f_sray, detector1) --
+     intersectionpoint(detector1, d1f_iray) --
+     intersectionpoint(d1f_iray, d1_iray) --
+     intersectionpoint(d1_iray, detector1f) --
+     cycle, opacity(opa)+red);
+
+// color in the regions of support
+fill(intersectionpoint(detector2f, d2_sray) --
+     intersectionpoint(d2_sray, d2f_sray) --
+     intersectionpoint(d2f_sray, detector2) --
+     intersectionpoint(detector2, d2f_iray) --
+     intersectionpoint(d2f_iray, d2_iray) --
+     intersectionpoint(d2_iray, detector2f) --
+     cycle, opacity(opa)+blue);
+#+END_SRC
+
+#+RESULTS:
+[[file:figures/opt/ax_fov_20cm.pdf]]
 
 ** Generalized trajectory framework
    :PROPERTIES:
