@@ -329,33 +329,22 @@ delivering therapeutic radiation doses are linear accelerators
 (linacs) that deliver powerful megavoltage (MV) treatment beams to
 diseased tissue 
 
+*additional history leading to IGRT*
 
-while using kilovoltage (kV) CT techniques to both
-localize the tissue and evaluate the target and normal tissue response
-to therapy
-cite:oldham_cone-beam-ct_2005,xing_overview_2006,saw_performance_2007.
-
-
-The addition of a linac-mounted,
-kV-imaging, cone-beam computed tomography (CBCT) system to the
-gantry-mounted clinical linear accelerator
+The addition of a linac-mounted, kV-imaging, cone-beam computed
+tomography (CBCT) system to the gantry-mounted clinical linear
+accelerator
 cite:jaffray_flat-panel_2002,letourneau_cone-beam-ct_2005,rahman_linac:_2015
 helped this modality become the most popular form of image-guided
 radiation therapy (IGRT)
 cite:xing_overview_2006,bissonnette_quality_2012,dawson_advances_2007.
-
-These image-guided radiation therapy (IGRT) 
-
-
-*additional history leading to IGRT*
-
 The tomographic information provided in the kV energy range improves
 soft-tissue contrast resolution over that provided by the MV
 electronic portal imaging device (EPID) alone
 cite:jaffray_radiographic_1999. The linac-mounted, kV-imaging, CBCT
 system not only helps with patient setup and target verification, but
 it also allows the monitoring of the tumor response during treatment
-cite:oldham_cone-beam-ct_2005,xing_overview_2006,dawson_advances_2007.
+cite:oldham_cone-beam-ct_2005.
 
 #+CAPTION: Annotated image of a TrueBeam linac. See text for description of components.
 #+ATTR_LaTeX: :width \textwidth
@@ -382,30 +371,31 @@ make multiple rotations in the same direction like a diagnostic CT
 system due to the complexity of the MV linac design.
 
 While there are many advantages in using linac-mounted CBCT imaging
-systems in IGRT, there are still limitations in the current clinical
-workflow that could be alleviated by utilizing non-circular scanning
-trajectories with optimization-based reconstruction. One issue is the
-limited axial FOV coverage provided by the current detectors and
-circular scanning trajectory. Another issue is the increased
-probability of patient collisions with the rotating treatment gantry.
-In this work, we will focus exclusively on utilizing a generalized
-optimization-based reconstruction framework from arbitrary CBCT
-trajectories to address these clinical issues for IGRT. However, the
-framework itself is not necessarily restricted to IGRT and could be of
-potential use for a variety of other CBCT applications.
+systems in IGRT, there are still technical limitations that negatively
+impact clinical utility, that could be alleviated by utilizing
+non-circular scanning trajectories with optimization-based
+reconstruction. One issue is the limited axial FOV coverage provided
+by the current detectors and circular scanning trajectory. Another
+issue is the increased potential of patient collisions with the
+rotating treatment gantry. In this work, we will focus exclusively on
+utilizing a generalized optimization-based reconstruction framework
+from arbitrary CBCT trajectories to address these clinical issues for
+IGRT. However, the framework itself is not necessarily restricted to
+IGRT and could be of potential use for a variety of other CBCT
+applications.
 
 ** Organization
    :PROPERTIES:
    :ID:       252a18dd-1210-4360-b082-fce5510334ab
    :END:
 In this work, we will discuss an optimization-based,
-image-reconstruction framework that enables the use of these new
-scanning trajectories. In particular, we will focus on how this
-approach was developed to address the two clinical shortcomings of
-limited axial FOV coverage and potential patient collisions with the
-linac gantry. By using these two examples, we will not only show the
-feasibility of using these non-circular trajectories, but also a
-potential solution to existing clinical needs.
+image-reconstruction framework that enables the use of new scanning
+trajectories. In particular, we will focus on how this approach was
+developed to address the two clinical shortcomings of limited axial
+FOV coverage and potential patient collisions with the linac gantry.
+By using these two examples, we will not only show the feasibility of
+using these non-circular trajectories, but also a potential solution
+to existing clinical needs.
 
 First, we will discuss the framework and considerations of using
 optimization-based reconstruction with different scanning trajectories
@@ -417,11 +407,10 @@ use of new trajectories to address the limited axial FOV issue in
 alleviate the issue of patient collisions in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
 trajectories]]. Finally, we will summarize this work and discuss
 possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
-conclusions]].
-
-We will implement and maintain image quality
-
-*current clinical workarounds reposition paitient or re-evaluate/scan sim*
+conclusions]]. We hypothesize that by implementing this
+optimization-based non-circular scanning framework, we will be able to
+maintain image quality while enabling scanning trajectories that are
+potential solutions to real clinical limitations.
 
 * General CBCT trajectory reconstruction framework with optimization-based algorithms :opt:
   :PROPERTIES:
@@ -761,7 +750,13 @@ cannot be acquired due to part of the patient being in the path of the
 linac's trajectory (i.e., gantry clearance cannot be achieved). As the
 current FDK algorithm requires a trajectory with sufficient angular
 coverage, the patient must be moved to a position where the gantry can
-make an uninterrupted rotation around the patient.
+make an uninterrupted rotation around the patient. These workarounds
+can incur significant temporal costs, not only in re-positioning the
+patient on the treatment couch, but potentially re-evaluating the
+planning simulation CT to account for the new collision-avoiding
+setup. A robust scanning modality that could avoid these collision
+zones while providing sufficient tomographic information would
+alleviate these expensive re-positioning occurrences.
 
 In both of these examples, the default circular trajectory prescribed
 by FDK is insufficient for obtaining the desired tomographic
@@ -1493,7 +1488,7 @@ currentprojection=orthographic(-15,5,13,up=Z);
 
 // shift different axes along x in IEC
 // real ax_shift = 10;
-real ax_scale=20;
+real ax_scale=100;
 
 // Draw axis
 // rad
