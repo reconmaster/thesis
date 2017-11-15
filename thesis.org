@@ -407,10 +407,17 @@ use of new trajectories to address the limited axial FOV issue in
 alleviate the issue of patient collisions in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
 trajectories]]. Finally, we will summarize this work and discuss
 possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
-conclusions]]. We hypothesize that by implementing this
-optimization-based non-circular scanning framework, we will be able to
-maintain image quality while enabling scanning trajectories that are
-potential solutions to real clinical limitations.
+conclusions]].
+
+The increased flexibility in choosing different scanning trajectories
+allowed by optimization-based reconstruction methods provided two
+solutions to the issues of limited axial FOV coverage and potential
+patient collisions. For these two problems, we found that the existing
+limitations could be resolved by using a different scanning
+configuration. In each case, we proposed a trajectory that would solve
+the existing problem, and then we evaluated how well the
+optimization-based reconstructions compared to the clinical images
+currently being used.
 
 * General CBCT trajectory reconstruction framework with optimization-based algorithms :opt:
   :PROPERTIES:
@@ -434,40 +441,41 @@ this system to find an object function that is consistent with the
 observed projections.
 
 Optimization-based image reconstruction provides a robust framework
-for reconstructing from projections acquired with the task-specific
-imaging trajectories we studied . Unlike the analytic-based methods,
-such as FDK algorithm cite:feldkamp_practical_1984, optimization-based
-methods require no assumptions about the initial scanning trajectory.
-As such, there is greater flexibility in choosing a scanning
-trajectory for a given task for which an analytic inverse may not yet
-have been derived. In this work, we investigate some of the
-task-specific scanning trajectories enabled by optimization-based
-methods.
+for reconstructing from projections acquired with nonstandard
+trajectories designed to address specific CBCT limitations, such as
+those studied in this work. Unlike the analytic-based methods, such as
+FDK algorithm cite:feldkamp_practical_1984, optimization-based methods
+require no assumptions about the initial scanning trajectory. As such,
+there is greater flexibility in choosing a scanning trajectory for a
+given task for which an analytic inverse may not yet have been
+derived. In this work, we investigate some of the task-specific
+scanning trajectories enabled by optimization-based methods.
 
 The use of optimization-based methods for tomographic image
 reconstruction is a natural extension of linearizing the x-ray
 transform imaging model of a tomographic scan. Approaching the image
 reconstruction problem as a linearized imaging model has existed since
-the first CT system built by Cormack and Hounsfield. For their initial
-image reconstructions, they utilized the algebraic reconstruction
-technique (ART) to solve a system of equations created by the
-summation of the rays through the image pixel grid at each projection
-angle cite:herman_art:_1973.
+the first CT system built by Cormack and Hounsfield. As discussed in
+the [[id:852796c3-9a3b-49da-bc08-1299e93e0768][Introduction]], they utilized the algebraic reconstruction technique
+(ART) to solve a system of equations created by the summation of the
+rays through the image pixel grid at each projection angle
+cite:herman_art:_1973.
 
 Though the initial optimization-based image reconstruction with ART
 was successful in providing a solution to the inverse problem, the
 limited computational power available at the time proved to be an
-intractable limitation. This computational complexity was further
-increased when moving from two-dimension (2D), single-slice images to
+intractable limitation. Though number of unknown in the system of
+equations associated with this 2D reconstruction problem is trivial by
+today's standards, the lack of parallelization and other engineering
+limitations of transistors at the time were too onerous for the
+clinical workflow. This computational complexity was further increased
+when moving from two-dimension (2D), single-slice images to
 three-dimensional (3D), volumetric image reconstruction which
-introduce a greater number of unknowns. The computationally-intensive
-nature of optimization-based reconstructions has been one of the
-biggest barriers preventing widespread use today cite:pan_why_2009.
-However, a recent renaissance of utilizing graphics processing units
-(GPUs) -- technology once solely in the purview of video games -- for
-scientific computation has made these optimization-based methods
-temporally competitive with analytic-based methods
-cite:xu_accelerating_2005,sharp_gpu-based_2007.
+introduce a greater number of unknowns. However, a recent renaissance
+of utilizing graphics processing units (GPUs) -- technology once
+solely in the purview of video games -- for scientific computation has
+made optimization-based methods temporally competitive with
+analytic-based methods cite:xu_accelerating_2005,sharp_gpu-based_2007.
 
 ** Background: Cone-beam computed tomography
    :PROPERTIES:
@@ -517,22 +525,33 @@ size(10cm);
 
 // detector
 real dlat=0, dvrt=50;
-point det=(dvrt,dlat);
+pair det=(dvrt,dlat);
 
 real ulen=40.0, vlen=30.0;
 
 path detector=(dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat);
-point det_cent=(dvrt,0);
+pair det_cent=(dvrt,0);
 
 // source
 real slat=0, svrt=-100;
-point src=(svrt,slat);
+pair src=(svrt,slat);
 
 // rotate sys and draw
 real theta=30;
 
 draw(Label("$g\left(\mathbf{r}_{0}, \hat{\theta}\right)$",position=MidPoint),rotate(theta)*detector, black);
 draw(Label("$\mathbf{r}_0$",position=BeginPoint,black),rotate(theta)*src--rotate(theta)*det_cent, dashed+red,Arrow(TeXHead));
+
+// show the cone angle
+real f_loc = 1.3;
+real op_c = 0.5;
+draw(rotate(theta)*src--rotate(theta)*(dvrt,ulen/2+dlat), blue+opacity(op_c));
+draw(Label("$\gamma$", position=MidPoint),
+     arc(rotate(theta)*src,
+         r=dvrt*f_loc,
+         angle1=theta,
+         angle2=theta+degrees(atan(.5*ulen/(dvrt-svrt)))),
+     blue, arrow=Arrow(TeXHead));
 
 // label("\mathbf(r)_0", src)
 // draw(src--(dvrt, -ulen/2+dlat), dashed+black);
@@ -551,10 +570,10 @@ draw(Label("$\theta$",position=MidPoint,E), arc((0, 0), r=2*ax_scale/3, angle1=0
 // generic object
 real obj_scale=10;
 path obj=(-obj_scale,-obj_scale){dir(45)}..(obj_scale,0)..(obj_scale,obj_scale)..(0,obj_scale)..cycle;
-draw(Label("$f$",position=Relative(0.7)),obj,black);
+draw(Label("$f$",position=Relative(0.2)),obj,black);
 #+END_SRC
 
-#+CAPTION: Single-view schematic of the x-ray transform of an object $f$ from an x-ray source at $\mathbf{r}_{0}$ illuminating the detector in the direction of $\hat{\theta}$ to produce the detector response $g\left(\mathbf{r}_{0}, \hat{\theta}\right)$. The source and detector geometry is that of Varian's TrueBeam kV-imaging system.
+#+CAPTION: Single-view schematic of the x-ray transform of an object $f$ from an x-ray source at $\mathbf{r}_{0}$ illuminating the detector in the direction of $\hat{\theta}$ to produce the detector response $g\left(\mathbf{r}_{0}, \hat{\theta}\right)$. The angle $\gamma$ is the maximum cone-angle of this CBCT as determined by the detector size. The source and detector geometry is that of Varian's TrueBeam kV-imaging system.
 #+ATTR_LaTeX: :width \textwidth
 #+RESULTS: fig:opt_analytic
 [[file:figures/opt/analytic.pdf]]
@@ -582,7 +601,8 @@ For transaxial planes other than the midplane, a quasi-redundancy in
 the scanning data is assumed. It is the violation of this assumption
 which leads to cone-angle artifacts, an example of which is shown in
 Figure ([[ref:fig:opt_defrise_fdk]]). These artifacts become more severe
-at larger cone angles where this assumption is less applicable.
+at larger cone angles (the angle $\gamma$ in Figure ([[ref:fig:opt_analytic]]))
+where this assumption is less applicable.
 
 #+BEGIN_EXPORT latex
 \begin{figure}
@@ -600,16 +620,16 @@ at larger cone angles where this assumption is less applicable.
   \caption{}
   \label{fig:opt_defrise_mlem}
 \end{subfigure}
-\caption{Example of cone-angle artifacts seen in the sagittal view of
-  a reconstructed Defrise-style phantom. On the left is an FDK
-  reconstruction, and on the right is an MLEM reconstruction (200
-  iterations). Such a phantom design of alternating high-contrast
+\caption{Simulated example of cone-angle artifacts seen in the
+  sagittal view of a reconstructed Defrise-style phantom. On the left
+  is an FDK reconstruction, and on the right is an MLEM reconstruction
+  (200 iterations). Such a phantom design of alternating high-contrast
   densities along the longitudinal direction is explicitly identified
   by the FDK authors as being a case where their assumptions breakdown
   at larger cone angles. In the middle of image that corresponds to
-  the plane of the source orbit, there are sharp boundaries between
-  the alternating disks can be seen. However at the edges of the
-  image, corresponding to larger cone angles, the breakdown of these
+  the plane of the source orbit, the sharp boundaries between the
+  alternating disks can be seen. However at the edges of the image,
+  corresponding to larger cone angles, the breakdown of these
   assumptions and the cone-angle artifacts produced can be seen. The
   cone-angle artifacts at the larger cone angles are less severe in
   the optimization-based reconstruction ([0, 0.3] cm$^{-1}$ display
@@ -637,15 +657,12 @@ Analytic-based reconstruction algorithms are problematic in that they
 require a fixed scanning trajectory to formulate the inverse. When
 approximations are made for the inverse, as in FDK, deviations from
 where these approximations are valid lead to inconsistencies in the
-model and subsequently artifacts in the reconstruction. For FDK, one
-example of this is cone-angle artifacts such as those shown in Figure
-([[ref:fig:opt_defrise_fdk]]) which become more severe with an increasing
-cone angle. In contrast to these analytic-based methods,
-optimization-based reconstruction algorithms have demonstrated a more
-robust model of the image formation process reducing the artifacts
-that arise from these analytic-based methods
+model and subsequently artifacts in the reconstruction such as the
+one-angle artifacts shown in Figure ([[ref:fig:opt_defrise_fdk]]). In
+contrast, optimization-based reconstruction algorithms represent a
+more robust model of the image formation process
 cite:shepp_maximum_1982,han_optimization-based_2012,sidky_image_2008,sidky_accurate_2006,bian_evaluation_2010.
-As Figure ([[ref:fig:opt_defrise_mlem]]) shows, this can help reduce 
+As Figure ([[ref:fig:opt_defrise_mlem]]) shows, this can help reduce
 artifacts such as the cone-angle artifacts.
 
 Optimization-based reconstruction algorithms provide a more accurate
@@ -666,46 +683,46 @@ to both its size and inconsistencies from factors such as noise,
 optimization techniques are used to solve this system for an estimate
 of the object $\mathbf{f^{*}}$.
 
-The optimization problem for these iterative reconstruction algorithms
-is formulated as an objective function based on the actual data
-$\mathbf{g}$ and the image model $\mathcal{H}\mathbf{f}$. An
-optimization algorithm is then used to iteratively update the estimate
-of $\mathbf{f^{*}}$ until a suitable convergence criterion has been met.
-The parameters of the optimization problem, the optimization
-algorithm, and the convergence criteria are all important factors in
-determining the properties of the reconstructed image and subsequently
-its utility. When the reconstruction program is not run to
-convergence, the number of iterations of the reconstruction program
-sometimes serves as a surrogate parameter which must be chosen with
-some justification if convergence is not the stopping criteria.
+The optimization problem is formulated as an objective function based
+on the actual data $\mathbf{g}$ and the image model
+$\mathcal{H}\mathbf{f}$. An optimization algorithm is then used to
+iteratively update the estimate of $\mathbf{f^{*}}$ until a suitable
+convergence criterion has been met. The parameters of the optimization
+problem, the optimization algorithm, and the convergence criteria are
+all important factors in determining the properties of the
+reconstructed image and subsequently its utility. When the
+reconstruction program is not run to convergence, a parameter such as
+the number of iterations can be fixed provided justification is given
+for the choice of iterations.
 
 In selecting the parameters for the reconstruction program,
 consideration must be given to the impact each parameter will have on
-the reconstructed image quality. As we investigate using
+the reconstructed image quality. As we investigated using
 optimization-based reconstruction for non-circular scanning
 trajectories, we selected parameters of our reconstruction program to
 mimic the relevant clinically-utilized parameters where applicable.
-For instance, our reconstruction resolution sizes are chosen as to
-provide the same voxel sizes used with by the clinical reconstruction
-software. However, these parameter choices are only made only to
-provide comparisons to the current clinical workflow. This does not
-mean that these values are optimally selected, and for any clinically
+For instance, our reconstruction resolution sizes are chosen to
+provide the same voxel sizes used by the clinical reconstruction
+software. However, these parameter choices are made only to provide
+comparisons to the current clinical image quality. This does not mean
+that these values are optimally selected, and for any clinically
 relevant evaluation, rigorous parameter optimization must be done for
 the clinical imaging task
 cite:metz_basic_1978,xia_optimization-based_2016-2.
 
+Previous work has shown that optimization-basaed algorithms can
+reconstruct clinically useful images under scanning conditions for
+which analytic-based FDK fails
+cite:han_optimization-based_2012,sidky_image_2007,sidky_accurate_2006.
 In applying optimization-based reconstruction to non-circular
 trajectories, we focus primarily on the well-understood
 maximum-likelihood expectation maximization (MLEM)
-cite:shepp_maximum_1982,dempster_maximum_1977. Previous work has shown
-that these iterative algorithms can reconstruct clinically useful
-images under scanning conditions for which analytic-based FDK fails
-cite:han_optimization-based_2012,sidky_image_2007,sidky_accurate_2006.
-Though a variety of optimization-based reconstruction programs exist,
-we used the MLEM program to limit the number of parameters introduced
-by the reconstruction program as the introduction of new scanning
-trajectories introduce additional parameters that impact the
-projection data and resulting tomographic reconstruction.
+cite:shepp_maximum_1982,dempster_maximum_1977. Though a variety of
+optimization-based reconstruction programs exist, we used the MLEM
+program to limit the number of parameters introduced by the
+reconstruction program, since new scanning trajectories already
+introduce additional parameters that impact the projection data and
+resulting tomographic reconstruction.
 
 # constrained, total-variation (TV) minimization by adaptive steepest
 # descent-projection onto convex sets (ASD-POCS)
@@ -729,21 +746,22 @@ analytic-based reconstruction of the scan volume, there are a variety
 of limitations that arise from this work flow.
 
 Due to engineering and cost restrictions, the kV detector has a
-limited size. This restricts the FOV that can be imaged in a
-traditional circular scan. While the offset detector technique
+limited size. The TrueBeam system has a transaxial width of 40 cm and
+an axial height of 30 cm. This restricts the FOV that can be imaged in
+a traditional circular scan. While the offset detector technique
 cite:bian_optimization-based_2013,cho_cone-beam_1995 is commonly used
-to increase the transaxial FOV (an increase in FOV diameter from 26.7
-cm to 44.0 cm on the TrueBeam system with a 13 cm offset), the axial
-coverage is still very limited cite:pearson_non-circular_2010. The
-reason why the limited FOV has not been addressed by increasing the
-detector size is partially due to the industry reliance on the
-approximate FDK algorithm cite:pan_why_2009. For increasingly large
-cone angles at the ends of the axial FOV, the approximation in the
-algorithm results in worse cone-angle artifacts
-cite:feldkamp_practical_1984.
+to increase the transaxial FOV (for a 1.5X magnification, this is an
+increase in FOV diameter from 26.7 cm to 44.0 cm on the TrueBeam
+system with a 13 cm offset), the axial coverage is still very limited
+(20 cm for the same TrueBeam geometry) cite:pearson_non-circular_2010.
+The reason why the limited FOV has not been addressed by increasing
+the detector size is partially due to the industry reliance on the
+approximate FDK algorithm cite:pan_why_2009. As shown in Figure
+([[ref:fig:opt_defrise]]), as the cone angle increases, artifacts near the
+end of the axial FOV become more severe.
 
 Another problem with the current circular imaging trajectory is the
-potential linac collisions with the patient
+potential for linac collisions with the patient
 cite:hua_practical_2004,nioutsikou_patient-specific_2003. Cases arise
 when the patient is positioned in the treatment position, a CBCT image
 cannot be acquired due to part of the patient being in the path of the
@@ -759,7 +777,7 @@ zones while providing sufficient tomographic information would
 alleviate these expensive re-positioning occurrences.
 
 In both of these examples, the default circular trajectory prescribed
-by FDK is insufficient for obtaining the desired tomographic
+by FDK is inadequate for obtaining the desired tomographic
 information. Furthermore, the disruption to the clinical workflow
 created by these limitations introduces bottlenecks into clinical
 efficiency which affects both the clinical staff as well as the
@@ -767,8 +785,8 @@ patient's comfort in the procedure. In the case of a potential patient
 collision, the inability to acquire the required trajectory can even
 result in forgoing the CBCT image. For these particular examples, we
 investigated ways in which new trajectories enabled by
-optimization-based reconstruction could alleviate the complications
-imposed by the standard circular scan required by FDK.
+optimization-based reconstruction could alleviate the limitations
+imposed by the standard circular scan.
 
 *** General trajectories
     :PROPERTIES:
@@ -779,11 +797,10 @@ addressing the reconstruction from some novel trajectories
 cite:katsevich_theoretically_2002,katsevich_image_2004,katsevich_image_2005,katsevich_formulation_2006,
 it could be clinically useful to enable reconstruction from an
 arbitrary, collision-avoiding trajectory. As the collision region (if
-one arises) is contingent on the patient's size and the patient's
-treatment position, the imaging trajectory would then vary on a per
-patient basis. As such, deriving the analytic inverse for each
-patient's scanning trajectory would be impractical in a clinical work
-flow.
+one arises) is contingent on the patient's size and treatment
+position, the imaging trajectory would vary on a per patient basis. As
+such, deriving the analytic inverse for each patient's scanning
+trajectory would be impractical.
 
 Optimization-based reconstruction provides a generalized framework
 enabling greater flexibility in reconstructing from projections
@@ -791,25 +808,14 @@ acquired with non-circular trajectories. Provided the geometry of each
 view is correctly incorporated into the system matrix $\mathcal{H}$ in
 Equation ([[ref:eq:opt_ddsys]]), clinically useful reconstructions can be
 obtained from acquisitions for which an analytic inverse may not be
-available. As the potential collision zone for a given patient would
-be patient specific, this robust approach enables tomographic imaging
-from collision-avoiding trajectories that would accommodate the
-patient's specific needs.
-
-The increased flexibility in choosing different scanning trajectories
-allowed by optimization-based reconstruction methods provided two
-solutions to the issues of limited axial FOV coverage and potential
-patient collisions. For these two problems, we found that the existing
-limitations could be resolved by using a different scanning
-configuration. In each case, we proposed a trajectory that would solve
-the existing problem, and then we evaluated how well the
-optimization-based reconstructions compared to the clinical images
-currently being used.
+available. This robust approach enables tomographic imaging from
+collision-avoiding trajectories that would accommodate the patient's
+specific needs.
 
 For the problem of the limited axial coverage, the current clinical
-method of extending the FOV is to acquire two different circular scans
-at different axial positions and reconstruct each circle independently
-using FDK before stitching the two volumes together
+method of extending the FOV is to acquire two circular scans at
+different axial positions and reconstruct each circle independently
+using FDK before stacking the two volumes together
 cite:forthmann_adaptive_2009. Unfortunately, the increased distortion
 from cone-angle artifacts at large cone angles limits the axial
 separation between these two circles. This restricted separation
@@ -824,9 +830,9 @@ illustrating this geometry support in Figure
 \begin{figure}
 \centering
 \begin{subfigure}[b]{0.9\textwidth}
-\includegraphics[width=\textwidth]{figures/opt/ax_fov_17cm.pdf}
+\includegraphics[width=\textwidth]{figures/opt/ax_fov_10cm.pdf}
 \caption{}
-\label{fig:opt_fov_17cm}
+\label{fig:opt_fov_10cm}
 \end{subfigure}
 ~ %add desired spacing between images, e. g. ~, \quad, \qquad,
 % \hfill etc.
@@ -836,37 +842,50 @@ illustrating this geometry support in Figure
 \caption{}
 \label{fig:opt_fov_20cm}
 \end{subfigure}
-\caption{Schematic }
+\caption{Schematic illustrating the axial coverage provided by
+  stacking two circular FDK reconstructions together for the TrueBeam
+  kV imaging system. In each figure, the top portion corresponds to
+  the projective geometry of the superior circle (blue), and the
+  bottom portion corresponds to that of the inferior circle (red). For
+  both the inferior and superior circles, two projective views are
+  illustrated as opposing projective views at $\theta=0^{\circ}$ (solid lines)
+  and $\theta=180^{\circ}$ (dashed lines). The shaded regions corresponds to
+  the image support of an FDK reconstruction of the respective circle.
+  The top figure (a) represents an axial separation between the two
+  circles ($d=10\text{cm}$) where the support volumes overlap
+  (purple). The bottom figure (b) shows the maximum axial separation
+  ($d=20\text{cm}$) for which the two support volumes are contiguous
+  though they share no redundancy in the reconstructed volumes.
+}
 \label{fig:opt_fov_schematic}
 \end{figure}
 #+END_EXPORT
 
 The use of the two circles alone provides one interesting example of a
 trajectory where optimization-based reconstruction provides an
-advantage to the stacked-FDK method currently used. Unlike stitching
+advantage to the stacked-FDK method currently used. Unlike stacking
 two separate reconstructions together, it is possible to reconstruct
 the entire volume at once provided the system matrix is correctly
 calculated to reflect the acquisition of two circles in planes located
 at different axial positions relative to the patient. In addition to
 the reduced cone-angle artifacts already seen in optimization-based
-methods cite:davis_extended_2013,davis_verifying_2013, reconstructing
-both volumes together provides additional information about the
-overlapping region between the circles that further helps to reduce
-the cone-angle artifacts.
+methods, reconstructing both volumes together provides additional
+information about the overlapping region between the circles that
+further helps to reduce the cone-angle artifacts.
 
 In addition to improving the use of the two circles, the
-optimization-based framework then allows for noncircular trajectories.
+optimization-based framework allows for noncircular trajectories.
 Given that there needs to be a relative axial translation between the
 kV-imaging system and the patient, we investigated if there were any
-advantages to acquiring some of the projection views during the axial
+advantages to acquiring some projection views during the axial
 translation. Such trajectories that included an axial translation
 stage have been studied before and have the potential to further
 reduce the impact of cone-angle artifacts with both analtyic-based
 cite:zeng_cone-beam_1992,noo_stable_1996,johnson_feldkamp_1998,katsevich_image_2004
-and optimization-based cite:davis_we-g-brf-07:_2014.
+and optimization-based methods cite:davis_we-g-brf-07:_2014.
 
 In the case of potential patient collisions with the linac gantry, a
-simple change in the scanning trajectory would be sufficient to
+simple change in the scanning trajectory could be sufficient to
 prevent a collision. Much like the extended axial FOV case,
 optimization-based reconstruction is able to handle variations in the
 acquisition trajectory provided it is accurately reflected in the
@@ -883,23 +902,23 @@ collision-free region and of the scanning trajectory. This effectively
 changes the magnification for that region, but the reconstruction
 framework is able to reconstruct from all the views at both
 magnifications provided that everything is accurately modeled in the
-reconstruction problem. The other trajectory modification that could
-solve this problem would be to move the patient.
+reconstruction problem. 
 
-As with the change in magnification, the change in the patient
-position does not prevent reconstruction with the optimization-based
-methods provided the patient motion is correctly incorporated into the
-system matrix $\mathcal{H}$. Moving the patient also provides a
-solution to avoid potential patient collisions that occur with the
-linac treatment head. The MV treatment head on Varian's TrueBeam
-system is actually closer to the patient than the kV detector. Unlike
-the kV detector, it is not possible to change the position of the
-treatment head. In this case, moving the patient would be the only
-viable trajectory modification to avoid a collision.
-
+The other trajectory modification that could solve this problem would
+be to move the patient. As with the change in magnification, the
+change in the patient position does not prevent reconstruction with
+the optimization-based methods provided the patient motion is
+correctly incorporated into the system matrix $\mathcal{H}$. Moving
+the patient also provides a solution to avoid potential patient
+collisions that occur with the linac treatment head. The MV treatment
+head on Varian's TrueBeam system is actually closer to the patient
+than the kV detector. Unlike the kV detector, it is not possible to
+change the position of the treatment head. In this case, moving the
+patient would be the only viable trajectory modification to avoid a
+collision.
 **** figures                                 :noexport:
 ***** 10 cm
-#+BEGIN_SRC asymptote :file figures/opt/ax_fov_17cm.pdf :exports results
+#+BEGIN_SRC asymptote :file figures/opt/ax_fov_10cm.pdf :exports results
 settings.multisample=0;
 settings.outformat="pdf";
 // settings.prc = false;
@@ -1021,7 +1040,7 @@ fill(intersectionpoint(detector2f, d2_sray) --
 #+END_SRC
 
 #+RESULTS:
-[[file:figures/opt/ax_fov_17cm.pdf]]
+[[file:figures/opt/ax_fov_10cm.pdf]]
 ***** 20 cm
 #+BEGIN_SRC asymptote :file figures/opt/ax_fov_20cm.pdf :exports results
 settings.multisample=0;
@@ -1192,7 +1211,7 @@ the room coordinate system, or is at least stationary relative to it.
 From each projection view acquired from the TrueBeam system, we
 extracted the position information of the CBCT imaging arms and
 subsequently built $\mathcal{H}_{ij}$ as the projective transform from
-image space in the IEC coordinate system to the data space of the kV
+image space in the room coordinate system to the data space of the kV
 detector.
 
 When the patient is no longer fixed relative to the room-coordinate
@@ -1205,7 +1224,7 @@ patient to the data space of the detector represented as
 $\mathcal{H'}$. As the acquisition system also reports the couch
 position, we used this to build the required transformation matrix
 $\mathcal{T}_{\text{IEC,patient}$ for each projection view. The
-imaging model in Equation ([[ref:eq:linmodel]]) then becomes
+imaging model in Equation ([[ref:eq:opt_linmodel_patient]]) then becomes
 \begin{equation}
   \label{eq:opt_linmodel_patient}
   \mathbf{g}=\mathcal{H'}\mathbf{f_{\text{patient}}},
@@ -1216,9 +1235,10 @@ where
   \mathcal{H'}=\mathcal{H}\mathcal{T_{\text{IEC,patient}}}.
 \end{equation}
 Once the change of basis is accounted for, the reconstruction program
-in Equation ([[ref:eq:kl]]) can be reformulated with $\mathbf{f_{\text{patient}}}$
-instead of $\mathbf{f}$ and solved with the MLEM algorithm in Equation
-([[ref:eq:mlem]]) using $\mathcal{H'}$ instead of $\mathcal{H}$.
+in Equation ([[ref:eq:opt_kl]]) can be reformulated with
+$\mathbf{f_{\text{patient}}}$ instead of $\mathbf{f}$ and solved with the
+MLEM algorithm in Equation ([[ref:eq:opt_mlem]]) using $\mathcal{H'}$
+instead of $\mathcal{H}$.
 
 *** Detector weighting                       :noexport:
     :PROPERTIES:
@@ -1346,75 +1366,15 @@ addMargins(0.5cm, 0.5cm);
    :PROPERTIES:
    :ID:       58A6E225-522B-4620-BEDB-F81AD30070C3
    :END:
-*** TrueBeam linac with Developer Mode
-     :PROPERTIES:
-     :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
-     :END:
-To study these trajectories on a clinical, kV-imaging system, we
-acquired some of them on Varian's TrueBeam system. The TrueBeam
-Developer Mode provides control of the kV imaging system to allow for
-motion control that is unavailable in clinical modes. Developer Mode
-provides a scriptable control interface that allows control of the
-gantry rotation, the kV-imaging arms, as well as the position of the
-treatment couch. By combining motions with all of these components, it
-is possible to acquire kV projection data from a variety of different
-interesting motions. From the acquisition, each projection is returned
-with self-reported nominal values that can be used to build the
-reconstruction system matrix. Table ([[ref:tab:opt_varian_header]]) shows
-a subset of these header variables pertaining to the kV imaging
-system.
-
-#+ATTR_LATEX: :environment longtable :align l|l|l|l|l
-#+CAPTION: Subset of Varian's TrueBeam projection header variables pertaining to the kV-imaging system.
-#+NAME: tab:opt_varian_header
-|-------------+----------------+------------------+--------------------+----------------|
-|             | Couch          | Detector         | Gantry             | kV Source      |
-|-------------+----------------+------------------+--------------------+----------------|
-| Acquisition | CouchLat       | ImagerLat        | GantryAcceleration | Current        |
-|             | CouchLng       | ImagerLng        | StartAngle         | FrameRate      |
-|             | CouchRtn       | ImagerOrigin     | StopAngle          | KVFilter       |
-|             | CouchThickness | ImagerResX       |                    | PulseLength    |
-|             | CouchVrt       | ImagerResY       |                    | SAD            |
-|             | CouchWidth     | ImagerSizeX      |                    | SID            |
-|             |                | ImagerSizeY      |                    | Voltage        |
-|             |                | ScatterGrid      |                    |                |
-|-------------+----------------+------------------+--------------------+----------------|
-| Projection  | CouchLat       | ImagerDeltaLat   | GantryRtn          | SourceAngle    |
-|             | CouchLng       | ImagerDeltaLng   |                    | SourceDeltaLat |
-|             | CouchRtn       | ImagerDeltaPitch |                    | SourceDeltaLng |
-|             | CouchVrt       | ImagerDeltaRtn   |                    | SourceDeltaVrt |
-|             |                | ImagerDeltaVrt   |                    |                |
-|-------------+----------------+------------------+--------------------+----------------|
-
-For the majority of our non-simulation work, we used Varian's TrueBeam
-kV imaging system (Varian Medical Systems, Palo Alto, CA) to acquire
-the projection data used in this study. This is a linac-mounted CBCT
-c-arm system consisting of a Varian kV x-ray source (GS-1542) and a
-39.7 cm x 29.8 cm amorphous silicon flat-panel detector (PaxScan
-4030CB) with a $2048 \times 1536$ pixel array that performs a $2 \times 2$
-binning for a readout of $1024 \times 768$ square pixels of effective size
-0.388 mm. The source and detector are mounted on robotic arms with the
-kV beam direction orthogonal to the MV treatment beam.
-***** note                                   :noexport:
- Also, you might write a paragraph that describes how these parameters
- come to you - that the acquired projections are stored in files using
- Varian’s XIM or HND formats, which have extensive headers containing
- dozens of parameters associated with the geometry, x-ray technique,
- and other information concerning each specific image. maybe have a
- table showing examples of a subset of the data from one projection -
- all the couch, detector, source, gantry and x-ray parameters like kV,
- mA, timing, exposure, etc? people not in this field probably have no
- idea this stuff exists. it’s kind of like DICOM but specific to Varian
- images. this could equally well go in the chapter where you describe
- your geometry framework for building the system matrix, and you could
- refer to it here.
-*** Varian coordinates
+*** TODO Varian coordinates
     :PROPERTIES:
     :ID:       9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1
     :END:
 In order to reconstruct from the different scanning trajectories
 implemented in Developer mode, the different coordinate systems the
 imaging and motion components of the treatment system must be unified. 
+
+*eqns for rad -> IEC -> img*
 
 #+BEGIN_EXPORT latex
 \begin{figure}
@@ -1715,7 +1675,71 @@ draw(Label("$y_{img}$",1),(0,0,0)--(0,0,-ax_scale),Arrow3);
 
 #+RESULTS: fig:opt_coords_img
 [[file:figures/opt/coords_img.pdf]]
+*** TrueBeam linac with Developer Mode
+     :PROPERTIES:
+     :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
+     :END:
+To study these trajectories on a clinical, kV-imaging system, we
+implemented some of them on Varian's TrueBeam system. The TrueBeam
+Developer Mode provides control of the kV imaging system to allow for
+motion control that is unavailable in clinical modes. Developer Mode
+provides a scriptable control interface that allows control of the
+gantry rotation, the kV-imaging arms, as well as the position of the
+treatment couch. By combining motions with all of these components, it
+is possible to acquire kV projection data from a variety of different
+interesting motions. From the acquisition, each projection is returned
+with self-reported nominal values that can be used to build the
+reconstruction system matrix. Table ([[ref:tab:opt_varian_header]]) shows
+a subset of these header variables pertaining to the kV imaging
+system.
 
+The TrueBeam's kV imaging system is illustrated in Figure
+([[ref:fig:intro_linac]]) in addition to the gantry, couch, and robotic
+arms that can all be utilized to implement these trajectories. The
+kV-imaging system itself consists of a Varian kV x-ray source
+(GS-1542) and a 39.7 cm x 29.8 cm amorphous silicon flat-panel
+detector (PaxScan 4030CB) with a $2048 \times 1536$ pixel array that
+performs a $2 \times 2$ binning for a readout of $1024 \times 768$ square pixels
+of effective size 0.388 mm. The source and detector are mounted on
+robotic arms with the kV beam direction orthogonal to the MV treatment
+beam.
+
+#+ATTR_LATEX: :environment longtable :align l|l|l|l|l
+#+CAPTION: Subset of Varian's TrueBeam projection header variables pertaining to the kV-imaging system.
+#+NAME: tab:opt_varian_header
+|-------------+----------------+------------------+--------------------+----------------|
+|             | Couch          | Detector         | Gantry             | kV Source      |
+|-------------+----------------+------------------+--------------------+----------------|
+| Acquisition | CouchLat       | ImagerLat        | GantryAcceleration | Current        |
+|             | CouchLng       | ImagerLng        | StartAngle         | FrameRate      |
+|             | CouchRtn       | ImagerOrigin     | StopAngle          | KVFilter       |
+|             | CouchThickness | ImagerResX       |                    | PulseLength    |
+|             | CouchVrt       | ImagerResY       |                    | SAD            |
+|             | CouchWidth     | ImagerSizeX      |                    | SID            |
+|             |                | ImagerSizeY      |                    | Voltage        |
+|             |                | ScatterGrid      |                    |                |
+|-------------+----------------+------------------+--------------------+----------------|
+| Projection  | CouchLat       | ImagerDeltaLat   | GantryRtn          | SourceAngle    |
+|             | CouchLng       | ImagerDeltaLng   |                    | SourceDeltaLat |
+|             | CouchRtn       | ImagerDeltaPitch |                    | SourceDeltaLng |
+|             | CouchVrt       | ImagerDeltaRtn   |                    | SourceDeltaVrt |
+|             |                | ImagerDeltaVrt   |                    |                |
+|-------------+----------------+------------------+--------------------+----------------|
+
+
+***** note                                   :noexport:
+ Also, you might write a paragraph that describes how these parameters
+ come to you - that the acquired projections are stored in files using
+ Varian’s XIM or HND formats, which have extensive headers containing
+ dozens of parameters associated with the geometry, x-ray technique,
+ and other information concerning each specific image. maybe have a
+ table showing examples of a subset of the data from one projection -
+ all the couch, detector, source, gantry and x-ray parameters like kV,
+ mA, timing, exposure, etc? people not in this field probably have no
+ idea this stuff exists. it’s kind of like DICOM but specific to Varian
+ images. this could equally well go in the chapter where you describe
+ your geometry framework for building the system matrix, and you could
+ refer to it here.
 ** ideas                                     :noexport:
 Given that part of the robust nature of optimization-based algorithms
 is the ability to handle the poorly-conditioned nature of the inverse
@@ -2930,7 +2954,7 @@ complete.
     :ID:       C07F2BE3-413C-490F-B171-0ADB82B939EA
     :END:
 As the current clinical procedure for obtaining an extended axial FOV
-CBCT is by stitching together the independently reconstructed images
+CBCT is by stacking together the independently reconstructed images
 of two circular scans acquired at different axial locations, we first
 used simulations to determine the maximum axial spacing between the
 two circular trajectories allowed by this technique. To evaluate this,
@@ -3004,7 +3028,7 @@ quantitative assessment of the image similarity between the reference
 image and the images from different trajectories.
 
 Simulating forward projections from this trajectory, we compared the
-images obtained from stitching together the independent FDK images to
+images obtained from stacking together the independent FDK images to
 those obtained by reconstructing the two circles as a single
 trajectory with MLEM. We also compared stacked FDK images to
 reconstructions from the simulated *CLC* and smooth trajectories.
