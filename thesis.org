@@ -852,9 +852,9 @@ illustrating this geometry support in Figure
   and $\theta=180^{\circ}$ (dashed lines). The shaded regions corresponds to
   the image support of an FDK reconstruction of the respective circle.
   The top figure (a) represents an axial separation between the two
-  circles ($d=10\text{cm}$) where the support volumes overlap
+  circles ($d=10\text{ cm}$) where the support volumes overlap
   (purple). The bottom figure (b) shows the maximum axial separation
-  ($d=20\text{cm}$) for which the two support volumes are contiguous
+  ($d=20\text{ cm}$) for which the two support volumes are contiguous
   though they share no redundancy in the reconstructed volumes.
 }
 \label{fig:opt_fov_schematic}
@@ -1365,6 +1365,7 @@ addMargins(0.5cm, 0.5cm);
 ** Framework implementation with Varian TrueBeam kV-CBCT system
    :PROPERTIES:
    :ID:       58A6E225-522B-4620-BEDB-F81AD30070C3
+   :ALT_TITLE: TrueBeam framework
    :END:
 *** TODO Varian coordinates
     :PROPERTIES:
@@ -1752,7 +1753,7 @@ problem...
    :PROPERTIES:
    :ID:       5c9cdd8b-721f-49b3-b136-c3282bf3659c
    :END:
-** Introduction
+** TODO Introduction
    :PROPERTIES:
    :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
    :END:
@@ -1764,9 +1765,9 @@ projection geometry and that used for image reconstruction creates
 artifacts in the reconstructed image
 cite:rougee_geometrical_1993,fahrig_three-dimensional_2000,noo_analytic_2000,smekal_geometric_2004,cho_accurate_2005,yang_geometric_2006,panetta_optimization-based_2008,daly_geometric_2008,li_generic_2010,wicklein_image_2012.
 An example of such an artifact is shown in Figure
-([[ref:fig:geo_cal_catphan_example]]). This is especially true when using
-non-standard scanning trajectories, Thus we developed a calibration
-procedure that would accommodate the different scanning configurations
+([[ref:fig:geo_cal_catphan_example]]). This is no less true when using
+non-standard scanning trajectories. Thus we developed a calibration
+procedure that can accommodate the different scanning configurations
 including non-standard scanning trajectories and scenarios in which
 the object, source and detector are all moving during the scan.
 
@@ -1832,22 +1833,25 @@ optimization-based reconstruction, optimization-based calibration
 methods are more flexible in providing calibration offsets for the
 novel trajectories that we studied.
 
+*lit review of calibration phantoms/methods*
+
 Using previous work for optimization-based geometric calibration
 cite:rougee_geometrical_1993,gullberg_estimation_1990,silver_determination_2000,
 we developed a calibration method that utilizes a phantom with known
 placement of highly attenuating fiducials. By scanning this phantom
 and comparing the projections to the modeled forward-projection of a
 mathematical model of the phantom, we can more accurately determine
-the system matrix $(\mathcal{H})$ in Equation ([[ref:eq:ddsys]]) for
-reconstructing from a non-circular scanning trajectory with
-optimization-based methods resulting in reduced image artifacts.
+the system matrix $(\mathcal{H})$ in Equation
+([[ref:eq:opt_linmodel_patient]]) for reconstructing from a non-circular
+scanning trajectory with optimization-based methods resulting in
+reduced image artifacts.
 
 ** Methods
    :PROPERTIES:
    :ID:       0b636fe5-fe45-4f10-a5fc-2de8a82bfbe4
    :END:
 Where analytic-based methods, such as FDK, require a certain
-acquisition trajectory such a as a fixed scanning radius of the source
+acquisition trajectory such as a fixed scanning radius of the source
 and detector and the angular position of each projection, the
 optimization-based system matrix makes no assumptions of the geometry
 in other views. As such, we created a reconstruction framework that
@@ -1855,8 +1859,6 @@ incorporates the best geometric estimate of the projection geometry
 from each view. The flexibility to incorporate geometric corrections
 in this way is another useful aspect in using optimization-based
 methods for image reconstruction.
-
-*lit review of calibration phantoms/methods*
 
 Before attempting to determine any geometric errors in our scanning
 acquisition, we first modified the calculation of our system matrix to
@@ -1904,13 +1906,13 @@ with our calibration, this fiducial placement was suboptimal.
 [[../../research/trajectories/geometry/geocal/20140901_extended_cllc.jpg]]
 
 The phantom we then decided to use for calibration was the Isocal
-phantom created by Varian shown in Figure ([[ref:fig:geo_isocal]]). The Isocal
+phantom created by Varian shown in Figure ([[ref:fig:geo_isocal]]).
+Additionally, the phantom is manufactured by Varian to help align the
+MV-treatment isocenter with the kV-imaging isocenter. The Isocal
 phantom directly addresses the two problems encountered with our first
 phantom. First, the phantom is designed with intentional asymmetry.
-Additionally, the phantom is manufactured by Varian to help align the
-MV-treatment isocenter with the kV-imaging isocenter. As such, the
-position of the beads on this phantom have a much tighter tolerance
-than that of our original phantom.
+The position of the beads on this phantom have a much tighter
+tolerance than that of our original phantom.
 
 #+CAPTION: Varian's Isocal phantom positioned at the isocenter.
 #+ATTR_LaTeX: scale=0.75
@@ -1943,19 +1945,21 @@ than that of our original phantom.
 \end{figure}
 #+END_EXPORT
 
-*** Calibration method
+*** TODO Calibration method
     :PROPERTIES:
     :ID:       F53F4B5A-83EB-4B16-9B6D-F557D3E441C2
     :END:
 We designed a calibration procedure specifically for the non-standard
 scanning trajectories we implemented on the TrueBeam system with
-Developer Mode. As such, the nominal trajectory we used to initialize
-our calibration method was self-reported, view-by-view geometry
-provided by the TrueBeam system for each projection. Starting with
-this initial estimate with which we calculated our reconstruction
-system matrix $\mathcal{H}$, the additional information extracted from
-our calibration was use to improve the estimate of both the system
-matrix and subsequently the estimated image from the reconstruction.
+Developer Mode. Using the methods described in the section [[id:58A6E225-522B-4620-BEDB-F81AD30070C3][/Framework implementation with Varian TrueBeam kV-CBCT system/]], we used the
+view-by-view header information from the TrueBeam system to initialize
+our calibration procedure. Starting with this initial estimate with
+which we calculated our reconstruction system matrix $\mathcal{H}$,
+the additional information extracted from our calibration was use to
+improve the estimate of both the system matrix and subsequently the
+estimated image from the reconstruction.
+
+*uml flow chart*
 
 Figure ([[ref:fig:geo_cal_schematic]]) provides a schematic illustration
 of the Isocal phantom for a single view. Ideally, the nominal geometry
@@ -2148,7 +2152,7 @@ dot(proj_uncal*isocal,red+opacity(op_uncal));
 // dot(proj270*isocal,red);
 #+END_SRC
 
-#+CAPTION: Schematic represenation of a single projection view for the isocal phantom with the TrueBeam kV-CBCT scanning geometry. The blue detector and projected isocal fiducials correspond to the self-reported geometry from the imaging system. The red detector and projected fiducials illustrates how translation and rotation offsets of both the phantom and the source-detector system create variations in the projected fiducials in the sinogram space. The bottom left corner corresponds to the origin of the detector coordinate system. The detector's translation and rotation offsets are exaggerated here for illustrative purposes.
+#+CAPTION: Schematic represenation of a single projection view for the isocal phantom with the TrueBeam kV-CBCT scanning geometry. The blue detector and projected isocal fiducials correspond to the self-reported geometry from the imaging system. The red detector and projected fiducials illustrate how translation and rotation offsets of both the phantom and the source-detector system create variations in the projected fiducials in the sinogram space. The bottom left corner corresponds to the origin of the detector coordinate system. The detector's translation and rotation offsets are exaggerated here for illustrative purposes.
 #+LABEL: fig:geo_cal_schematic
 #+ATTR_LaTeX: :width 0.9\textwidth
 #+RESULTS: fig:geo_cal_schematic
@@ -2162,12 +2166,10 @@ is calculated using the variables describing each view shown in Figure
 ([[ref:fig:geo_cal_proj]]). The source and detector (including the
 detector's frame vectors $\left\{ \hat{u}, \hat{v}, \hat{w} \right\}$)
 are rotated into the global image space by rotating these vectors by
-the gantry angle $\left( \theta_{g} \right)$ at each view (the gantry rotation
+the gantry angle $\left( \theta_{g} \right)$ at each view. The gantry rotation
 axis is the logitudinal axis of the cylinder in Figure
 ([[ref:fig:geo_cal_schematic]]) and the $y$ axis in Figure
 ([[ref:fig:geo_cal_proj]]).
-
-*simple flowchart of procedure*
 
 Projection of the fiducial coordinates onto the detector needs to be
 done in a coordinate system aligned with the detector’s frame vectors.
@@ -2311,7 +2313,7 @@ homogeneous coordinate projection matrix is
   \boldsymbol{P} = \begin{bmatrix}
     1 & 0 & 0 & 0 \\
     0 & 1 & 0 & 0 \\
-    0 & 0 & 0 & \frac{1}{L}  \\
+    0 & 0 & 1 & \frac{1}{L}  \\
     0 & 0 & 0 & 0
   \end{bmatrix}.
   \label{eq:geo_pmat}
@@ -2372,8 +2374,6 @@ step. We use the Nelder-Mead simplex algorithm
 cite:lagarias_convergence_1998 to minimize the $L_{2}\text{-norm}$ cost
 function.
 
-*discuss physical limits as constraint possibility*
-
 Given that there are there are different combinations of couch, source
 and detector motions that can cause the same change of the object
 relative to the source and detector within the image coordinate
@@ -2390,13 +2390,12 @@ image reconstruction.
 
 For a new trajectory, this phantom is first scanned to identify any
 potential corrections to the parameters reported in the TrueBeam data
-headers. Though we find the self-reported position *accuracy (ADD
-ACCURACY ESTIMATE)* from the acquisition metadata to be very good,
-there are still some scanning configurations for which the additional
-refinement from our geometric calibration is critical for obtaining
-the best quality reconstruction. This is particularly true for
-scanning trajectories where the object and the kV imaging system move
-simultaneously.
+headers. Though we find the self-reported position from the
+acquisition metadata to be very good, there are still some scanning
+configurations for which the additional refinement from our geometric
+calibration is critical for obtaining the best quality reconstruction.
+This is particularly true for scanning trajectories where the object
+and the kV imaging system move simultaneously.
 *** Geometric-offset artifact catalog        :noexport:
     :PROPERTIES:
     :ID:       DED4A0A6-3775-41ED-AF64-BD6604B2B3AD
@@ -2485,15 +2484,14 @@ moves during the acquisition. For each of these trajectories, we used
 the same Developer Mode script to scan both the Catphan phantom and
 the Isocal phantom. We subsequently used the sinogram from the Isocal
 scan to extract calibration offsets for that particular trajectory
-using the calibration method described in Section ([[id:F53F4B5A-83EB-4B16-9B6D-F557D3E441C2][Calibration
-method]]).
+using the calibration method described above.
 
 We reconstructed the Catphan scans from these two trajectories with
 and without the calibrations offsets. An isotropic image grid of 0.473
 mm was used for each reconstruction with application of the half-fan
-weighting described in the section on [[id:81d9f135-01c3-4415-a699-1f364e8c9ce3][Detector weighting]]. For all
-reconstructions, 200 iterations of MLEM were used, as described in the
-[[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]] section.
+weighting cite:bian_optimization-based_2013. For all reconstructions,
+200 iterations of MLEM were used, as described in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized
+trajectory framework]] section.
 
 *metric analysis on these two scans w/ and w/o calibration*
 *** figures                                  :noexport:
@@ -2621,7 +2619,7 @@ dot(proj270*isocal,red);
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
    :END:
-*** Experimental validation
+*** TODO Experimental validation
     :PROPERTIES:
     :ID:       2c3c25d5-477a-4013-bf2a-5a74716b9c20
     :END:
@@ -2635,10 +2633,12 @@ the treatment couch during the scan introduces additional geometric
 error over the standard circle scan which visually degrades spatial
 resolution.
 
+*table of example corrections for order mag*
+
 The bottom row of Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the same
 slice from the corresponding trajectory with the geometric offsets
 from the calibration procedure incorporated into the system matrix
-$\mathcal(H)$. For the circular scan, using the calibration
+$\mathcal{H}$. For the circular scan, using the calibration
 information does provide a bit of an improvement in spatial
 resolution. However, the efficacy of the calibration method is
 particularly striking for the virtual isocenter scan. By using the
@@ -2646,21 +2646,21 @@ calibration offsets in the reconstruction model, the spatial
 resolution of the virtual isocenter reconstruction becomes comparable
 to that of the circular scan.
 
+*couch motion introduces additional uncertainty*
+
 Figure ([[ref:fig:geo_cal_cost]]) shows the $L_{2}_{}-\text{norm}$ of the
 distance between the simulated fiducial projections and the real
 fiducial projections acquired from the circle and virtual isocenter
-scans of the isocal phantom. As this served as the cost function which
-was used as the minimization objective for the optimized offset
-search, we can see that the calibration did effectively reduce this
-cost from the nominal geometry (blue) to the calibrated geometry
-(green). This cost also reflects the same trend we see in the spatial
-resolution of the images shown in Figure
+scans of the isocal phantom. We can see that the calibration did
+effectively reduce this cost from the nominal geometry (blue) to the
+calibrated geometry (green). This cost also reflects the same trend we
+see in the spatial resolution of the images shown in Figure
 ([[ref:fig:geo_cal_catphan_sens]]).
 
 Comparing the the $L_{2}_{}-\text{norm}$ of the uncalibrated scans in Figure
-([[ref:fig:geo_cal_cost]]), *we see that there is far more disagreement
-between modeled* and observed Isocal fiducial positions for the
-virtual isocenter scan than that of the circular scan, leading to more
+([[ref:fig:geo_cal_cost]]), we see that there is far more disagreement
+between modeled and observed Isocal fiducial positions for the virtual
+isocenter scan than that of the circular scan, leading to more
 artifacts and loss of spatial resolution in the virtual isocenter
 reconstruction than in that of the circular scan. With the geometric
 calibrations applied, the cost for the virtual isocenter and circular
@@ -2707,16 +2707,18 @@ trajectories is quite comparable, as is the spatial resolution.
    :PROPERTIES:
    :ID:       CAB89A8B-FC4B-4F9A-A52A-68E17ED2885C
    :END:
+*discuss physical limits as constraint possibility*
+
 ** Conclusion
    :PROPERTIES:
    :ID:       fd41d566-a4b3-4dcd-9f8c-7417276ad25c
    :END:
 In developing our optimization-based geometry calibration procedure,
-we found that proper geometric calibration is a critical component of
-improving tomographic image quality. This is particularly true for
-more complicated trajectories where additional motion components such
-as that of the treatment couch *introduce additional degrees of
-freedom* in which geometric errors can arise. As shown in Figure
+we found that proper geometric calibration is critical to achieving
+optimal tomographic image quality. This is particularly true for more
+complicated trajectories where additional motion components such as
+that of the treatment couch introduce additional degrees of freedom in
+which geometric errors can arise. As shown in Figure
 ([[ref:fig:geo_cal_sens_cost]]), the additional motion of the couch with
 the simultaneous motion of the source and detector introduces a larger
 deviation from the nominal scanning geometry.
@@ -2727,14 +2729,12 @@ ability to acquire view-by-view calibration information with this
 approach dovetails nicely with the optimization-based framework that
 enables the reconstruction from the different trajectories we studied
 in this research. Though many of the different analytic-based methods
-described in the literature could be adopted to some of these
+described in the literature could be adapted to some of these
 trajectories cite:noo_analytic_2000,smekal_geometric_2004, the benefit
 of the optimization-based framework for both reconstruction and
 geometric calibration comes from freedom to easily model and
 reconstruct from any desired trajectories as well as geometric offsets
 that deviate from the analytically prescribed model.
-
-*estimate of the calibration time*
 
 Though this does imply that calibration scans must be acquired for
 each scan of interest, there are optimization-based calibration
@@ -2752,12 +2752,12 @@ image quality alone.
 In the following chapters, where we investigate particular
 applications of these different trajectories, we will use our
 calibration method with the Isocal phantom to more accurately model
-the system matrix $\mathcal(H)$. Though the more exotic scanning
+the system matrix $\mathcal{H}$. Though the more exotic scanning
 trajectories introduce more degrees of freedom that create greater
-geometric uncertainty, our calibration procedure performs *rather
-well* in determining what these deviations are from the self-reported
-geometry metadata. For these trajectories, we found that incorporating
-geometric calibration consistently improves image quality.
+geometric uncertainty, our calibration procedure determines what these
+deviations are from the self-reported geometry metadata. For these
+trajectories, we found that incorporating geometric calibration
+consistently improves image quality.
 * Axial field-of-view extension              :fov:
   :PROPERTIES:
   :ID:       eaae199f-f899-4862-af50-720895a31c36
@@ -2822,42 +2822,67 @@ When an extended axial FOV is needed in the IGRT clinic, the current
 practice is to acquire two circular scans centered at different axial
 positions. Once each independent volume has been reconstructed with an
 analytic-based FBP algorithm such as FDK, the two volumes are stacked
-to create the extended image. Though this stacked image does extended
+to create the extended image. Though this stacked image does extend
 the axial coverage beyond that provided by a single circular scan,
-there are some limitations to this approach.
+there are some limitations to this approach. We investigated if the
+non-circular trajectories with optimization-based methods described in
+[[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]] can provide a solution to these
+shortcomings.
 
- Given this limitation, we
-investigated if
-
- using current linac-mounted kV-imaging  with the robust
-trajectory framework described in [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]].
-
-
-The main problem with the current approach is a limitation incurred by
-reconstructing each of the volumes with analytic-based reconstruction
-methods, such as FDK. When combining the volumes of two
+The main problem with the current clinical approach is a limitation
+incurred by reconstructing each of the volumes with analytic-based
+reconstruction methods, such as FDK. When combining the volumes of two
 independently-constructed FDK volumes acquired at different axial
 positions, the overlap region between the two axial positions
 corresponds to the larger cone angles of the two independent volumes.
-
 As methods like FDK are known to suffer from cone-angle artifacts at
 the axial extremes of the reconstruction volume as shown in Figure
 ([[ref:fig:opt_defrise]]), this volume stacking approach abuts the regions
 of the two independent volumes most afflicted with cone angle
-artifacts against each other. Furthermore, as the two circular volumes
-are reconstructed independently, neither scan benefits from
-mutually-shared information in the overlap region between the two
-scans, which could potentially reduce the cone-angle artifacts.
+artifacts against each other as shown in Figure
+([[ref:fig:opt_fov_schematic]]). 
 
-Unlike analytic-based reconstruction methods, there is no imposition
-of a prescribed trajectory when using optimization-based methods.
-Provided that the correct geometry of the acquisition trajectory is
-well understood and properly calibrated (e.g. using a calibration
-method such as that discussed in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]), the system
-matrix of the image formation process can be calculated for arbitrary
-CBCT scanning configurations. These new trajectories are no longer
-limited to the few cases of non-circular trajectories for which
-analytic inverse formulations exist such as the line
+Furthermore, the stacking of FDK volumes is also limited by the axial
+support provided the reconstruction algorithm. As the axial spacing
+between the two circles is increased, the shadow zones
+cite:forthmann_adaptive_2009 corresponding to regions outside the
+support of the FDK reconstruction further contaminate the region of
+overlap. In Figure ([[ref:fig:opt_fov_schematic]]), everything bounded by
+the detectors for both circles at opposing views constitutes the image
+support of optimization-based methods like MLEM. For comparison, the
+support of the FDK reconstruction is limited to just the shaded
+regions of each circle. As the spacing between the circles is
+increased, these shadows regions encroach into the volume of the
+stacked FDK image. At the maximum axial spacing of 20 cm for the
+TrueBeam system, the shadow zones extend directly to the center of the
+image as shown in Figure ([[ref:fig:opt_fov_20cm]]) resulting in missing
+information in the stacked volume.
+
+In addition to the shadow zone contamination, there is another
+limitation that affects the stacked FDK volume approach. As the two
+circular volumes are reconstructed independently, neither scan
+benefits from mutually-shared information in the overlap region
+between the two scans, which could potentially reduce the cone-angle
+artifacts. For axial separations between the two circles $\left(
+d\right)$ that is less than the maximum spacing, there is redundant
+sampling of the image volume by the two circular scans. This is
+illustrated in Figure ([[ref:fig:opt_fov_10cm]]) where the purple region
+corresponds to this redundant sampling. For any axial separation less
+than the maximum, optimization-based reconstruction methods can take
+this redundant sampling into account whereas the FDK volumes are
+agnostic to this additional information in the neighboring
+reconstruction volume.
+
+Taking advantage of the flexible reconstruction framework described in
+[[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][General CBCT trajectory reconstruction framework with
+optimization-based algorithms]], data from more than a single circular
+scan can be reconstructed. Provided that the correct geometry of the
+acquisition trajectory is well understood and properly calibrated
+(e.g. using a calibration method such as that discussed in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric
+calibration]]), the system matrix of the image formation process can be
+calculated for arbitrary CBCT scanning configurations. Trajectories
+are not limited to the few cases of non-circular trajectories for
+which analytic inverse formulations exist such as the line
 cite:sidky_volume_2005, circle and line
 cite:zeng_cone-beam_1992,katsevich_image_2004, circle and arcs
 cite:zou_image_2005-1,katsevich_image_2005, and non-planar orbits
@@ -2867,23 +2892,22 @@ Using some of the trajectories enabled by optimization-based methods,
 we can address the problem of the limited axial coverage for
 linac-mounted CBCT kV-imaging systems. Rather than increasing the size
 of the detector, the source and detector motion can be extended in the
-axial direction. For these trajectories where the source and detector
-move in the axial direction relative to the patient, projection data
-can be obtained for axial positions beyond what is illuminated with
-current detector sizes and a circular scanning trajectory.
+axial direction, allowing projections to be obtained for axial
+positions beyond what is illuminated with current detector sizes and a
+circular scanning trajectory.
 
 In this chapter, we study a few different trajectories that could
 address the limited axial coverage provided by linac-mounted
-kV-imaging systems which can be half the size of the MV-treatment beam
-FOV. This limitation can be problematic for patients with treatment
-volumes that extend axially beyond what is visible in a single
-circular acquisition cite:voong_dosimetric_2014. For the case of the
-TrueBeam system, the axial coverage of the treatment FOV is 40 cm
-while the CBCT coverage from a single circle is only 20 cm. The
-trajectories we investigate in this chapter provide extended axial
-coverage. Our hypothesis is that extended volume images can be
-acquired with image quality that is comparable to the current clinical
-standard
+kV-imaging systems. For the case of the TrueBeam system, the axial
+coverage of the treatment FOV is 40 cm while the CBCT coverage from a
+single circle is only 20 cm. This limitation can be problematic for
+patients with treatment volumes that extend axially beyond what is
+visible in a single circular acquisition cite:voong_dosimetric_2014.
+The trajectories we investigate in this chapter provide extended axial
+coverage. Our hypothesis is that data from scans with extended axial
+coverage can be reconstructed into extended FOV images with quality
+equivalent to current clinical scans using only a single circle and
+resultant limited axial FOV.
 
 ** Methods
    :PROPERTIES:
@@ -2896,27 +2920,25 @@ standard
 In order to obtain additional axial tomographic information from a
 patient beyond what is covered by the detector, there must be a
 relative shift along that axis between the patient and the imaging
-system. As alluded to in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]] section,
-either the patient or the imaging system can shift along this
+system. As described to in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]]
+section, either the patient or the imaging system can shift along this
 direction to obtain the desired projection information as long as the
 motion is correctly reflected in the system matrix $\mathcal{H}$. With
 the additional projections along the axial direction, it is possible
 to extend the axial coverage of the tomographic image beyond that
-which is provided by the detector coverage alone.
+which is provided by a single circular scan.
 
 The current clinical method of obtaining an extended axial image
 involves stacking the FDK reconstructions of two circular scans at
 different axial positions. For this reason, the first class of
 trajectories we studied was a dual-circle trajectory shown on the left
-in Figure ([[ref:fig:fov_3d_trajectories]]). As is the current clinical
-practice, this trajectory extends the axial coverage by obtaining an
-additional circular scan at a different axial position. As the linac
-is only able to make one complete rotation of the gantry, this is
-implemented by acquiring a circular trajectory scan, effecting and
-axial shift, and then acquiring a second circle by rotating the gantry
-in the opposite direction.
+in Figure ([[ref:fig:fov_3d_trajectories]]). As the linac is only able to
+make one complete rotation of the gantry, this is implemented by
+acquiring a circular trajectory scan, applying the axial shift, and
+then acquiring a second circle by rotating the gantry in the opposite
+direction.
 
-#+CAPTION: Source trajectories of the three classes of extended axial-FOV trjaectories studied with a separation of 17 cm between the planes of the circular components of the scan. Moving in diametric opposition of the source is the CBCT detector which provides coverage 15 cm above and below the source trajectory in the axial direction (z) All of these trajectories are plotted in the image coordinate space described in the section [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates]]. On the left is the double circle trajectory that is equivalent to the double circle scan currently used in the clinic to obtain extended axial coverage. In the middle is the circle-line-cirlce trajectory that acquires additional projection information as the source and detector translate from the axial position of the first circle to that of the second. The last trajectory on the right is the smooth trajectory in which the translation component occurs during the rotation of the two circles.
+#+CAPTION: Source trajectories of the three classes of extended axial-FOV trajectories studied with a separation of 17 cm between the planes of the circular components of the scan. Moving in diametric opposition of the source is the CBCT detector which provides coverage 15 cm above and below the source trajectory in the axial direction (z) All of these trajectories are plotted in the image coordinate space described in the section [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates]]. On the left is the double circle trajectory that is equivalent to the double circle scan currently used in the clinic to obtain extended axial coverage. In the middle is the circle-line-circle trajectory that acquires additional projection information as the source and detector translate from the axial position of the first circle to that of the second. The last trajectory on the right is the smooth trajectory in which the translation component occurs during the rotation of the two circles.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_3d_trajectories
 [[file:figures/fov/3d_trajectories.pdf]]
@@ -2924,26 +2946,21 @@ in the opposite direction.
 Another class of trajectories we studied was the circle-line-circle
 (CLC) trajectory shown in the middle of Figure
 ([[ref:fig:fov_3d_trajectories]]). Like the double circle trajectory, this
-trajectory also consists of two circles at various axial positions.
-The difference between these is that projections are acquired during
-the linear shift between the two different axial positions of the
-circles for the CLC trajectory. As with the double circle, this is
-implemented by first acquiring a circle, effecting an axial
-translation (while acquiring projection information), and then
-obtaining a second circle when the gantry reverses direction.
+trajectory consists of two circles at various axial positions, but
+with projections also acquired during the linear shift between the two
+axial positions of the circles for the CLC trajectory.
 
 The last class of trajectories we studied will be referred to as the
 smooth trajectory which is shown at the right of Figure
 ([[ref:fig:fov_3d_trajectories]]). It is similar to the CLC trajectory in
-that it predominately consists of two circles at two different axial
-positions with projections acquired along the axial shift component.
-Unlike the double circle and CLC trajectories, this trajectory does
-not have a complete circle at either of the two axial positions. The
-gantry motion is the same in that it performs two rotations in the
-opposite direction. The difference here is that the axial shift
-component is introduced before the first gantry rotation is complete,
-and the second gantry rotation begins before the axial shift is
-complete.
+that it consists of two circles at two different axial positions with
+projections acquired along the axial shift component. The gantry
+motion is the same in that it performs two rotations in the opposite
+direction. The difference here is that the axial shift component is
+begun before the first gantry rotation is complete, and the second
+gantry rotation begins before the axial shift is complete. Unlike the
+double circle and CLC trajectories, this trajectory does not have a
+complete circle at either of the two axial positions.
 
 **** notebooks                               :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170816_circ_clc_smth_catphans/matlab/em/trajectories.ipynb")][truebeam/170816_circ_clc_smth_catphans/matlab/em/trajectories.ipynb]]
@@ -2982,20 +2999,17 @@ variable axial separation between the two circles. With a 1.5x
 magnification factor and a 30 cm detector size along the axial
 direction (e.g., geometry equivalent to that of the TrueBeam
 kV-imaging detector), a single circular scan has a maximum axial
-coverage of 20 cm. Furthermore, the maximum spacing between the two
-circles is 20 cm as any separation larger than this would mean that
-the independent image volumes from the two circles are no longer
-contiguous. We therefore created trajectories with 10, 12, 14, 16, 18,
-and 20 cm separations between the planes of the source's dual-circle
-trajectory.
+coverage of 20 cm. Thus, the maximum spacing between the two circles
+is 20 cm as any separation larger than this creates a gap between the
+two imaging volumes. We therefore created trajectories with 10, 12,
+14, 16, 18, and 20 cm separations between the planes of the source's
+dual-circle trajectory.
 
 In addition to the double circle trajectory, we also simulated
 projections from the CLC and smooth classes of trajectories shown in
 Figure ([[ref:fig:fov_3d_trajectories]]). We uniformly distributed 600
-views over the entire trajectory which is comparable to the total
-number of views used in a single clinical CBCT scan with the kV
-imaging system. Of these 600 views, 20% were distributed along the
-axial translation stage.
+views over the entire trajectory. Of these 600 views, 20% were
+distributed along the axial translation stage.
 
 For the extended-volume reconstruction using the stacked FDK, we
 independently reconstructed each circular scan with FDK using a
@@ -3043,20 +3057,19 @@ system]] section. By using the Developer Mode XML control schema, we
 created acquisition scripts that implemented gantry rotations with a
 component of axial translation between the patient and the kV-imaging
 system. The trajectory plots shown in Figure
-([[ref:fig:fov_3d_trajectories]]) are actually plotted from the projection
-data acquired from implementing each of three classes of trajectories
-studied with a 17 cm gap between the two planes of the circular
-orbits.
+([[ref:fig:fov_3d_trajectories]]) are from the actual trajectories of the
+three classes studied with a 17 cm gap between the two planes of the
+circular orbits.
 
 Though the imaging framework is agnostic to which component of the
 system effects the relative motion between the patient and the imaging
 system, there are some engineering limitations of the TrueBeam system
 that determine how the axial translation component of these
-trajectories is implemented. The primary limitation with the TrueBeam
-kV-imaging robotic arms is that they cannot perform any translational
-movement while the gantry is rotating. As such, all of our axial
-translation were implemented by moving the treatment couch for all of
-the trajectories instead of translating the robotic arms. As the CLC
+trajectories is implemented. In the current TrueBeam implementation,
+the kV-imaging robotic arms cannot perform any translational movement
+while the gantry is rotating. As such, all of our axial translation
+were implemented by moving the treatment couch for all of the
+trajectories instead of translating the robotic arms. As the CLC
 trajectory requires no gantry rotation during the translation stage,
 we did acquire one CLC trajectory using translation of the robotic
 imaging arms for comparison.
@@ -3064,9 +3077,8 @@ imaging arms for comparison.
 The image quality that results from using these trajectories with
 optimization-based algorithms must be quantitatively evaluated for the
 different trajectories and spacings chosen. Given that contrast
-resolution is on of the tasks that enables physicians to utilize the
-imaging system's clinical potential cite:dawson_advances_2007, we
-wanted to characterize the low-contrast resolution as a function of
+resolution is important to clinical utility cite:dawson_advances_2007,
+we wanted to characterize the low-contrast resolution as a function of
 axial position for the different trajectories and spacings. As the
 extended axial coverage we obtain with the kV imaging system using
 these methods is novel, there is not a standard phantom for
@@ -3090,12 +3102,12 @@ within a single scan.
     \label{fig:fov_disk}
   \end{subfigure}
   \caption{The left image shows the experimental setup of the acrylic
-  tube with four low-contrast disks. Given they symmetry of the
-  scanning geometry, one disk is placed at the plane between the two
-  circles. The remaining 3 are place at different axial positions in
-  one half of the image volume. The right image shows one of the
-  low-contrast disks with the larger holes for the solid water RMI
-  inserts.}
+    tube with four low-contrast disks. Given the symmetry of the
+    scanning geometry, one disk is placed at the plane between the two
+    circles. The remaining three are placed at different axial
+    positions in one half of the image volume. The right image shows
+    one of the low-contrast disks with the larger holes for the solid
+    water RMI inserts.}
   \label{fig:fov_disk_phan}
 \end{figure}
  
@@ -3241,7 +3253,7 @@ between the two volumes begins to infiltrate the reconstruction volume
 creating voids in the reconstruction volume. 
 
 
-#+CAPTION: Plot of the RMSE for extended volumes of different trajectories with different spacing between planes of the circles, compared to the central CBCT volume of a single circular scan which is an axial FOV of 20 cm.
+#+CAPTION: Plot of the RMSE for extended volumes of different simulated trajectories with different spacing between planes of the circles, compared to the central CBCT volume of a single circular scan which is an axial FOV of 20 cm.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_take_rmse
 [[file:figures/fov/take/central_cbct_rmse.pdf]]
@@ -3251,14 +3263,14 @@ optimization-based reconstruction to produce extended-axial coverage
 images. 
 
 Figure ([[ref:fig:fov_take_rmse]]) shows a root-mean-square error (RMSE)
-comparison of the three classes of trajectories as well as the stakced
+comparison of the three classes of trajectories as well as the stacked
 FDK method with different axial spacings between the two planes of the
 circles. The volume for which the RMSE is calculated is the central
 volume between the two circles with a 20 cm axial length, which would
-be the region seen with a single CBCT scan. The figure shows that for
-any extended volume spacing, the stacked-FDK reconstruction from two
-separate circles deviates the most from the truth, and it degrades
-with increasing separation.
+be the region seen with a single circular scan at the midplane. The
+figure shows that for any extended volume spacing, the stacked-FDK
+reconstruction from two separate circles deviates the most from the
+truth, and it degrades with increasing separation.
 
 #+BEGIN_EXPORT latex
 \begin{figure*}[t!]
@@ -3279,12 +3291,15 @@ with increasing separation.
 
     \bottomrule
   \end{tabular}
-  \caption{Mid-sagittal views of the Defrise disk phantom
+  \caption{Mid-sagittal views of the simulated Defrise disk phantom
     reconstructions at different separation distances. The display
     window is [0.1, 0.3]~cm$^{-1}$. The left column shows the stacked
     FDK extended volumes, and the remaining columns show the
     100$^{\text{th}}$ iteration of the MLEM extended volumes for
-    different trajectories.}
+    different trajectories. In the stacked-FDK image at the maximum 20
+    cm spacing shown on the bottom left, the encroachment of the
+    shadow zones into the reconstruction volume appear as two black
+    wedges into the Defrise phantom volume.}
   \label{fig:fov_sim_take}
   %\vspace{-1em}
 \end{figure*}
@@ -4666,4 +4681,8 @@ approach in collision-plagued situations.
   :PROPERTIES:
   :ID:       1bade25b-80d6-4650-b8a3-baf370fa657c
   :END:
+Though linac-mounted kV imaging system 
+
+Optimization-based reconstruction methods provide a 
+
 \makebibliography
