@@ -353,22 +353,23 @@ cite:oldham_cone-beam-ct_2005.
 
 Figure ([[ref:fig:intro_linac]]) shows an annotated image of a Varian
 TrueBeam linac (Varian Medical Systems, Palo Alto, CA). On the patient
-couch is the CIRS torso phantom aligned at the mechanical isocenter
-using the laser guidance system. Above the torso phantom to the left
-is the MV treatment head with the metallic accessory mount and beam
-exit window. Below the table to the left is the kV source which
-provides the kV x-rays for the kV-CBCT imaging system. Above the
-phantom to the right is the kV detector panel which acquires the
-projections through the phantom for the kV-CBCT imaging system. Both
-the kV source and kV detector are mounted on robotic position arms.
-Below the phantom to the right is the MV electronic portal imaging
-device, which is retracted in this image, for acquiring MV projections
-from the MV treatment beam. Finally all of these components are
-mounted on a rotating gantry which can rotate $360^{\circ}$ around the
-mechanical isocenter for a single rotation. A subsequent rotation must
-occur in the opposite direction as the gantry lacks the ability to
-make multiple rotations in the same direction like a diagnostic CT
-system due to the complexity of the MV linac design.
+couch is the CIRS Torso Phantom (Computerized Imaging Reference
+Systems, Norfolk, VA) aligned at the mechanical isocenter using the
+laser guidance system. Above the torso phantom to the left is the MV
+treatment head with the metallic accessory mount and beam exit window.
+Below the table to the left is the kV source which provides the kV
+x-rays for the kV-CBCT imaging system. Above the phantom to the right
+is the kV detector panel which acquires the projections through the
+phantom for the kV-CBCT imaging system. Both the kV source and kV
+detector are mounted on robotic position arms. Below the phantom to
+the right is the MV electronic portal imaging device, which is
+retracted in this image, for acquiring MV projections from the MV
+treatment beam. Finally all of these components are mounted on a
+rotating gantry which can rotate $360^{\circ}$ around the mechanical
+isocenter for a single rotation. A subsequent rotation must occur in
+the opposite direction as the gantry lacks the ability to make
+multiple rotations in the same direction like a diagnostic CT system
+due to the complexity of the MV linac design.
 
 While there are many advantages in using linac-mounted CBCT imaging
 systems in IGRT, there are still technical limitations that negatively
@@ -3048,6 +3049,9 @@ trajectory with MLEM. We also compared stacked FDK images to
 reconstructions from the simulated *CLC* and smooth trajectories.
 
 *** Experimental Data
+    :PROPERTIES:
+    :ID:       0a6741b1-925a-4b69-97ff-7047ceac53d4
+    :END:
 After identifying potential benefits of addressing the limited axial
 FOV using non-circular trajectories as described in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized
 trajectory framework]] section, we then evaluated how well this approach
@@ -3085,33 +3089,10 @@ these methods is novel, there is not a standard phantom for
 characterizing low-contrast resolution as a function of axial position
 within a single scan.
 
-#+BEGIN_EXPORT latex
-\begin{figure}
-  \centering
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[height=1.75in]{figures/fov/disk_phan/tube_setup.jpg}
-    \caption{}
-    \label{fig:fov_tube_setup}
-  \end{subfigure}
-  \qquad %add desired spacing between images, e. g. ~, \quad, \qquad,
-  % \hfill etc.
-  % (or a blank line to force the subfigure onto a new line)
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[height=1.75in]{figures/fov/disk_phan/disk_phantom.jpg}
-    \caption{}
-    \label{fig:fov_disk}
-  \end{subfigure}
-  \caption{The left image shows the experimental setup of the acrylic
-    tube with four low-contrast disks. Given the symmetry of the
-    scanning geometry, one disk is placed at the plane between the two
-    circles. The remaining three are placed at different axial
-    positions in one half of the image volume. The right image shows
-    one of the low-contrast disks with the larger holes for the solid
-    water RMI inserts.}
-  \label{fig:fov_disk_phan}
-\end{figure}
- 
-#+END_EXPORT
+#+CAPTION: Catphan CTP 515 low-contrast module schematic.
+#+ATTR_LaTeX: :width 0.75\textwidth
+#+LABEL: fig:fov_catphan_ctp515
+[[file:figures/fov/ctp515.png]]
 
 For this reason, we built a custom low-contrast disk phantoms that fit
 into an acrylic tube with extended axial coverage as shown in Figure
@@ -3125,42 +3106,119 @@ designed to hold the different electron density plugs from the Gammex
 of these disks in the tube, we can obtain these metrics as a function
 of axial position within a given reconstruction.
 
-#+CAPTION: Catphan CTP 515 low-contrast module schematic.
-#+ATTR_LaTeX: :width 0.5\textwidth
-#+LABEL: fig:fov_catphan_ctp515
-[[file:figures/fov/ctp515.png]]
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.55\textwidth}
+  \includegraphics[height=1.75in]{figures/fov/disk_phan/tube_setup.jpg}
+  \caption{}
+  \label{fig:fov_tube_setup}
+\end{subfigure}
+\qquad %add desired spacing between images, e. g. ~, \quad, \qquad,
+% \hfill etc.
+% (or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.35\textwidth}
+  \includegraphics[height=1.75in]{figures/fov/disk_phan/four_disks.jpg}
+  \caption{}
+  \label{fig:fov_disk}
+\end{subfigure}
+\caption{The left image shows the experimental setup of the acrylic
+  tube with four low-contrast disks. Given the symmetry of the
+  scanning geometry, one disk is placed at the plane between the two
+  circles. The remaining three are placed at different axial positions
+  in one half of the image volume. The right image shows the four
+  low-contrast disks with the larger holes holding solid water RMI
+  inserts.}
+\label{fig:fov_disk_phan}
+\end{figure}
 
-# To evaluate these techniques with an anthropomorphic phantom, we used
-# the CIRS (Norfolk, VA) Model 600 torso phantom shown in Figure ([[ref:fig:ed][ed]]).
-# Using a half-fan configuration, we acquired the same three classes of
-# double circle, CLC, and smooth trajectories with a 17 cm axial spacing
-# between the two planes of the circles.
+#+END_EXPORT
 
-# #+BEGIN_LaTeX
-# \begin{figure}
-#   \centering
-#   \begin{subfigure}[b]{0.45\textwidth}
-#     \centering
-#     \includegraphics[height=1.75in]{../../research/trajectories/phantoms/cirs/20140901_ed_cllc.j
+After some preliminary studies, we found the nominal 1% low-contrast
+inserts were too challenging to consistently identify on the linac's
+kV-imaging system. Given this, we decided to use two Catphan 504
+phantoms to provide features for obtaining image quality metrics. As
+we needed to acquire image quality metrics over the extended axial
+coverage, we placed the two Catphan's end to end. This effectively
+provided a standard image-quality phantom that also spanned the
+extended axial-FOV volume enabled by these trajectories of interest.
 
-#       \caption{CIRS torso phantom}
-#       \label{fig:ed_setup}
-#     \end{subfigure}
-#     \qquad
-#     \begin{subfigure}[b]{0.45\textwidth}
-#       \centering
-#       \includegraphics[height=1.75in]{../../research/trajectories/phantoms/cirs/600_PHO_01.jpg}
-#       \caption{Phantom cross sections}
-#       \label{fig:ed_secs}}
-#   \end{subfigure}
-#   \caption{The left image shows the experimental setup of the CIRS
-#     torso
-#     phantom. The right image shows the cross sections of this phantom
-#     with some of its low-contrast features.}
-#   \label{fig:ed}
-# \end{figure}
-# #+END_LaTeX
+#+CAPTION: Schematic from the Catphan manual off the CTP 404 sensitometry module.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:fov_ctp404
+[[file:figures/fov/catphan_ctp404.png]]
 
+For the all of the different trajectory scans, the double-Catphan
+configuration was positioned with one of the Catphan's sensitometry
+module shown in Figure ([[ref:fig:fov_ctp404]]) aligned at imaging
+isocenter. As this module provides many of the features we used to
+calculate image metrics, we wanted to acquire metrics with this module
+placed so that it is in the plane of the source's orbit for one of the
+two circles. By doing this, we could compare the image quality metrics
+from the different scanning trajectories against a clinical circular
+FDK scan where the image quality is evaluated on the plane where FDK
+satisfies Tuy's condition. We acquired all three classes of
+trajectories (double circle, CLC, and smooth) with both full-fan and
+half-fan detector configurations.
+
+In addition to the double-Catphan configuration, we also scanned the
+CIRS torso phantom shown in Figure (). We aligned the phantom so that
+the center of phantom was placed at the midpoint between the axial
+position of the two circular components of the different trajectories.
+We again acquired the three classes of scanning trajectories, but only
+with a half-fan detector configuration as this larger phantom would
+incur truncation artifacts with a full-fan configuration.
+
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[height=1.75in]{figures/fov/cirs/cross_sectioned.jpg}
+  \caption{}
+  \label{fig:fov_cirs_sec}
+\end{subfigure}
+\qquad %add desired spacing between images, e. g. ~, \quad, \qquad,
+% \hfill etc.
+% (or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[height=1.75in]{figures/fov/cirs/ed_setup.jpg}
+  \caption{}
+  \label{fig:fov_cirs_setup}
+\end{subfigure}
+\caption{The CIRS torso phantom. On the left is a picture of the
+  phantom broken apart so that the cross-sectional composition of the
+  slices is visible. The anthropomorphic phantom is designed to
+  provide soft-tissue organ structures with realistic electron
+  densities. The image on the right shows the phantom setup on the
+  linac treatment couch.}
+\label{fig:fov_cirs}
+\end{figure}
+
+#+END_EXPORT
+
+In addition to acquiring the different trajectory scans of these
+phantoms, we also repeated the scans with the Isocal phantom to
+acquire geometric calibration information. As the Isocal phantom is
+designed to align the MV-treatment isocenter with the kV-imaging
+system's isocenter, it has a fixed mounting point on the treatment
+couch. In order to extract the calibration information for the
+different trajectories, we positioned the Isocal phantom on the
+treatment table at the location where we placed the double Catphans
+and the CIRS torso phantom. As described in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]], we
+used the Isocal scans to provide calibration corrections for all three
+trajectories with both the full-fan and half-fan detector
+configurations.
+
+The clinical reconstruction software uses a larger voxel size for
+half-fan detector scans than for full-fan detector configurations. We
+therefore reconstructed the CIRS torso phantom onto a 0.836 mm
+isotropic voxel grid. However, as voxel size is a critical parameter
+of the reconstruction program, reconstructed all of the scans of the
+double-Catphan configuration onto a 0.473 mm isotropic image grid for
+all detector configurations so that only the detector configuration
+would be the independent variable. As we will discuss in the next
+chapter, we selected 200 iterations of MLEM for all of our
+optimization-based reconstructions.
 **** fragments                               :noexport:
 For the dual-circle-extended-line trajectory, it was possible to
 acquire this in Developer Mode by controlling just the c-arms. This
