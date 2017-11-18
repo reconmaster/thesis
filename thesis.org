@@ -3162,12 +3162,13 @@ trajectories (double circle, CLC, and smooth) with both full-fan and
 half-fan detector configurations.
 
 In addition to the double-Catphan configuration, we also scanned the
-CIRS torso phantom shown in Figure (). We aligned the phantom so that
-the center of phantom was placed at the midpoint between the axial
-position of the two circular components of the different trajectories.
-We again acquired the three classes of scanning trajectories, but only
-with a half-fan detector configuration as this larger phantom would
-incur truncation artifacts with a full-fan configuration.
+CIRS torso phantom shown in Figure ([[ref:fig:fov_cirs_setup]]). We
+aligned the phantom so that the center of phantom was placed at the
+midpoint between the axial position of the two circular components of
+the different trajectories. We again acquired the three classes of
+scanning trajectories, but only with a half-fan detector configuration
+as this larger phantom would incur truncation artifacts with a
+full-fan configuration.
 
 #+BEGIN_EXPORT latex
 \begin{figure}
@@ -3219,6 +3220,29 @@ all detector configurations so that only the detector configuration
 would be the independent variable. As we will discuss in the next
 chapter, we selected 200 iterations of MLEM for all of our
 optimization-based reconstructions.
+
+In addition to reconstructing the extended-axial-FOV sinograms using
+the optimization-based framework, we also reconstructed the superior
+and inferior circles of the double circle using Varian's clinical FDK
+algorithm in iTools. In addition to the default reconstruction chain,
+we also reconstructed the two circles without Varian's pre-processing
+chain that provides a scatter-correction to the projection data. We
+did this as we did no scatter correction modeling in our MLEM
+reconstructions. Though we had initially attempted to extract the
+pre-processed projection data from iTools to use in our reconstruction
+chain, we discovered that some of the non-standard motions we
+implemented with the linac caused the iTools pre-processing step to
+crash as it did not conform to the typical circular trajectory
+anticipated by Varian's software.
+
+For additional metric analysis, we also reconstructed the superior and
+inferior circle independently with our analytic-based reconstruction
+chain. We then stacked these two independent volumes together the same
+way as for the FDK reconstructions. Finally, as MLEM generally
+provides better spatial resolution that FDK, we also reconstructed the
+two circles without pre-processing using the iTools FDK with a sharp
+kernel as to increase the spatial resolution from the FDK
+reconstructions.
 **** fragments                               :noexport:
 For the dual-circle-extended-line trajectory, it was possible to
 acquire this in Developer Mode by controlling just the c-arms. This
@@ -3301,24 +3325,22 @@ in the imaging trajectory.
     :END:
 Our simulations suggested that the optimization-based reconstruction
 of the dual-circle trajectory is comparable to the clinical stacked
-FDK method for axial separations where the FDK shadow zones
-cite:forthmann_adaptive_2009 do not contaminate the reconstruction
-volume. For the geometry of our Defrise-style phantom and our TrueBeam
-kV-imaging system geometry, the stacked-FDK method and the
-optimization-based reconstruction were comparable up to a gap of
-approximately 14 cm. For larger axial gaps, the FDK shadow zone
-between the two volumes begins to infiltrate the reconstruction volume
-creating voids in the reconstruction volume. 
-
+FDK method when the axial spacing is small enough that the stacked FDK
+method is still able to yield a complete reconstruction. As shown in
+Figure ([[ref:fig:opt_fov_schematic]]), larger axial spacings
+$\left(d\right)$ between the two circles results in larger portions of
+the image volume falling outside of FDK's support volume. For the
+geometry of our Defrise-style phantom and our TrueBeam kV-imaging
+system geometry, the stacked-FDK method and the optimization-based
+reconstruction were comparable up to a gap of approximately 14 cm. For
+larger axial gaps, the FDK shadow zone between the two volumes begins
+to infiltrate the reconstruction volume creating voids in the
+reconstruction volume.
 
 #+CAPTION: Plot of the RMSE for extended volumes of different simulated trajectories with different spacing between planes of the circles, compared to the central CBCT volume of a single circular scan which is an axial FOV of 20 cm.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_take_rmse
 [[file:figures/fov/take/central_cbct_rmse.pdf]]
-
-Our simulation results demonstrated promising advantages to using the
-optimization-based reconstruction to produce extended-axial coverage
-images. 
 
 Figure ([[ref:fig:fov_take_rmse]]) shows a root-mean-square error (RMSE)
 comparison of the three classes of trajectories as well as the stacked
@@ -3378,97 +3400,144 @@ visually distinguishable from the smooth trajectory reconstructions.
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"take/metrics.ipynb")][take/metrics.ipynb]]
 
 *** Experimental Data
-We repeated the same reconstruction process of stacking FDK
-reconstructions and using MLEM to iteratively reconstruct the entire
-image volume from a single trajectory composed of two circular scans.
-One phantom was a Defrise disk phantom of the same dimensions of the
-simulated disk phantom, with alternating disks of Delrin and cork. The
-other phantom was the upper torso of the RANDO Man phantom (The
-Phantom Laboratory, Salem NY). The experimental results shown in
-Figure (\ref{fig:trilogy_data}) demonstrate the same finding that
-iterative reconstruction could recover more of the shadow zone where
-the FDK fails.
+    :PROPERTIES:
+    :ID:       da41c36b-5e9a-4058-8b45-83b22e4f92d1
+    :END:
+Figure ([[ref:fig:col_recons_catphan]]) shows the central sagittal slices
+from the reconstructions of the dual-Catphan phantom scanned with each
+of the extended-axial-FOV trajectories in both the full-fan and
+half-fan detector configurations. The left column of the figure
+represents a full-fan detector configuration scans, and the right
+column is for the half-fan detector configuration scans. From the top
+row to the bottom, these images correspond to the double circle, the
+CLC, and the smooth trajectory.
 
-#+BEGIN_LaTeX
-   \begin{figure*}[t!]
-     \centering
-     \begin{tabular}{lccc}
-       \toprule
-       &Central Single Circle&12~cm Double Circle&20~cm Double Circle\\
-       \midrule
+#+CAPTION: Sagittal slices of the dual-catphan MLEM reconstruction acquired with the double-circle, the CLC, and the smooth trajectories (in order from left to right). The top row corresponds to the full-fan detector configuration, and the bottom row corresponds to the half-fan detector configuration. The display window is [-160, 240] HU.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:fov_dcatphans
+[[file:figures/fov/catphanFOV.pdf]]
 
-       FDK&
-       \includegraphics[height=3cm]{img/trilogy/stacked_defrise_00cm_256x256x200_sag.png}&
-       \includegraphics[height=3cm]{img/trilogy/stacked_defrise_12cm_256x256x320_sag.png}&
-       \includegraphics[height=3cm]{img/trilogy/stacked_defrise_20cm_256x256x400_sag.png}\\
-       MLEM&
-       \includegraphics[height=3cm]{img/trilogy/disk_dual_00cm_em_list_256x256x234_sag.png}&
-       \includegraphics[height=3cm]{img/trilogy/disk_dual_12cm_em_list_256x256x354_sag.png}&
-       \includegraphics[height=3cm]{img/trilogy/disk_dual_20cm_em_list_256x256x434_sag.png}\\
+Of the metrics we analyzed, we first looked at the quantitative
+Hounsfield units (HU) from the different sensitometry modules. Figure
+([[ref:fig:sensROIplot]]) shows the mean ROI value for each of the Catphan
+sensitometry modules for the stacked FDK and the stacked MLEM
+reconstructions as well as the extended-axial-FOV reconstructions. The
+height of each of the bars is the standard deviation of the ROI. The
+first plot in Figure ([[ref:fig:fov_sensROIfull]]) corresponds to the
+full-fan detector scans, and the bottom plot in Figure
+([[ref:fig:fov_sensROIhalf]]) corresponds to the half-fan detector
+configuration.
 
-       \midrule
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.9\textwidth}
+\includegraphics[width=\textwidth]{figures/fov/rois/sensROIplot_full.pdf}
+\caption{}
+\label{fig:fov_sensROIfull}
+\end{subfigure}
+~ %add desired spacing between images, e. g. ~, \quad, \qquad,
+% \hfill etc.
+% (or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.9\textwidth}
+\includegraphics[width=\textwidth]{figures/fov/rois/sensROIplot_half.pdf}
+\caption{}
+\label{fig:fov_sensROIhalf}
+\end{subfigure}
+\caption{Plots of the Catphan CTP 404 sensitometyr insert ROIs for the
+  different classes of trajectories studied. Each bar in the plot is
+  centered on the mean ROI value, and the height of the bar is the
+  standard deviation of that ROI. The top plot (a) shows the ROI
+  measurements for the full-fan detector scans, and the bottom plot
+  (b) shows the corresponding measurements from the half-fan detector
+  scans. For each material ROI, the different scanning trajectory
+  results are presented from left to right in the same order listed in
+  the legend.}
+\label{fig:sensROIplot}
+\end{figure}
+#+END_EXPORT
 
-       FDK&
-       \includegraphics[height=3.5cm]{img/trilogy/stacked_rando_00cm_200x512x512_sag.png}&
-       \includegraphics[height=3.5cm]{img/trilogy/stacked_rando_12cm_320x512x512_sag.png}&
-       \includegraphics[height=3.5cm]{img/trilogy/stacked_rando_20cm_400x512x512_sag.png}\\
-       MLEM&
-       \includegraphics[height=3.5cm]{img/trilogy/rando_00cm_hf_300x512x512_sag.png}&
-       \includegraphics[height=3.5cm]{img/trilogy/rando_12cm_hf_380x512x512_sag.png}&
-       \includegraphics[height=3.5cm]{img/trilogy/rando_20cm_hf_440x512x512_sag.png}\\
+To further investigate the relationship between the full-fan and
+half-fan configuration as well as the algorithm used, we plotted the
+ROI values for just the stacked circle trajectories. As the
+introduction of additional trajectory components will be applicable
+for the optimization-based framework, this comparison simply provides
+a baseline of how MLEM directly compares to the clinical standard.
+Figure ([[ref:fig:fov_sensROI_full_half]]) shows the ROI values 
 
-       \bottomrule
-     \end{tabular}
-     \caption{Mid-sagittal views of the Defrise disk and RANDO phantom
-       reconstructions for a single scan and double circular scans at
-       different separation distances. The top two rows show the Defrise
-       disk phantom, and the bottom two rows show the RANDO phantom. The
-       display window is [0.1, 0.3]~cm$^{-1}$. The red arrows indicate
-       misalignment artifacts in the MLEM reconstruction introduced by
-       the couch translation.}
-     \label{fig:trilogy_data}
-     %\vspace{-1em}
-   \end{figure*}
+#+CAPTION: Comparison of the MLEM algorithm as a direct replacement of the current clinical method of axial-FOV extension by stacking two independently reconstructed circlulr scans together. These ROIs are measured from two independently reconstructed circular scans (both full and half fan) using MLEM and FDK. As in Figure ([[ref:fig:sensROIplot]]), the bars are centered on the mean HU value of the ROI, and the height corresponds to the standard deviation in that ROI.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:fov_sensROI_full_half
+[[file:figures/fov/rois/sensROIplot_full_half_fdk.pdf]]
 
-#+END_LaTeX
+We then looked at the impact these different scanning configurations
+and algorithms had on the spatial resolution of the reconstruction.
+Though the MTF is a problematic metric of spatial resolution in CT due
+to its violation of linear shift invariance, it can provide a useful
+benchmark for determining the impact different scanning parameters
+could have on the reconstruction's spatial resolution. From our
+reconstructions, we wanted to evaluate not only the spatial resolution
+from the non-circular trajectories with optimization-based methods as
+compared to the current clinical standard of stacked FDK, but also
+evaluate what impact our geometric calibration procedure described in
+[[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]] has on spatial resolution as well.
 
-#+BEGIN_LaTeX
-   \begin{figure*}[t!]
-     \centering
-     \begin{tabular}{lccc}
-       \toprule
-       &FDK stacked&MLEM double circle&MLEM smooth\\
-       \midrule
+#+CAPTION: Grid of the different spatial resolution metrics extracted from the MTF analysis of the dual-Catphan phantom scan. 
+#+ATTR_LaTeX: :width \textwidth :options angle=90
+#+LABEL: fig:fov_mtf_alg
+[[file:figures/fov/mtf/alg_grid.pdf]]
 
-       18~cm&
-       \includegraphics[height=3cm]{img/take/fdk_18cm.png}&
-       \includegraphics[height=3cm]{img/take/mlem_dual_18cm.png}&
-       \includegraphics[height=3cm]{img/take/mlem_smth_18cm.png}\\
-       20~cm&
-       \includegraphics[height=3cm]{img/take/fdk_20cm.png}&
-       \includegraphics[height=3cm]{img/take/mlem_dual_20cm.png}&
-       \includegraphics[height=3cm]{img/take/mlem_smth_20cm.png}\\
+The first collection of metrics we extracted from the dual-Catphan
+reconstructions from the different classes of trajectories is shown in
+Figure ([[ref:fig:fov_mtf_alg]]). This *make plot fit*
 
-       \bottomrule
-     \end{tabular}
-     \caption{Mid-sagittal views of the Defrise disk phantom
-       reconstructions at different separation distances. The display
-       window is [0.1, 0.3]~cm$^{-1}$. The left column shows the stacked
-       FDK extended volumes, and the remaining columns show the
-       100$^{\text{th}}$ iteration of the MLEM extended volumes for
-       different trajectories.}
-     \label{fig:sim_take}
-     %\vspace{-1em}
-   \end{figure*}
+###################################
 
-#+END_LaTeX
+#+CAPTION: Metrics of acrylic CNR for both FDK and MLEM.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:fov_acrylic_cnr
+[[file:figures/fov/cnr/acrylic.pdf]]
+
+In addition to the spatial resolution metrics, we also used the CTP
+404 sensitometry module to calculate the CNR of the acrylic and
+polystyrene inserts. These are the inserts that provide the lowest
+contrast relative to the water-equivalent inserts as can be seen in
+the ROI measurements in Figure ([[ref:fig:sensROIplot]]). Figures
+([[ref:fig:fov_acrylic_cnr]]) and ([[ref:fig:fov_poly_cnr]]) show the
+calculated CNR plots for the different algorithms and trajectories for
+both the full-fan and half-fan detector configurations.
+
+#+CAPTION: Metrics of polystyrene CNR for both FDK and MLEM.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:fov_poly_cnr
+[[file:figures/fov/cnr/poly.pdf]]
+
+The rows in Figure ([[ref:fig:fov_ed]]) show the central sagittal,
+coronal, and transverse slices (from top to bottom respectively) of
+the CIRS torso phantom scanned with the three extended-axial-FOV
+trajectories using a half-fan detector configuration. Each column in
+the figure corresponds to each of the scanning trajectories.
+
+#+CAPTION: Sagittal, coronal, and transverse slices of the CIRS torso phantom reconstructions. Given the incrased size of this anthropomorphic phantom, only the half-fan configuration was used as the full-fan configuration would ahve incurred truncation artifacts. The display window is [-160, 240] HU.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:fov_ed
+[[file:figures/fov/edFOV.pdf]]
 
 **** notebooks                               :noexport:
+***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170816_circ_clc_smth_catphans/fov_images.ipynb")][truebeam/170816_circ_clc_smth_catphans/fov_images.ipynb]]
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170816_circ_clc_smth_catphans/metrics_catphans.ipynb")][truebeam/170816_circ_clc_smth_catphans/metrics_catphans.ipynb]]
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170816_circ_clc_smth_catphans/matlab/em/metrics/catphans.ipynb")][truebeam/170816_circ_clc_smth_catphans/matlab/em/metrics/catphans.ipynb]]
 - initial analysis that didn't include the iTools FDK
+**** figs                                    :noexport:
+***** dual catphans
+#+BEGIN_SRC sh :dir ~/cloud/medical_physics/thesis/thesis/figures/fov
+rsync -avz remus:/data/amdavis/truebeam/170816_circ_clc_smth_catphans/figs/ .
+#+END_SRC
 ** Discussion
-- limitation of the phantom metric location
+- limitations/benefits of study putting sensitometry module at FDK
+  central ray, good to show direct comparison. bad b/c don't have
+  metrics from overlap.
+
 - blade at the edge of the FOV which exacerbates issues in the overlap
   region
 
@@ -3486,6 +3555,8 @@ phantom is being developed to detect such displacements which will
 reduce the subsequent artifacts in these regions. By using a slightly
 smaller spacing of 17 cm which still produces an axial FOV of 37 cm,
 sufficient redundancy is available to reconstruct this volume.
+
+- couch or C-arms show recon w/ both and also show table break
 
 Subsequent experimental scans were performed with Varian's TrueBeam kV
 imaging system. This allowed the use of the TrueBeam Developer Mode to
