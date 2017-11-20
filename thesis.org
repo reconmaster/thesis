@@ -1381,7 +1381,7 @@ imaging and motion components of the treatment system must be unified.
 #+BEGIN_EXPORT latex
 \begin{figure}
 \centering
-\begin{subfigure}[b]{.3\textwidth}
+\begin{subfigure}[b]{.2\textwidth}
 \includegraphics[width=\textwidth]{figures/opt/coords_rad.pdf}
 \caption{}
 \label{fig:opt_coords_rad}
@@ -1390,14 +1390,14 @@ imaging and motion components of the treatment system must be unified.
 % \hfill etc.
 % (or a blank line to force the subfigure onto a new line)
 
-\begin{subfigure}[b]{.3\textwidth}
+\begin{subfigure}[b]{.2\textwidth}
 \includegraphics[width=\textwidth]{figures/opt/coords_iec.pdf}
 \caption{}
 \label{fig:opt_coords_iec}
 \end{subfigure}
 ~
 
-\begin{subfigure}[b]{.3\textwidth}
+\begin{subfigure}[b]{.2\textwidth}
 \includegraphics[width=\textwidth]{figures/opt/coords_img.pdf}
 \caption{}
 \label{fig:opt_coords_var}
@@ -1444,19 +1444,28 @@ size(5cm);
 addMargins(0.5cm, 0.5cm);
 
 // view configuration
-currentprojection=orthographic(-15,5,13,up=Z);
+currentprojection=orthographic(100,-300,150,up=Z);
 // currentprojection=perspective(-15,5,13,up=Y);
 // currentlight=White;
 
+// currentprojection=
+//   orthographic(camera=(120,-190,130), up=Z,
+//               // target=(-26.8372678113593,40.5411784319797,-16.3591562478052),
+//               zoom=0.5,
+//               // angle=42.0296556458697,
+//               autoadjust=false);
+
 // shift different axes along x in IEC
 // real ax_shift = 10;
-real ax_scale=100;
+real ax_scale=50;
 
 // Draw axis
 // rad
 draw(Label("lng",1),(0,0,0)--(0,ax_scale,0),Arrow3);
 draw(Label("vrt",1),(0,0,0)--(ax_scale,0,0),Arrow3);
 draw(Label("lat",1),(0,0,0)--(0,0,ax_scale),Arrow3);
+
+draw(Label("gantry",1),(0,ax_scale+50,0)--(0,ax_scale+70,0),red+dashed,Arrow3);
 
 // // kV schematic
 real dlat=0, dlng=0, dvrt=50;
@@ -1476,132 +1485,17 @@ triple det0 = det_cent-(0,ulen/2,vlen/2);
 // draw(det0--v,blue,Arrow3,L=Label("$v$", position=EndPoint, align=N));
 // draw(det0--w,blue,Arrow3,L=Label("$w$", position=EndPoint, align=S));
 
-draw(detector, blue);
-
-// // path3 det180 = rot180*detector;
-// // path3 det270 = rot270*detector;
-
-// // uncal detector coordinate system
-// transform3 det_pitch=rotate(-5, det_cent, det_cent+(-1,0,0));
-// transform3 det_roll=rotate(-5, det_cent, det_cent+(0,0,1));
-// transform3 det_yaw=rotate(5, det_cent, det_cent+(0,-1,0));
-// transform3 det_shift=shift(5, -8, 2);
-
-// path3 detector_uncal = det_pitch*det_roll*det_yaw*det_shift*detector;
-// path3 det_cent_uncal = det_pitch*det_roll*det_yaw*det_shift*det_cent;
-// // path3 detector_uncal = det_shift*detector;
-// // path3 det_cent_uncal = det_shift*det_cent;
-// real op_uncal=0.35;
-// draw(detector_uncal, red+opacity(op_uncal));
-
-// // labels
-// //From Charles Staats's tutorial
-// //Direction of a point toward the camera.
-// triple cameradirection(triple pt, projection P=currentprojection) {
-//   if (P.infinity) {
-//     return unit(P.camera);
-//   } else {
-//     return unit(P.camera - pt);
-//   }
-// }
-
-// //Move a point closer to the camera.
-// triple towardcamera(triple pt, real distance=1, projection P=currentprojection) {
-//   return pt + distance * cameradirection(pt, P);
-// }
-
-// // label("$\theta=0^{\circ}$",red,align=S,position=towardcamera((det_cent-(0, ulen/2, -vlen/2))));
-
 // source
 real slat=0, slng=0, svrt=-100;
 triple src=(svrt,slat, slng);
 
-// // lines from source to detector edges
-draw(src..det_cent-(0,-vlen/2,-ulen/2),blue+opacity(0.15));
-draw(src..det_cent-(0,-vlen/2,ulen/2),blue+opacity(0.15));
-draw(src..det_cent-(0,vlen/2,ulen/2),blue+opacity(0.15));
-draw(src..det_cent-(0,vlen/2,-ulen/2),blue+opacity(0.15));
-
-// draw(Label("$X_{\theta_g=0^{\circ}}$", 1),src--det_cent-(110,0,0), blue, arrow=Arrow3);
-
-// // transformed frame vectors
-// triple det0_uncal = point(detector_uncal, 0);
-// triple u_p = point(detector_uncal, 1) - det0_uncal;
-// triple v_p = point(detector_uncal, 3) - det0_uncal;
-
-// // unit vectors
-// triple uhat_p = u_p / length(u_p);
-// triple vhat_p = v_p / length(v_p);
-// triple what_p = cross(uhat_p, -vhat_p);
-
-// // scale
-// triple u_p = s*uhat_p + det0_uncal;
-// triple v_p = s*vhat_p + det0_uncal;
-// triple w_p = s*what_p + det0_uncal;
-
-// // uncalibrated detector coordinate system
-// draw(det0_uncal--u_p,red,Arrow3,L=Label("$u'$", position=EndPoint, align=SE));
-// draw(det0_uncal--v_p,red,Arrow3,L=Label("$v'$", position=EndPoint, align=S));
-// draw(det0_uncal--w_p,red,Arrow3,L=Label("$w'$", position=EndPoint, align=S));
-
-// // draw(point(detector_uncal, 1)--src, red+opacity(0.15));
-// // real arrowlength = 5
-// // vector v_p=new path(real x){
-// //     return point(detector_uncal, 1)--arrowlength*(-1)*point(detector_uncal, 2));
-// // };
-
-// // draw(v_p)
-// // draw(point(detector_uncal, 1)--point(detector_uncal, 2),red, arrow=Arrow3);
-
-// // // and for real projection
-// // draw(src_uncal..point(detector_uncal, 0), red+opacity(0.15));
-// // draw(src_uncal..point(detector_uncal, 1), red+opacity(0.15));
-// // draw(src_uncal..point(detector_uncal, 2), red+opacity(0.15));
-// // draw(src_uncal..point(detector_uncal, 3), red+opacity(0.15));
-
-// // draw(Label("$\mathcal{H}$", 1),src--det_cent_uncal, red, arrow=Arrow3);
-
-// // Draw cylinder
-// // cylinder(startpoint3d, radius, length, along_this_axis)
-// triple start = (0,0,-8);
-// real length = 16;
-// real radius = 11.3;
-// triple ax = (0,0,1);
-// revolution r = cylinder(start,radius,length,ax);
-// draw(r,black);
-
-// // isocal spots
-// triple[] isocal={(0,-11.3,-7.5),
-//                  (7.9903,-7.9903,-7.5),
-//                  (7.9903,7.9903,-7.5),
-//                  (-11.3,0.0,-7.5),
-//                  (-7.9903,7.9903,-5),
-//                  (11.3,0.0,-3),
-//                  (0,11.3,-2),
-//                  (-10.4398,4.3243,2),
-//                  (4.3243,10.4398,3),
-//                  (-10.4398,-4.3243,5),
-//                  (4.3243,-10.4398,5),
-//                  (10.4398,-4.3243,7.5),
-//                  (10.4398,4.3243,7.5),
-//                  (-4.3243,10.4398,7.5),
-//                  (-4.3243,-10.4398,7.5)
-// };
-
-// dot(isocal, black);
-
-// // project points
-// transform3 proj=planeproject(detector);
-// transform3 proj_uncal=planeproject(detector_uncal);
-// // transform3 proj090=planeproject(det090);
-// // transform3 proj180=planeproject(det180);
-// // transform3 proj270=planeproject(det270);
-
-// dot(proj*isocal,blue);
-// dot(proj_uncal*isocal,red+opacity(op_uncal));
-// // dot(proj090*isocal,red);
-// // dot(proj180*isocal,red);
-// // dot(proj270*isocal,red);
+// lines from source to detector edges
+real op=0.2;
+draw(detector, blue+opacity(op));
+draw(src..det_cent-(0, -vlen/2, -ulen/2),blue+opacity(op));
+draw(src..det_cent-(0, vlen/2, -ulen/2),blue+opacity(op));
+draw(src..det_cent-(0, vlen/2, ulen/2),blue+opacity(op));
+draw(src..det_cent-(0, -vlen/2, ulen/2),blue+opacity(op));
 #+END_SRC
 
 #+RESULTS: fig:opt_coords_rad
@@ -1610,9 +1504,9 @@ draw(src..det_cent-(0,vlen/2,-ulen/2),blue+opacity(0.15));
 #+LABEL: fig:opt_coords_iec
 #+BEGIN_SRC asymptote :file figures/opt/coords_iec.pdf :exports none
 settings.multisample=0;
-settings.outformat="pdf";
 settings.prc = false;
 settings.render = 0;
+settings.outformat="pdf";
 
 import graph3;
 import geometry;
@@ -1620,23 +1514,69 @@ import solids;
 import three;
 
 // view configuration
-size(2cm);
+size(5cm);
 addMargins(0.5cm, 0.5cm);
 
 // view configuration
-// currentprojection=orthographic(-15,5,13,up=Y);
+currentprojection=orthographic(100,-300,150,up=Z);
 // currentprojection=perspective(-15,5,13,up=Y);
 // currentlight=White;
 
 // shift different axes along x in IEC
 // real ax_shift = 10;
-real ax_scale=5;
+real ax_scale=50;
+
+// origin
+triple iso=(0, 0, 0);
+
+// gantry rotation
+real gtheta=45;
+transform3 grot=rotate(gtheta, Y);
+
+// // kV schematic
+real dlat=0, dlng=0, dvrt=50;
+triple det_cent=(dvrt,dlat,dlng);
+real ulen=40.0, vlen=30.0;
+
+path3 detector=plane((0,vlen,0), (0,0,ulen), det_cent-(0,vlen/2,ulen/2));
+triple det0 = det_cent-(0,ulen/2,vlen/2);
+
+// real s=5;
+// triple u = (det0+s*(0,1,0));
+// triple v = (det0+s*(0,0,1));
+// triple w = (det0+s*(-1,0,0));
+
+// // detector coordinate system
+// draw(det0--u,blue,Arrow3,L=Label("$u$", position=EndPoint, align=W));
+// draw(det0--v,blue,Arrow3,L=Label("$v$", position=EndPoint, align=N));
+// draw(det0--w,blue,Arrow3,L=Label("$w$", position=EndPoint, align=S));
+
+// source
+real slat=0, slng=0, svrt=-100;
+triple src=(svrt,slat, slng);
+
+// lines from source to detector edges
+real op=0.2;
+draw(grot*src..grot*(det_cent-(0, -vlen/2, -ulen/2)),blue+opacity(op));
+draw(grot*src..grot*(det_cent-(0, vlen/2, -ulen/2)),blue+opacity(op));
+draw(grot*src..grot*(det_cent-(0, vlen/2, ulen/2)),blue+opacity(op));
+draw(grot*src..grot*(det_cent-(0, -vlen/2, ulen/2)),blue+opacity(op));
+
+// show grot angle
+draw(grot*src..grot*det_cent, red+dashed+opacity(op), Arrow3);
+
+draw(Label("$\theta$",position=MidPoint,E),
+     arc((0,0,0), (2*ax_scale/3,0,0), grot*(2*ax_scale/3,0,0)), red);
+
+draw(grot*detector, blue+opacity(op));
 
 // Draw axis
-// iec
-draw(Label("$\text{Lng}$",1),(0,0,0)--(0,ax_scale,0),Arrow3);
-draw(Label("$\text{Vrt}$",1),(0,0,0)--(ax_scale,0,0),Arrow3);
-draw(Label("$\text{Lat}$",1),(0,0,0)--(0,0,ax_scale),Arrow3);
+// rad
+draw(Label("$y_{IEC}$",1),(0,0,0)--(0,ax_scale,0),Arrow3);
+draw(Label("$x_{IEC}$",1),(0,0,0)--(ax_scale,0,0),Arrow3);
+draw(Label("$z_{IEC}$",1),(0,0,0)--(0,0,ax_scale),Arrow3);
+
+draw(Label("gantry",1),(0,ax_scale+50,0)--(0,ax_scale+70,0),red+dashed,Arrow3);
 #+END_SRC
 
 #+RESULTS: fig:opt_coords_iec
@@ -1645,9 +1585,9 @@ draw(Label("$\text{Lat}$",1),(0,0,0)--(0,0,ax_scale),Arrow3);
 #+LABEL: fig:opt_coords_img
 #+BEGIN_SRC asymptote :file figures/opt/coords_img.pdf :exports none
 settings.multisample=0;
-settings.outformat="pdf";
 settings.prc = false;
 settings.render = 0;
+settings.outformat="pdf";
 
 import graph3;
 import geometry;
@@ -1655,24 +1595,78 @@ import solids;
 import three;
 
 // view configuration
-size(2cm);
+size(5cm);
 addMargins(0.5cm, 0.5cm);
 
 // view configuration
-// currentprojection=orthographic(-15,5,13,up=Y);
+currentprojection=orthographic(100,-300,150,up=Z);
 // currentprojection=perspective(-15,5,13,up=Y);
 // currentlight=White;
 
 // shift different axes along x in IEC
 // real ax_shift = 10;
-real ax_scale=5;
+real ax_scale=50;
+
+// origin
+triple iso=(0, 0, 0);
+
+// gantry rotation
+real gtheta=45;
+transform3 grot=rotate(gtheta, Y);
+
+// // kV schematic
+real dlat=0, dlng=0, dvrt=50;
+triple det_cent=(dvrt,dlat,dlng);
+real ulen=40.0, vlen=30.0;
+
+path3 detector=plane((0,vlen,0), (0,0,ulen), det_cent-(0,vlen/2,ulen/2));
+triple det0 = det_cent-(0,ulen/2,vlen/2);
+
+// real s=5;
+// triple u = (det0+s*(0,1,0));
+// triple v = (det0+s*(0,0,1));
+// triple w = (det0+s*(-1,0,0));
+
+// // detector coordinate system
+// draw(det0--u,blue,Arrow3,L=Label("$u$", position=EndPoint, align=W));
+// draw(det0--v,blue,Arrow3,L=Label("$v$", position=EndPoint, align=N));
+// draw(det0--w,blue,Arrow3,L=Label("$w$", position=EndPoint, align=S));
+
+// source
+real slat=0, slng=0, svrt=-100;
+triple src=(svrt,slat, slng);
+
+// lines from source to detector edges
+real op=0.2;
+draw(grot*src..grot*(det_cent-(0, -vlen/2, -ulen/2)),blue+opacity(op));
+draw(grot*src..grot*(det_cent-(0, vlen/2, -ulen/2)),blue+opacity(op));
+draw(grot*src..grot*(det_cent-(0, vlen/2, ulen/2)),blue+opacity(op));
+draw(grot*src..grot*(det_cent-(0, -vlen/2, ulen/2)),blue+opacity(op));
+
+// show grot angle
+draw(grot*src..grot*det_cent, red+dashed+opacity(op), Arrow3);
+
+draw(Label("$\theta$",position=MidPoint,E),
+     arc((0,0,0), (2*ax_scale/3,0,0), grot*(2*ax_scale/3,0,0)), red+opacity(op));
+
+draw(grot*detector, blue+opacity(op));
 
 // Draw axis
-// var/img
-draw(Label("$z_{img}$",1),(0,0,0)--(0,ax_scale,0),Arrow3);
-draw(Label("$x_{img}$",1),(0,0,0)--(ax_scale,0,0),Arrow3);
-draw(Label("$y_{img}$",1),(0,0,0)--(0,0,-ax_scale),Arrow3);
+// rad
+draw(Label("$y_{IEC}$",1),(0,0,0)--(0,ax_scale,0),dashed+opacity(op),Arrow3);
+draw(Label("$x_{IEC}$",1),(0,0,0)--(ax_scale,0,0),dashed+opacity(op),Arrow3);
+draw(Label("$z_{IEC}$",1),(0,0,0)--(0,0,ax_scale),dashed+opacity(op),Arrow3);
 
+draw(Label("gantry",1),(0,ax_scale+50,0)--(0,ax_scale+70,0),red+dashed,Arrow3);
+
+// img coordinates
+transform3 pshift=shift(-40, -40, -20);
+
+draw(Label("$r_{img}$",position=EndPoint,NW),pshift*(0,0,0)--(0,0,0),red,Arrow3);
+
+draw(Label("$z_{img}$",position=EndPoint,N),pshift*(0,0,0)--pshift*(0,ax_scale,0),Arrow3);
+draw(Label("$x_{img}$",position=EndPoint,S),pshift*(0,0,0)--pshift*(ax_scale,0,0),Arrow3);
+draw(Label("$y_{img}$",position=EndPoint),pshift*(0,0,0)--pshift*(0,0,-ax_scale),Arrow3);
 #+END_SRC
 
 #+RESULTS: fig:opt_coords_img
@@ -1787,6 +1781,11 @@ cases provide scanning configurations for which clinical image quality
 phantoms do not exist, we tried to use phantoms with direct clinical
 relevance.
 
+#+CAPTION: Schematic from the Catphan manual of the the CTP 404 sensitometry module which features a variety of different electron density inserts which can be used for contrast and CT number analysis as well as beads and wires for extracting spatial resolution metrics.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:opt_ctp404
+[[file:figures/opt/catphan_ctp404.png]]
+
 The majority of the quantitative metrics we present come from scans of
 the Catphan 504 (The Phantom Laboratory, Salem, NY). This is a
 standard quality assessment (QA) phantom for clinical CT devices that
@@ -1798,35 +1797,6 @@ quantify these image qualities, we compared the different
 magnifications of both the circular and virtual isocenter scans to the
 MLEM reconstruction of a standard circular scan.
 
-#+BEGIN_EXPORT latex
-\begin{figure}
-\centering
-\begin{subfigure}[b]{0.5\textwidth}
-\includegraphics[width=\textwidth]{figures/opt/catphan_ctp404.png}
-\caption{}
-\label{fig:opt_ctp404}
-\end{subfigure}
-~ %add desired spacing between images, e. g. ~, \quad, \qquad,
-% \hfill etc.
-% (or a blank line to force the subfigure onto a new line)
-\begin{subfigure}[b]{0.4\textwidth}
-\includegraphics[width=\textwidth]{figures/opt/catphan_ctp528.png}
-\caption{}
-\label{fig:opt_ctp528}
-\end{subfigure}
-\caption{Schematic illustrations of the two image quality modules from
-  the Catphan 504 phantom that we used for evaluating most of the
-  quantitative image quality metrics in this work. (a) shows the CTP
-  404 sensitometry module which features a variety of different
-  electron density inserts which can be used for contrast and HU value
-  analysis as well as beads and wires for extracting spatial
-  resolution metrics. (b) shows the CTP 528 module that provides a
-  bar-pattern phantom for evaluating spatial resolution metrics.
-}
-\label{fig:opt_ctp_modules}
-\end{figure}
-#+END_EXPORT
-
 There are a number of ways to evaluate the spatial resolution from
 images of the Catphan phantom in a CT image. The CTP 528 module
 contains a circular array of bar patterns which we used to,
@@ -1837,6 +1807,11 @@ transfer function (MTF) can be determined. Furthermore, the MTF can be
 calculated from the bar patterns themselves
 cite:droege_practical_1982, as well as any suitably high contrast edge
 in the image cite:rossmann_point_1969.
+
+#+CAPTION: Schematic from the Catphan manual of the CTP 528 module that provides a bar-pattern phantom for evaluating spatial resolution metrics.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:opt_ctp528
+[[file:figures/opt/catphan_ctp528.png]]
 
 While the use of MTF in CT has its challenges, notably the assumption
 of shift-invariance is not satisfied, it still can be useful when
@@ -1946,7 +1921,7 @@ problem...
    :PROPERTIES:
    :ID:       5c9cdd8b-721f-49b3-b136-c3282bf3659c
    :END:
-** TODO Introduction
+** Introduction
    :PROPERTIES:
    :ID:       26feb0f0-f33e-4972-af9c-f73e0124f074
    :END:
@@ -2138,7 +2113,7 @@ tolerance than that of our original phantom.
 \end{figure}
 #+END_EXPORT
 
-*** TODO Calibration method
+*** Calibration method
     :PROPERTIES:
     :ID:       F53F4B5A-83EB-4B16-9B6D-F557D3E441C2
     :END:
@@ -2153,6 +2128,10 @@ improve the estimate of both the system matrix and subsequently the
 estimated image from the reconstruction.
 
 *uml flow chart*
+
+#+BEGIN_UML
+
+#+END_UML
 
 Figure ([[ref:fig:geo_cal_schematic]]) provides a schematic illustration
 of the Isocal phantom for a single view. Ideally, the nominal geometry
@@ -2685,8 +2664,6 @@ mm was used for each reconstruction with application of the half-fan
 weighting cite:bian_optimization-based_2013. For all reconstructions,
 200 iterations of MLEM were used, as described in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized
 trajectory framework]] section.
-
-*metric analysis on these two scans w/ and w/o calibration*
 *** figures                                  :noexport:
 **** four detector schematic
 # +LABEL: fig:geo_schematic
@@ -3631,7 +3608,7 @@ for the optimization-based framework, this comparison simply provides
 a baseline of how MLEM directly compares to the clinical standard.
 Figure ([[ref:fig:fov_sensROI_full_half]]) shows the ROI values 
 
-#+CAPTION: Comparison of the MLEM algorithm as a direct replacement of the current clinical method of axial-FOV extension by stacking two independently reconstructed circlulr scans together. These ROIs are measured from two independently reconstructed circular scans (both full and half fan) using MLEM and FDK. As in Figure ([[ref:fig:sensROIplot]]), the bars are centered on the mean HU value of the ROI, and the height corresponds to the standard deviation in that ROI.
+#+CAPTION: Comparison of the MLEM algorithm as a direct replacement of the current clinical method of axial-FOV extension by stacking two independently reconstructed circlulr scans together. These ROIs are measured from two independently reconstructed circular scans (both full and half fan) using MLEM and FDK. As in Figure ([[ref:fig:sensROIplot]]), the bars are centered on the mean CT number of the ROI, and the height corresponds to the standard deviation in that ROI.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_sensROI_full_half
 [[file:figures/fov/rois/sensROIplot_full_half_fdk.pdf]]
