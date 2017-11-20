@@ -1727,8 +1727,6 @@ beam.
 |             | CouchVrt       | ImagerDeltaRtn   |                    | SourceDeltaVrt |
 |             |                | ImagerDeltaVrt   |                    |                |
 |-------------+----------------+------------------+--------------------+----------------|
-
-
 ***** note                                   :noexport:
  Also, you might write a paragraph that describes how these parameters
  come to you - that the acquired projections are stored in files using
@@ -1742,6 +1740,200 @@ beam.
  images. this could equally well go in the chapter where you describe
  your geometry framework for building the system matrix, and you could
  refer to it here.
+** Metric Evaluation
+   :PROPERTIES:
+   :ID:       bbb809be-d901-4945-b045-bb886cf349bd
+   :END:
+Though we by no means wish to suggest that this framework is limited
+to a particular hardware implementation, or even simply to the purview
+of IGRT alone, the TrueBeam system and the practical issues that
+currently face the clinic with its use motivated this investigation.
+As we present this as a potential solution to some of the limitations
+in the clinic, we must demonstrate that in bringing the benefits of
+these new trajectories, we are not adversely impacting the subsequent
+image quality. We must emphasize that image quality alone cannot
+determine ultimately determine the true value of any particular
+imaging modality or technique.
+
+It is imperative that for any translation of novel technology to a
+clinical setting to occur, rigorous clinical studies must be performed
+to determine the true impact any technology has on the real metric of
+performance which is the task-based utility. How that is defined is
+itself a challenging component in any field, but in medicine this must
+given consideration to the patient outcome. 
+
+Image quality is itself one component of the myriad factors that must
+be considered when evaluating a clinical technique. As we discuss this
+framework of reconstructing from non-circular trajectories with
+optimization-based reconstruction, we will use image quality as a
+surrogate for clinical utility. Though the trajectories we will look
+at were formulated to address practical limitations of the current
+state of the art, the benefits to the clinical workflow must
+eventually be evaluated with the ultimate patient outcome. What we do
+posit is that if the framework can achieve reconstructions with image
+quality that is comparable to existing techniques that have already
+met the stringent clinical evaluation criteria, then the additional
+benefits allowed by the non-circular trajectories truly do have the
+potential to improve clinical utility.
+
+As we look at some examples of different scanning trajectories that
+could be beneficial to the IGRT clinical workflow, we will use some of
+the following image quality metrics to compare reconstructions using
+this framework to the images of existing clinical techniques. We have
+attempted to select metrics based on existing clinical phantoms and
+image quality phantoms so as to reflect the potential image quality of
+these methods were they to be used clinically. Though some of the uses
+cases provide scanning configurations for which clinical image quality
+phantoms do not exist, we tried to use phantoms with direct clinical
+relevance.
+
+The majority of the quantitative metrics we present come from scans of
+the Catphan 504 (The Phantom Laboratory, Salem, NY). This is a
+standard quality assessment (QA) phantom for clinical CT devices that
+provides a series of sections with different objects for calculating
+image quality metrics. We used the CTP 404 sensitometry module shown
+in Figure ([[ref:fig:opt_ctp404]]) and the CTP 528 spatial resolution
+module shown in Figure ([[ref:fig:opt_ctp528]]). Using metrics that
+quantify these image qualities, we compared the different
+magnifications of both the circular and virtual isocenter scans to the
+MLEM reconstruction of a standard circular scan.
+
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics[width=\textwidth]{figures/opt/catphan_ctp404.png}
+\caption{}
+\label{fig:opt_ctp404}
+\end{subfigure}
+~ %add desired spacing between images, e. g. ~, \quad, \qquad,
+% \hfill etc.
+% (or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.4\textwidth}
+\includegraphics[width=\textwidth]{figures/opt/catphan_ctp528.png}
+\caption{}
+\label{fig:opt_ctp528}
+\end{subfigure}
+\caption{Schematic illustrations of the two image quality modules from
+  the Catphan 504 phantom that we used for evaluating most of the
+  quantitative image quality metrics in this work. (a) shows the CTP
+  404 sensitometry module which features a variety of different
+  electron density inserts which can be used for contrast and HU value
+  analysis as well as beads and wires for extracting spatial
+  resolution metrics. (b) shows the CTP 528 module that provides a
+  bar-pattern phantom for evaluating spatial resolution metrics.
+}
+\label{fig:opt_ctp_modules}
+\end{figure}
+#+END_EXPORT
+
+There are a number of ways to evaluate the spatial resolution from
+images of the Catphan phantom in a CT image. The CTP 528 module
+contains a circular array of bar patterns which we used to,
+subjectively, determine the highest frequency set which is resolvable.
+The same module also has two 0.28mm tungsten carbide beads simulating
+an impulse source from which a point spread and then modulation
+transfer function (MTF) can be determined. Furthermore, the MTF can be
+calculated from the bar patterns themselves
+cite:droege_practical_1982, as well as any suitably high contrast edge
+in the image cite:rossmann_point_1969.
+
+While the use of MTF in CT has its challenges, notably the assumption
+of shift-invariance is not satisfied, it still can be useful when
+treated with some care. Each of the methods above has some advantages
+and disadvantages. The point source method can provide 3D directional
+estimates of the point-spread function (PSF), however it can also be
+sensitive to the location of the bead relative to the image grid with
+significant difference between a bead located totally within a single
+voxel or on the interface of many. The bar pattern based evaluation is
+a clear complement to the visual analysis, however the orientation of
+the bars relative to the grid will affect some frequencies differently
+than others which can result in atypical appearing MTF curves. Using
+an edge spread analysis on the circular phantom boundary provides many
+samples, at varying directions to the image grid which can be averaged
+out. It can be impacted by scatter or saturation in the air region
+near the phantom boundary, however this has not proven to be a
+significant factor in the images we have analyzed.
+
+The image slice for analysis, the central slice here, is first
+thresholded based on the image intensity, the connected component with
+area of the appropriate size is isolated and any holes in the
+thresholded region are filled. The center of this region is taken as
+the phantom center and used as the origin of the coordinates for
+analysis. The data are then resampled at high density, along radial
+spokes at 8 angles chosen to avoid surface alignment marks, using a
+linear interpolant from 5 mm inside to 5 mm outside the surface
+boundary. The edge-spread function is then the mean $(\mu(X))$
+subtracted profile over the standard deviation $(\sigma(X))$, or
+\begin{equation}
+\text{ESF} = \frac{X-\mu(X)}{\sigma(X)}.
+\end{equation}
+In standard form, the line-spread function (LSF) can be computed from
+the derivative of the edge-spread function (ESF),
+\begin{equation}
+\text{LSF} = \frac{d}{dX}\text{ESF},
+\end{equation}
+and the MTF as the discrete fourier transform $(\mathcal{D})$ of the
+LSF,
+\begin{equation}
+\text{MTF} = \mathcal{D}(\text{LSF})
+\end{equation}
+
+To characterize low-contrast resolution, we calculated the
+contrast-to-noise ratio (CNR) using the polystyrene insert in the CTP
+404 sensitometry module. These inserts have CT numbers which are the
+closest to the water-like polymer that surrounds them. The metric is
+defined as
+\begin{equation}
+\label{eq:lcv}
+\text{CNR} = \frac{2\left|\mu_{\text{roi}}-\mu_{\text{bkg}}\right|}{\sigma_\text{roi}+\sigma_\text{bkg}}
+\end{equation}
+where $\sigma$ represents the standard deviation and $\mu$ the mean of the of
+the pixel values in the respective regions.
+
+The last metric we evaluated was the reproducibility of the CT numbers
+in the images from the different scanning trajectories we
+investigated. For this we used the mean and standard deviations in
+ROIs for all the material inserts of the Catphan CTP 404 sensitometry
+module in addition to the polystyrene and background ROIs used for the
+low-contrast CNR calculations. We also evaluated three additional ROIs
+of the water-like background for a total of four background ROIs.
+
+#+BEGIN_EXPORT latex
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[height=1.75in]{figures/opt/cirs/cross_sectioned.jpg}
+  \caption{}
+  \label{fig:opt_cirs_sec}
+\end{subfigure}
+\qquad %add desired spacing between images, e. g. ~, \quad, \qquad,
+% \hfill etc.
+% (or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[height=1.75in]{figures/opt/cirs/ed_setup.jpg}
+  \caption{}
+  \label{fig:opt_cirs_setup}
+\end{subfigure}
+\caption{The CIRS torso phantom. On the left is a picture of the
+  phantom broken apart so that the cross-sectional composition of the
+  slices is visible. The anthropomorphic phantom is designed to
+  provide soft-tissue organ structures with realistic electron
+  densities. The image on the right shows the phantom setup on the
+  linac treatment couch.}
+\label{fig:opt_cirs}
+\end{figure}
+
+#+END_EXPORT
+
+In addition to the CTP 504 Catphan modules, we also used the CIRS
+model 600 torso phantom shown in Figure ([[ref:fig:opt_cirs]]) to evaluate
+these trajectories with this non-circular scanning trajectory
+configuration. Though we primarily used this anthropomorphic phantom
+to produce clinically-relevant reconstructions in the use-case we
+envisioned for these proposed trajectories, we also extracted CT
+numbers from ROIs in some of the soft-tissue organs corresponding to
+aorta, liver and spleen in the phantom's abdomen.
 ** ideas                                     :noexport:
 Given that part of the robust nature of optimization-based algorithms
 is the ability to handle the poorly-conditioned nature of the inverse
@@ -3078,6 +3270,11 @@ trajectory requires no gantry rotation during the translation stage,
 we did acquire one CLC trajectory using translation of the robotic
 imaging arms for comparison.
 
+#+CAPTION: Catphan  sagittal view showing the axial extent of a single Catphan 504 phantom.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:fov_catphan_sagittal
+[[file:figures/fov/catphan_incr_module_pos.png]]
+
 The image quality that results from using these trajectories with
 optimization-based algorithms must be quantitatively evaluated for the
 different trajectories and spacings chosen. Given that contrast
@@ -3087,7 +3284,8 @@ axial position for the different trajectories and spacings. As the
 extended axial coverage we obtain with the kV imaging system using
 these methods is novel, there is not a standard phantom for
 characterizing low-contrast resolution as a function of axial position
-within a single scan.
+within a single scan. Figure ([[ref:fig:fov_catphan_sagittal]]) shows the
+limited coverage afforded by a single Catphan 504 phantom.
 
 #+CAPTION: Catphan CTP 515 low-contrast module schematic.
 #+ATTR_LaTeX: :width 0.75\textwidth
@@ -3098,13 +3296,13 @@ For this reason, we built a custom low-contrast disk phantoms that fit
 into an acrylic tube with extended axial coverage as shown in Figure
 ([[ref:fig:fov_tube_setup]]). The disks themselves, such as the one shown
 in Figure ([[ref:fig:fov_disk]]), are designed to provide similar metrics
-such as those obtained with the Catphan (The Phantom Laboratory,
-Salem, NY) phantom's low-contrast module CTP515 shown in Figure
-([[ref:fig:fov_catphan_ctp515]]). Additionally, the largest holes are
-designed to hold the different electron density plugs from the Gammex
-(Middleton, WI) RMI tissue characterization phantom. By placing four
-of these disks in the tube, we can obtain these metrics as a function
-of axial position within a given reconstruction.
+such as those obtained with the Catphan phantom's low-contrast module
+CTP515 shown in Figure ([[ref:fig:fov_catphan_ctp515]]). Additionally, the
+largest holes are designed to hold the different electron density
+plugs from the Gammex (Middleton, WI) RMI tissue characterization
+phantom. By placing four of these disks in the tube, we can obtain
+these metrics as a function of axial position within a given
+reconstruction.
 
 #+BEGIN_EXPORT latex
 \begin{figure}
@@ -3143,14 +3341,9 @@ coverage, we placed the two Catphan's end to end. This effectively
 provided a standard image-quality phantom that also spanned the
 extended axial-FOV volume enabled by these trajectories of interest.
 
-#+CAPTION: Schematic from the Catphan manual off the CTP 404 sensitometry module.
-#+ATTR_LaTeX: :width \textwidth
-#+LABEL: fig:fov_ctp404
-[[file:figures/fov/catphan_ctp404.png]]
-
 For the all of the different trajectory scans, the double-Catphan
 configuration was positioned with one of the Catphan's sensitometry
-module shown in Figure ([[ref:fig:fov_ctp404]]) aligned at imaging
+module shown in Figure ([[ref:fig:opt_ctp404]]) aligned at imaging
 isocenter. As this module provides many of the features we used to
 calculate image metrics, we wanted to acquire metrics with this module
 placed so that it is in the plane of the source's orbit for one of the
@@ -3162,40 +3355,13 @@ trajectories (double circle, CLC, and smooth) with both full-fan and
 half-fan detector configurations.
 
 In addition to the double-Catphan configuration, we also scanned the
-CIRS torso phantom shown in Figure ([[ref:fig:fov_cirs_setup]]). We
+CIRS torso phantom shown in Figure ([[ref:fig:opt_cirs_setup]]). We
 aligned the phantom so that the center of phantom was placed at the
 midpoint between the axial position of the two circular components of
 the different trajectories. We again acquired the three classes of
 scanning trajectories, but only with a half-fan detector configuration
 as this larger phantom would incur truncation artifacts with a
 full-fan configuration.
-
-#+BEGIN_EXPORT latex
-\begin{figure}
-\centering
-\begin{subfigure}[b]{0.45\textwidth}
-  \includegraphics[height=1.75in]{figures/fov/cirs/cross_sectioned.jpg}
-  \caption{}
-  \label{fig:fov_cirs_sec}
-\end{subfigure}
-\qquad %add desired spacing between images, e. g. ~, \quad, \qquad,
-% \hfill etc.
-% (or a blank line to force the subfigure onto a new line)
-\begin{subfigure}[b]{0.45\textwidth}
-  \includegraphics[height=1.75in]{figures/fov/cirs/ed_setup.jpg}
-  \caption{}
-  \label{fig:fov_cirs_setup}
-\end{subfigure}
-\caption{The CIRS torso phantom. On the left is a picture of the
-  phantom broken apart so that the cross-sectional composition of the
-  slices is visible. The anthropomorphic phantom is designed to
-  provide soft-tissue organ structures with realistic electron
-  densities. The image on the right shows the phantom setup on the
-  linac treatment couch.}
-\label{fig:fov_cirs}
-\end{figure}
-
-#+END_EXPORT
 
 In addition to acquiring the different trajectory scans of these
 phantoms, we also repeated the scans with the Isocal phantom to
@@ -3739,25 +3905,6 @@ collisions with two components of the linac treatment system.
    :PROPERTIES:
    :ID:       973b1793-b733-43ce-a7aa-dd31af58c680
    :END:
-*** Phantoms
-    :PROPERTIES:
-    :ID:       501e0d09-ed7c-4c78-a997-477e6414df18
-    :END:
-The abdominal region of the CIRS (Computerized Imaging Reference
-Systems, Norfolk, VA) model 600 torso phantom was scanned. This
-phantom contains both high-contrast (bone) and low-contrast (soft
-tissue) structures in an anthropomorphic form. These features provide
-an indication of imaging performance in more clinically relevant
-conditions.
-
-To quantify image quality metrics for the different scanning
-trajectories, we used a Catphan 504 (The Phantom Laboratory, Salem,
-NY). This is a standard quality assessment (QA) phantom for clinical
-CT devices that provides a series of sections with different objects
-for calculating image quality metrics. We used the CTP 404 module for
-evaluating low-contrast resolution, and the CTP 404 and 528 modules
-for evaluating spatial resolution.
-
 *** Scans
     :PROPERTIES:
     :ID:       dd0b68a5-c0eb-4c57-a28f-c27e2c57c8d8
@@ -3849,98 +3996,6 @@ this study.
 |-------------------+------------------------------------------|
 **** figures                                 :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb]]
-*** Metric Evaluation
-    :PROPERTIES:
-    :ID:       bbb809be-d901-4945-b045-bb886cf349bd
-    :END:
-To evaluate the different magnifications of both the circular and
-virtual isocenter trajectory, we used the sensitometry and spatial
-resolution modules (CTP 404 and CTP 528 respectively) of the Catphan
-phantom. Using metrics that quantify these image qualities, we
-compared the different magnifications of both the circular and virtual
-isocenter scans to the MLEM reconstruction of a standard circular
-scan.
-
-*catphan schematic?*
-
-There are a number of ways to evaluate the spatial resolution from
-images of the Catphan phantom in a CT image. The CTP528 module
-contains a circular array of bar patterns which we used to,
-subjectively, determine the highest frequency set which is resolvable.
-The same module also has two 0.28mm tungsten carbide beads simulating
-an impulse source from which a point spread and then modulation
-transfer function (MTF) can be determined. Furthermore, the MTF can be
-calculated from the bar patterns themselves
-cite:droege_practical_1982, as well as any suitably high contrast edge
-in the image cite:rossmann_point_1969.
-
-While the use of MTF in CT has its challenges, notably the assumption
-of shift-invariance is not satisfied, it still can be useful when
-treated with some care. Each of the methods above has some advantages
-and disadvantages. The point source method can provide 3D directional
-estimates of the point-spread function (PSF), however it can also be
-sensitive to the location of the bead relative to the image grid with
-significant difference between a bead located totally within a single
-voxel or on the interface of many. The bar pattern based evaluation is
-a clear complement to the visual analysis, however the orientation of
-the bars relative to the grid will affect some frequencies differently
-than others which can result in atypical appearing MTF curves. Using
-an edge spread analysis on the circular phantom boundary provides many
-samples, at varying directions to the image grid which can be averaged
-out. It can be impacted by scatter or saturation in the air region
-near the phantom boundary, however this has not proven to be a
-significant factor in the images we have analyzed.
-
-The image slice for analysis, the central slice here, is first
-thresholded based on the image intensity, the connected component with
-area of the appropriate size is isolated and any holes in the
-thresholded region are filled. The center of this region is taken as
-the phantom center and used as the origin of the coordinates for
-analysis. The data are then resampled at high density, along radial
-spokes at 8 angles chosen to avoid surface alignment marks, using a
-linear interpolant from 5 mm inside to 5 mm outside the surface
-boundary. The edge-spread function is then the mean $(\mu(X))$
-subtracted profile over the standard deviation $(\sigma(X))$, or
-\begin{equation}
-\text{ESF} = \frac{X-\mu(X)}{\sigma(X)}.
-\end{equation}
-In standard form, the line-spread function (LSF) can be computed from
-the derivative of the edge-spread function (ESF),
-\begin{equation}
-\text{LSF} = \frac{d}{dX}\text{ESF},
-\end{equation}
-and the MTF as the discrete fourier transform $(\mathcal{D})$ of the
-LSF,
-\begin{equation}
-\text{MTF} = \mathcal{D}(\text{LSF})
-\end{equation}
-
-To characterize low-contrast resolution, we calculated the
-contrast-to-noise ratio (CNR) using the polystyrene insert in the CTP
-404 sensitometry module. These inserts have CT numbers which are the
-closest to the water-like polymer that surrounds them. The metric is
-defined as
-\begin{equation}
-\label{eq:lcv}
-\text{CNR} = \frac{2\left|\mu_{\text{roi}}-\mu_{\text{bkg}}\right|}{\sigma_\text{roi}+\sigma_\text{bkg}}
-\end{equation}
-where $\sigma$ represents the standard deviation and $\mu$ the mean of the of
-the pixel values in the respective regions.
-
-The last metric we evaluated was the reproducibility of the CT numbers
-between the circular and virtual isocenter scan, and the different
-combinations of magnification bumps. For this we used the mean and
-standard deviations in ROIs for all the material inserts of the
-Catphan CTP 404 sensitometry module in addition to the polystyrene and
-background ROIs used for the low-contrast CNR calculations. We also
-evaluated three additional ROIs of the water-like background for a
-total of four background ROIs.
-
-In addition to the catphan modules, we also analyzed ROIs
-corresponding to aorta, liver and spleen in the abdomen of the CIRS
-torso phantom. For each of the magnifications from both the circular
-and virtual isocenter trajectories, the mean HU values and standard
-deviations were calculated.
 *** Reconstruction
     :PROPERTIES:
     :ID:       d0eac288-37d6-4cef-97c8-7896dcc67733
