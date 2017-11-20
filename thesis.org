@@ -3714,10 +3714,10 @@ compared to the current clinical standard of stacked FDK, but also
 evaluate what impact our geometric calibration procedure described in
 [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]] has on spatial resolution as well.
 
-#+CAPTION: Grid of the different spatial resolution metrics extracted from the MTF analysis of the dual-Catphan phantom scan. 
-#+ATTR_LaTeX: :width \textwidth :options angle=90
-#+LABEL: fig:fov_mtf_alg
-[[file:figures/fov/mtf/alg_grid.pdf]]
+# #+CAPTION: Grid of the different spatial resolution metrics extracted from the MTF analysis of the dual-Catphan phantom scan. 
+# #+ATTR_LaTeX: :width \textwidth :options angle=90
+# #+LABEL: fig:fov_mtf_alg
+# [[file:figures/fov/mtf/alg_grid.pdf]]
 
 # The first collection of spatial resolution metrics we extracted from
 # the dual-Catphan reconstructions from the different classes of
@@ -4987,9 +4987,117 @@ isocenter CBCT scans and kV-detector magnification changes could be
 combined with optimization-based reconstruction as a useful clinical
 approach in collision-plagued situations.
 
-* Summary and conclusions                    :conc:
+* Conclusions                                :conc:
   :PROPERTIES:
   :ID:       1bade25b-80d6-4650-b8a3-baf370fa657c
   :END:
+In this dissertation work, we developed a framework that leverages
+optimization-based reconstruction methods to enable generalized,
+non-circular, scanning trajectories in CBCT. Where analytic-based
+reconstruction methods require a prescribed trajectory in order to
+derive an analytic inverse, optimization-based methods require no such
+assumption regarding the trajectory by which the projection views were
+acquired. This agnosticism of optimization-methods to the order and
+geometry by which projections are acquired allows for dynamic,
+view-by-view modifications to the scanning trajectory that would be
+untenable if the scanning trajectory were fixed by necessity of the
+reconstruction program's requirements.
+
+We describe our generalized framework for reconstructing from
+generalized scanning trajectories using optimization-based
+reconstruction methods in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Chapter 2]]. Though we limited ourselves to
+MLEM to solve our reconstruction problem, we by no means imply that
+this framework is beholden to this algorithm. Not only can other
+optimization-based algorithms be plugged into this framework, more
+sophisticated optimization techniques may be better suited to this
+optimization problem. However, regardless of the optimization-based
+algorithm employed in this paradigm, it is always critical that the
+user to ensure that the parameters of the algorithm are carefully
+selected for the desired task.
+
+In addition to developing this framework, we also developed a general
+calibration procedure in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Chapter 3]] that would accommodate view-by-view
+corrections to the different non-circular trajectories we studied. We
+then proceeded to use this calibration protocol to make calibration
+corrections for the non-circular trajectory classes we studied in the
+subsequent chapters. Though optimization-based algorithms are very
+robust, the view-by-view agnosticism we utilize for our trajectory
+framework is only beneficial if the geometry describing each of the
+views in the system matrix if correct. As with all inverse problems,
+the answer provided by the inverse is only useful if you have solved
+the right problem.
+
+As our investigation into different non-circular trajectories was
+motivated by existing clinical limitations currently encountered in
+using linac-mounted CBCT for IGRT, we then found two clinical examples
+where the ability to use non-circular trajectories could provide a
+solution. By first selecting two particular tasks to test our
+framework, we were able to constrain our investigation of the
+trajectory parameters that were relevant to solving these problems.
+Just as the parameters of the optimization program must be selected
+for the desired task, similar task-based considerations must be given
+to selecting what type of non-circular trajectory, if any, would be
+suited for intended application.
+
+The first clinical limitation we studied in [[id:eaae199f-f899-4862-af50-720895a31c36][Chapter 4]] is the problem
+of the limited-axial FOV provided by linac-mounted CBCT systems. Since
+the axial coverage provided by the CBCT detector is limited by
+engineering constraints, we hypothesized that non-circular
+trajectories would be able to extend the axial FOV while maintaining
+image quality that is comparable to current clinical methods. In
+addition to studying the double circle trajectory that is comparable
+to the current clinical practice of stacking the independently
+reconstructed FDK volumes of two circles together, we also studied the
+CLC and smooth trajectory classes that include acquiring projections
+as the CBCT imaging system translates between the two planes of the
+circular components of the scan. We found that not only does our
+framework with MLEM perform as well as FDK in the portion of the
+reconstructed volume where FDK satisfies Tuy's condition, but that it
+is also able to improve the image quality in the region between the
+planes of the source's circular orbit. Additionally, our framework
+demonstrated that it is possible to extend the axial spacing between
+the planes of the two circles into distances that exceed the support
+of two stacked FDK volumes.
+
+The second clinical problem in using linac-mounted CBCT for IGRT that
+investigated in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Chapter 5]] is that of potential patient collisions with
+the linac when attempting to acquire a CBCT. For some of the treatment
+positions used for breast, lung, and head and neck cancer patients,
+the orientation of the patient on the treatment table puts them at
+risk of being hit by the linac as it rotates around the patient. In
+this study, we looked at different non-circular trajectories that
+could alleviate the different types of collisions that potentially
+faced by these patients. One such trajectory would increase the radius
+of the kV-imaging detector in a potential collision zone to create a
+dynamic magnification trajectory. To avoid potential collisions with
+the linac treatment head, we looked at a virtual isocenter trajectory
+that moved the patient couch while the gantry rotated to maintain a
+fixed distance between the patient and treatment head to ensure no
+collision would take place. Finally, we created a trajectory that
+combined the virtual isocenter trajectory with the dynamic
+magnification in order to create a trajectory that could alleviate
+collisions with both the kV-detector and the treatment head. For each
+of these different configurations, we showed we could obtain
+reconstructions with image quality comparable to the standard clinical
+circular trajectory.
+
+In conclusion, we found that our non-circular scanning trajectory
+framework using optimization-based reconstruction methods have the
+potential to address limitation of linac-mounted CBCT for IGRT. We
+selected specific non-circular trajectories that we knew had the
+potential to address real clinical limitations. In finding that the
+subsequent image quality was no worse than that achieved by the
+existing clinical methods, we hopefully demonstrated that these
+non-circular scanning trajectories have the potential to address
+limitations of CBCT in IGRT. Though we did not explicitly study any
+other application here, we do not think this framework is limited to
+these two applications or even just to the realm of radiotherapy. In
+selecting the two examples shown here, we have only wished to
+demonstrate the potential utility enabled by non-circular trajectories
+with optimization-based reconstruction. As with all tomographic
+reconstruction problems, careful consideration must be given to the
+desired task and further task-based metric analysis must be performed
+to evaluate not only the performance of the chosen reconstruction
+chain, but also to that of the chosen scanning trajectory.
 
 \makebibliography
