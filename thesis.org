@@ -574,6 +574,7 @@ draw(Label("$f$",position=Relative(0.2)),obj,black);
 #+END_SRC
 
 #+CAPTION: Single-view schematic of the x-ray transform of an object $f$ from an x-ray source at $\mathbf{r}_{0}$ illuminating the detector in the direction of $\hat{\theta}$ to produce the detector response $g\left(\mathbf{r}_{0}, \hat{\theta}\right)$. The angle $\gamma$ is the maximum cone-angle of this CBCT as determined by the detector size. The source and detector geometry is that of Varian's TrueBeam kV-imaging system.
+#+LABEL: fig:opt_analytic
 #+ATTR_LaTeX: :width \textwidth
 #+RESULTS: fig:opt_analytic
 [[file:figures/opt/analytic.pdf]]
@@ -1230,9 +1231,9 @@ imaging model in Equation ([[ref:eq:opt_linmodel_patient]]) then becomes
   \mathbf{g}=\mathcal{H'}\mathbf{f_{\text{patient}}},
 \end{equation}
 where
-l\begin{equation}
+\begin{equation}
   \label{eq:sys_patient}
-  \mathcal{H'}=\mathcal{H}\mathcal{T_{\text{IEC,patient}}}.
+  \mathcal{H'}=\mathcal{H}\mathcal{T}_{\text{IEC,patient}}.
 \end{equation}
 Once the change of basis is accounted for, the reconstruction program
 in Equation ([[ref:eq:opt_kl]]) can be reformulated with
@@ -1440,7 +1441,7 @@ geometry reported in the projection headers shown in Table
 describes the projection information in the desired image-space basis.
 In the case of IGRT, the image-basis of interest to physicians is that
 of the patient. As discussed, this requires calculating the correct
-transform $\mathcal{T}_{{IEC,patient}}$ so that the system matrix for
+transform $\mathcal{T}_{{\text{IEC,patient}}}$ so that the system matrix for
 reconstructing into the image space $\left(\mathcal{H'}\right)$ as
 described in Equation ([[ref:eq:opt_linmodel_patient]]) can be found.
 
@@ -1516,6 +1517,7 @@ draw(src..det_cent-(0, -vlen/2, ulen/2),blue+opacity(op));
 #+END_SRC
 
 #+CAPTION: Radiation coordinate system which is the basis of the projection geometry reported in the projection headers. This coordinate system provides a description of the source position relative to the detector bins with the origin at the imaging isocenter of that view. Though this basis is agnostic of the gantry rotation, the red arrow points into the gantry for reference in images showing the other bases used in this transform.
+#+LABEL: fig:opt_coords_rad
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_coords_rad
 [[file:figures/opt/coords_rad.pdf]]
@@ -1608,6 +1610,7 @@ draw(Label("gantry",1),(0,ax_scale+50,0)--(0,ax_scale+70,0),red+dashed,Arrow3);
 #+END_SRC
 
 #+CAPTION: the IEC coordinate system that is the global-basis for all the linac geometry. To transform the data in the radiation coordinate system into the IEC coordinate system, the gantry rotation angle is used to rotate each view in the radiation-coordinate basis into the global room coordinates. For a gantry angle of $\theta_{g}=0^{\circ}$, the radiation-coordinate system in Figure ([[ref:fig:opt_coords_rad]]) is the same as the IEC.
+#+LABEL: fig:opt_coords_iec
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_coords_iec
 [[file:figures/opt/coords_iec.pdf]]
@@ -1626,10 +1629,10 @@ For a gantry angle of $\theta_{g}=0^{\circ}$, the radiation-coordinate system
 shown in Figure ([[ref:fig:opt_coords_rad]]) has the same basis as the
 radiation coordinate system in Figure ([[ref:fig:opt_coords_rad]]). This
 can be used to place the view-by-view header information into the IEC
-basis ignoring the gantry rotation initially. Using the $x__{}{IEC}$,
-$x__{}{IEC}$, and $x__{}{IEC}$ shown in Figure ([[ref:fig:opt_coords_rad]]), the
-source and detector positions for that view in homogeneous coordinates
-are then
+basis ignoring the gantry rotation initially. Using the IEC basis
+vectors $X__{}{\text{IEC}}$, $Y__{}{\text{IEC}}$, and $Z__{}{\text{IEC}}$ shown
+in Figure ([[ref:fig:opt_coords_rad]]), the source and detector positions
+for that view in homogeneous coordinates are then
 \begin{equation}
   \boldsymbol{r}_{\text{src,rad}} = \begin{bmatrix}
     \text{SourceVrt} \\
@@ -1655,13 +1658,13 @@ To then get these source and position vectors into the correct IEC
 position, they are transformed via a rotation around the longitudinal
 or $y_{\text{IEC}}$ axis by the gantry angle $\theta_{g}$ which is
 \begin{equation}
-  \mathcal{R}\left(\theta_{g}\right) = \begin{bmatrix}
-    \text{cos}\theta_{g} & 0 & \text{sin}}\theta_{g} & 0 \\
-  0 & 1  & 0  &  0 \\
-  \text{-sin}\theta_{g} & 0 & \text{cos}}\theta_{g} & 0 \\
-    0 & 0 & 0 & 0
-  \end{bmatrix}.
-  \label{eq:opt_rot_rad_iec}
+\mathcal{R}\left(\theta_{g}\right) = \begin{bmatrix}
+\text{cos}\left(\theta_{g}\right) & 0 & \text{sin}\left(\theta_{g}\right) & 0 \\
+0 & 1  & 0  &  0 \\
+\text{-sin}\left(\theta_{g}\right) & 0 & \text{cos}\left(\theta_{g}\right) & 0 \\
+0 & 0 & 0 & 0
+\end{bmatrix}.
+\label{eq:opt_rot_rad_iec}
 \end{equation}
 By then applying this transform to each projection view geometry in the
 radiation coordinate system, we then have
@@ -1775,6 +1778,7 @@ draw(Label("$y_{img}$",position=EndPoint),pshift*(0,0,0)--pshift*(0,0,-ax_scale)
 #+END_SRC
 
 #+CAPTION:  The image or patient coordinate system that will be used as the basis for the reconstruction system matrix $\matchal{H}$ in Equation ([[ref:eq:opt_linmodel_patient]]). By using the view-by-view transform enabled by optimization-based methods, this can incorporates the relative motion of the imaging source and detector as well as the motion of the couch and gantry relative to the point of interest in the patient dentoted by $\boldsymbol{r}_{img}}$.
+#+LABEL: fig:opt_coords_img
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_coords_img
 [[file:figures/opt/coords_img.pdf]]
@@ -1796,13 +1800,13 @@ transformed into the basis of the patient's imaging volume. Though
 this transform need not be limited to translation, the form presented
 here would then involve a final transform of the form
 \begin{equation}
-  \mathcal{T}_{{img,rad}}\left(\theta_{g}\right) = \begin{bmatrix}
-    1 & 0 & 0 & -r_{x,IEC} \\
-    0 & 1 & 0 & -r_{y,IEC} \\
-    0 & 0 & 1 & -r_{z,IEC} \\
-    0 & 0 & 0 & 0
-  \end{bmatrix},
-  \label{eq:opt_rot_rad_iec}
+\mathcal{T}_{{\text{img,rad}}}\left(\theta_{g}\right) = \begin{bmatrix}
+  1 & 0 & 0 & -r_{x,IEC} \\
+  0 & 1 & 0 & -r_{y,IEC} \\
+  0 & 0 & 1 & -r_{z,IEC} \\
+  0 & 0 & 0 & 0
+\end{bmatrix},
+\label{eq:opt_rot_rad_iec}
 \end{equation}
 and the requisite transform of the system matrix would then be the
 necessary transfrom $\mathcal{T}_{\tex{IEC,patient}}$ needed to
@@ -1867,7 +1871,7 @@ phantoms do not exist, we tried to use phantoms with direct clinical
 relevance.
 
 #+CAPTION: Schematic from the Catphan manual of the the CTP 404 sensitometry module which features a variety of different electron density inserts which can be used for contrast and CT number analysis as well as beads and wires for extracting spatial resolution metrics.
-#+ATTR_LaTeX: :width \textwidth
+#+ATTR_LaTeX: :width 0.75\textwidth
 #+LABEL: fig:opt_ctp404
 [[file:figures/opt/catphan_ctp404.png]]
 
@@ -1894,7 +1898,7 @@ cite:droege_practical_1982, as well as any suitably high contrast edge
 in the image cite:rossmann_point_1969.
 
 #+CAPTION: Schematic from the Catphan manual of the CTP 528 module that provides a bar-pattern phantom for evaluating spatial resolution metrics.
-#+ATTR_LaTeX: :width \textwidth
+#+ATTR_LaTeX: :width 0.75\textwidth
 #+LABEL: fig:opt_ctp528
 [[file:figures/opt/catphan_ctp528.png]]
 
@@ -5091,8 +5095,8 @@ existing clinical methods, we hopefully demonstrated that these
 non-circular scanning trajectories have the potential to address
 limitations of CBCT in IGRT. Though we did not explicitly study any
 other application here, we do not think this framework is limited to
-these two applications or even just to the realm of radiotherapy. In
-selecting the two examples shown here, we have only wished to
+these two applications or even solely to the purview of radiotherapy.
+In selecting the two examples shown here, we have only wished to
 demonstrate the potential utility enabled by non-circular trajectories
 with optimization-based reconstruction. As with all tomographic
 reconstruction problems, careful consideration must be given to the
