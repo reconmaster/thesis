@@ -312,7 +312,7 @@ cite:feldkamp_practical_1984 (which we will discuss further in
 useful reconstruction from a circular scanning trajectory on a CBCT
 system.
 
-** TODO Image-guided radiation therapy
+** Image-guided radiation therapy
    :PROPERTIES:
    :ID:       bbf164a1-25cd-4b35-b4ae-eb2b642d9d18
    :END:
@@ -329,7 +329,7 @@ delivering therapeutic radiation doses are linear accelerators
 (linacs) that deliver powerful megavoltage (MV) treatment beams to
 diseased tissue 
 
-*additional history leading to IGRT*
+# *additional history leading to IGRT*
 
 The addition of a linac-mounted, kV-imaging, cone-beam computed
 tomography (CBCT) system to the gantry-mounted clinical linear
@@ -1200,7 +1200,7 @@ cite:bian_optimization-based_2013.
 We define a scanning trajectory as the sequence of source and detector
 positions used to acquire each projection view. For all of the
 trajectories we studied, the detector moves in diametric opposition to
-the kV-imagin source though this is not a requirement of this
+the kV-imaging source though this is not a requirement of this
 formulation. The coordinates of the trajectory are then defined
 relative to a fixed origin in the patient. In a traditional scanning
 configuration where the patient is stationary, the system matrix
@@ -2086,7 +2086,7 @@ optimization-based reconstruction, optimization-based calibration
 methods are more flexible in providing calibration offsets for the
 novel trajectories that we studied.
 
-*lit review of calibration phantoms/methods*
+# *lit review of calibration phantoms/methods*
 
 Using previous work for optimization-based geometric calibration
 cite:rougee_geometrical_1993,gullberg_estimation_1990,silver_determination_2000,
@@ -2212,7 +2212,7 @@ the additional information extracted from our calibration was use to
 improve the estimate of both the system matrix and subsequently the
 estimated image from the reconstruction.
 
-*uml flow chart*
+# *uml flow chart*
 
 #+BEGIN_UML
 
@@ -2874,7 +2874,7 @@ dot(proj270*isocal,red);
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
    :END:
-*** TODO Experimental validation
+*** Experimental validation
     :PROPERTIES:
     :ID:       2c3c25d5-477a-4013-bf2a-5a74716b9c20
     :END:
@@ -2888,7 +2888,7 @@ the treatment couch during the scan introduces additional geometric
 error over the standard circle scan which visually degrades spatial
 resolution.
 
-*table of example corrections for order mag*
+# *table of example corrections for order mag*
 
 The bottom row of Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the same
 slice from the corresponding trajectory with the geometric offsets
@@ -2901,7 +2901,7 @@ calibration offsets in the reconstruction model, the spatial
 resolution of the virtual isocenter reconstruction becomes comparable
 to that of the circular scan.
 
-*couch motion introduces additional uncertainty*
+# *couch motion introduces additional uncertainty*
 
 Figure ([[ref:fig:geo_cal_cost]]) shows the $L_{2}_{}-\text{norm}$ of the
 distance between the simulated fiducial projections and the real
@@ -2921,7 +2921,7 @@ reconstruction than in that of the circular scan. With the geometric
 calibrations applied, the cost for the virtual isocenter and circular
 trajectories is quite comparable, as is the spatial resolution.
 
-*describe TB1 virtual isocenter couch backlash*
+# *describe TB1 virtual isocenter couch backlash*
 
 #+BEGIN_EXPORT latex
 \begin{figure}
@@ -2958,7 +2958,7 @@ trajectories is quite comparable, as is the spatial resolution.
 - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
 **** notes                                   :noexport:
 - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
-** Discussion
+** Discussion                                :noexport:
    :PROPERTIES:
    :ID:       CAB89A8B-FC4B-4F9A-A52A-68E17ED2885C
    :END:
@@ -3193,7 +3193,7 @@ acquiring a circular trajectory scan, applying the axial shift, and
 then acquiring a second circle by rotating the gantry in the opposite
 direction.
 
-#+CAPTION: Source trajectories of the three classes of extended axial-FOV trajectories studied with a separation of 17 cm between the planes of the circular components of the scan. Moving in diametric opposition of the source is the CBCT detector which provides coverage 15 cm above and below the source trajectory in the axial direction (z) All of these trajectories are plotted in the image coordinate space described in the section [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates]]. On the left is the double circle trajectory that is equivalent to the double circle scan currently used in the clinic to obtain extended axial coverage. In the middle is the circle-line-circle trajectory that acquires additional projection information as the source and detector translate from the axial position of the first circle to that of the second. The last trajectory on the right is the smooth trajectory in which the translation component occurs during the rotation of the two circles.
+#+CAPTION: Source trajectories of the three classes of extended axial-FOV trajectories studied with a separation of 17 cm between the planes of the circular components of the scan. Moving in diametric opposition of the source is the CBCT detector which provides coverage 15 cm above and below the source trajectory in the axial direction (z) All of these trajectories are plotted in the image coordinate space described in the section [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates]]. On the left is the double circle trajectory that is equivalent to the double circle scan currently used in the clinic to obtain extended axial coverage. In the middle is the circle-line-circle trajectory that acquires additional projection information as the source and detector translate from the axial position of the first circle to that of the second. On the right is the smooth trajectory in which the translation component occurs during the rotation of the two circles.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_3d_trajectories
 [[file:figures/fov/3d_trajectories.pdf]]
@@ -3442,11 +3442,11 @@ The clinical reconstruction software uses a larger voxel size for
 half-fan detector scans than for full-fan detector configurations. We
 therefore reconstructed the CIRS torso phantom onto a 0.836 mm
 isotropic voxel grid. However, as voxel size is a critical parameter
-of the reconstruction program, reconstructed all of the scans of the
-double-Catphan configuration onto a 0.473 mm isotropic image grid for
-all detector configurations so that only the detector configuration
-would be the independent variable. As we will discuss in the next
-chapter, we selected 200 iterations of MLEM for all of our
+of the reconstruction program, we reconstructed all of the scans of
+the double-Catphan configuration onto a 0.473 mm isotropic image grid
+for all detector configurations so that only the detector
+configuration would be the independent variable. As we will discuss in
+the next chapter, we selected 200 iterations of MLEM for all of our
 optimization-based reconstructions.
 
 In addition to reconstructing the extended-axial-FOV sinograms using
@@ -3459,9 +3459,9 @@ did this as we did no scatter correction modeling in our MLEM
 reconstructions. Though we had initially attempted to extract the
 pre-processed projection data from iTools to use in our reconstruction
 chain, we discovered that some of the non-standard motions we
-implemented with the linac caused the iTools pre-processing step to
-crash as it did not conform to the typical circular trajectory
-anticipated by Varian's software.
+implemented with the linac could not be accommodated in iTools as it
+did not conform to the typical circular trajectory anticipated by
+Varian's software.
 
 For additional metric analysis, we also reconstructed the superior and
 inferior circle independently with our analytic-based reconstruction
@@ -3615,14 +3615,14 @@ truth, and it degrades with increasing separation.
 
 Figure ([[ref:fig:fov_take_rmse]]) also shows that the optimization-based
 reconstruction of the same dual-circle trajectory is much closer to
-the truth, but demonstrates the same degradation with increasing
-spacing between the two circles. Finally, the CLC trajectory and the
-smooth trajectories reconstructions remain relatively constant for
-increasing spacing, with the smooth trajectory being closer to the
-truth. The slices shown in Figure ([[ref:fig:fov_sim_take]]) visually
-agree with these results. The double circle and line trajectory was
-left out of Figure ([[ref:fig:fov_sim_take]]) since the results were not
-visually distinguishable from the smooth trajectory reconstructions.
+the truth, but also demonstrates degradation with increasing spacing
+between the two circles. Finally, the CLC trajectory and the smooth
+trajectories reconstructions remain relatively constant for increasing
+spacing, with the smooth trajectory being closer to the truth. The
+slices shown in Figure ([[ref:fig:fov_sim_take]]) visually agree with
+these results. The double circle and line trajectory was left out of
+Figure ([[ref:fig:fov_sim_take]]) since the results were not visually
+distinguishable from the smooth trajectory reconstructions.
 
 **** notebooks                               :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"take/metrics.ipynb")][take/metrics.ipynb]]
@@ -3635,12 +3635,12 @@ Figure ([[ref:fig:col_recons_catphan]]) shows the central sagittal slices
 from the reconstructions of the dual-Catphan phantom scanned with each
 of the extended-axial-FOV trajectories in both the full-fan and
 half-fan detector configurations. The left column of the figure
-represents a full-fan detector configuration scans, and the right
-column is for the half-fan detector configuration scans. From the top
-row to the bottom, these images correspond to the double circle, the
-CLC, and the smooth trajectory.
+represents full-fan detector configuration scans, and the right column
+the half-fan detector configuration scans. From the top row to the
+bottom, these images correspond to the double circle, the CLC, and the
+smooth trajectory.
 
-#+CAPTION: Sagittal slices of the dual-catphan MLEM reconstruction acquired with the double-circle, the CLC, and the smooth trajectories (in order from left to right). The top row corresponds to the full-fan detector configuration, and the bottom row corresponds to the half-fan detector configuration. The display window is [-160, 240] HU.
+#+CAPTION: Sagittal slices of the dual-catphan MLEM reconstruction acquired with the double-circle, the CLC, and the smooth trajectories (in order from top to bottom). The left column corresponds to the full-fan detector configuration, and the right column corresponds to the half-fan detector configuration. The display window is [-160, 240] HU.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_dcatphans
 [[file:figures/fov/catphanFOV.pdf]]
@@ -3691,17 +3691,21 @@ ROI values for just the stacked circle trajectories. As the
 introduction of additional trajectory components will be applicable
 for the optimization-based framework, this comparison simply provides
 a baseline of how MLEM directly compares to the clinical standard.
-Figure ([[ref:fig:fov_sensROI_full_half]]) shows the ROI values 
+Figure ([[ref:fig:fov_sensROI_full_half]]) shows the ROI CT numbers of
+both the FDK and MLEM reconstructions for both the full-fan and
+half-fan detector configurations. Again, each bar is centered on the
+mean CT number, and the height corresponds to the standard deviation
+of the ROI.
 
 #+CAPTION: Comparison of the MLEM algorithm as a direct replacement of the current clinical method of axial-FOV extension by stacking two independently reconstructed circlulr scans together. These ROIs are measured from two independently reconstructed circular scans (both full and half fan) using MLEM and FDK. As in Figure ([[ref:fig:sensROIplot]]), the bars are centered on the mean CT number of the ROI, and the height corresponds to the standard deviation in that ROI.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_sensROI_full_half
 [[file:figures/fov/rois/sensROIplot_full_half_fdk.pdf]]
 
-We then looked at the impact these different scanning configurations
-and algorithms had on the spatial resolution of the reconstruction.
-Though the MTF is a problematic metric of spatial resolution in CT due
-to its violation of linear shift invariance, it can provide a useful
+We then looked at the impact the different scanning configurations and
+algorithms had on the spatial resolution of the reconstruction. Though
+the MTF is a problematic metric of spatial resolution in CT due to its
+violation of linear shift invariance, it can provide a useful
 benchmark for determining the impact different scanning parameters
 could have on the reconstruction's spatial resolution. From our
 reconstructions, we wanted to evaluate not only the spatial resolution
@@ -3715,13 +3719,14 @@ evaluate what impact our geometric calibration procedure described in
 #+LABEL: fig:fov_mtf_alg
 [[file:figures/fov/mtf/alg_grid.pdf]]
 
-The first collection of metrics we extracted from the dual-Catphan
-reconstructions from the different classes of trajectories is shown in
-Figure ([[ref:fig:fov_mtf_alg]]). This *make plot fit*
+# The first collection of spatial resolution metrics we extracted from
+# the dual-Catphan reconstructions from the different classes of
+# trajectories is shown in Figure ([[ref:fig:fov_mtf_alg]]). This *make plot
+# fit*
 
-###################################
+# ###################################
 
-#+CAPTION: Metrics of acrylic CNR for both FDK and MLEM.
+#+CAPTION: Metrics of acrylic CNR for FDK and MLEM.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_acrylic_cnr
 [[file:figures/fov/cnr/acrylic.pdf]]
@@ -3735,18 +3740,21 @@ the ROI measurements in Figure ([[ref:fig:sensROIplot]]). Figures
 calculated CNR plots for the different algorithms and trajectories for
 both the full-fan and half-fan detector configurations.
 
-#+CAPTION: Metrics of polystyrene CNR for both FDK and MLEM.
+#+CAPTION: Metrics of polystyrene CNR for FDK and MLEM.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_poly_cnr
 [[file:figures/fov/cnr/poly.pdf]]
 
-The rows in Figure ([[ref:fig:fov_ed]]) show the central sagittal,
-coronal, and transverse slices (from top to bottom respectively) of
-the CIRS torso phantom scanned with the three extended-axial-FOV
-trajectories using a half-fan detector configuration. Each column in
-the figure corresponds to each of the scanning trajectories.
+Finally, the reconstructed images of the anthropomorphic CIRS torso
+phantom provide a visual illustration of the three different
+trajectory classes. The rows in Figure ([[ref:fig:fov_ed]]) show the
+central sagittal, coronal, and transverse slices (from top to bottom
+respectively) of the CIRS torso phantom scanned with the three
+extended-axial-FOV trajectories using a half-fan detector
+configuration. Each column in the figure corresponds to one of the
+scanning trajectories.
 
-#+CAPTION: Sagittal, coronal, and transverse slices of the CIRS torso phantom reconstructions. Given the incrased size of this anthropomorphic phantom, only the half-fan configuration was used as the full-fan configuration would ahve incurred truncation artifacts. The display window is [-160, 240] HU.
+#+CAPTION: Sagittal, coronal, and transverse slices of the CIRS torso phantom reconstructions. Given the incrased size of this anthropomorphic phantom, only the half-fan configuration was used as the full-fan configuration would have incurred truncation artifacts. The display window is [-160, 240] HU.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_ed
 [[file:figures/fov/edFOV.pdf]]
@@ -3762,59 +3770,115 @@ the figure corresponds to each of the scanning trajectories.
 rsync -avz remus:/data/amdavis/truebeam/170816_circ_clc_smth_catphans/figs/ .
 #+END_SRC
 ** Discussion
-- limitations/benefits of study putting sensitometry module at FDK
-  central ray, good to show direct comparison. bad b/c don't have
-  metrics from overlap.
-
-- blade at the edge of the FOV which exacerbates issues in the overlap
-  region
-
-While a 20 cm spacing between the two circles is the theoretical
-maximum spacing where contiguous volumes can be combined in an
-extended axial image, there are some practical limitations that
-further limit the spacing. Specifically, the edge of the kV detector
-has a few rows of unusable pixels. When the maximum spacing is used,
-these rows result in a small volume in the image where there is no
-redundancy to fill in the corrupted volume. The lack of redundancy in
-this overlap region also makes the reconstruction more susceptible to
-geometric artifacts like the vertical displacement in the couch
-between the two longitudinal positions. The geometric calibration
-phantom is being developed to detect such displacements which will
-reduce the subsequent artifacts in these regions. By using a slightly
-smaller spacing of 17 cm which still produces an axial FOV of 37 cm,
-sufficient redundancy is available to reconstruct this volume.
-
-- couch or C-arms show recon w/ both and also show table break
-
-Subsequent experimental scans were performed with Varian's TrueBeam kV
-imaging system. This allowed the use of the TrueBeam Developer Mode to
-acquire scan data from non-circular trajectories other than two
-circles. In addition to programming couch motion, Developer Mode
-allows the motion of the source and detector arms to be programmed as
-a series of control points. The advantage of using just the imaging
-arms to cover an extended axial volume is that the patient can be left
-at the isocenter. This is very advantageous as moving the patient will
-always introduce some uncertainty after moving the patient back, and
-it is more comfortable for the patient when the couch does not move.
-
-** Conclusion
-   :PROPERTIES:
-   :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
-   :END:
 By increasing the separation between the two circular scans up to the
 maximum spacing of 20 cm, it is apparent that FDK has fundamental
 support limitations that restricts the acceptable distance between
 these two circles to less than the maximum 20 cm spacing. The gap in
 the axial coverage is a region with insufficient scan information
-which is known as the shadow zone cite:forthmann_adaptive_2009.
+which is known as the shadow zone cite:forthmann_adaptive_2009. It is
+likely that if such an extended image volume were to be used in the
+clinic, it would be centered on an object of interest. If this were
+so, the most important content in the image would be in the region
+most afflicted by cone-angle artifacts. 
+
 Optimization-based reconstruction methods can use information from
 both circular scans simultaneously, leading to improved reconstruction
 of the image in the shadow zone as seen in Figure
-([[ref:fig:fov_sim_take]]). It is likely that if such an extended image
-volume were to be used in the clinic, it would be centered on an
-object of interest. If this were so, the most important content in the
-image would be in the region most afflicted by cone-angle artifacts.
+([[ref:fig:fov_sim_take]]). However, as it can be seen in Figure
+([[ref:fig:fov_catphan_sagittal]]), artifacts can still appear in the
+overlap region even with optimization based method. The streaking is
+particularly noticeable in these results for two reasons.
 
+The first issue is the fact that there is a sharp density change in
+the axial direction much like the difficult Defrise-like phantom
+design we used in simulation. We made an effort to minimize this
+drastic density change from the Catphan to air and then directly back
+to the Catphan by inserting a urethane plug we machined to fit in the
+ends of the two phantoms. In addition to this, we also sandwiched a
+foam disk in the region to attempt to fill the flush concavities of
+the two Catphan tops. 
+
+Another problem with this particular data is related to contamination
+of the beam at the edge of the axial FOV from the collimator blade
+appearing in the FOV. Though this collimator blade would be slightly
+inconvenient in a typical circular scan, it would not be excessively
+problematic as it would appear in the region typically affected by
+cone-angle artifacts. Here however, as the edge of the axial FOV
+appears in the center of the image, this additional source of
+inconsistency exacerbates an already challenging feature to
+reconstruct with a CBCT system.
+
+For future work on this particular use of non-circular trajectories,
+it would first be beneficial to ensure the collimator blades do
+encroach onto the detector. Especially along the axial extremes of the
+detector as that will contaminate what would probably be the region of
+most interest. It would also be nice to place an image quality module
+in the overlap region to evaluate the image quality that this method
+would be able to provide without the collimator blade contamination.
+
+Despite the limitations of this study, the decision to place the image
+quality modules at the axial position of the circle's source plane
+gives an upper limit on what FDK can reasonably achieve, even as a
+standalone circular scan comparison. By evaluating the two algorithms
+at a location where FDK does satisfy Tuy's condition, we can see in
+the results that MLEM can do just as well if not better than FDK.
+
+For example, in the comparison of the stacked,
+independently-reconstructed, dual-circle trajectories using both
+algorithms, it can be seen that FDk fails to be consistent with itself
+in the full-fan versus half-fan configuration. As Figure
+([[ref:fig:fov_sensROI_full_half]]) shows, the CT numbers for the FDK with
+the different detector configuration do not agree with each other. The
+two detector configurations for MLEM however, not only are consistent
+with each other, but they also fall between the two extremes bracketed
+by the FDK results. The consistency of the MLEM results, and the fact
+that they fall between the FDK results suggests that MLEM is probably
+also closer to the real CT number.
+
+Finally, it is important to point out that for the smooth trajectory,
+the half-fan configuration does not provide complete support when
+using the half-fan detector configuration. In a full-fan
+configuration, the typical $\pi$-plus-fan-angle angular coverage
+provides sufficient projection data. With the half-fan configuration
+however, this is not the case; so as the axial-translation component
+of the trajectory begins, there is insufficient support at the axial
+extremes of the entire extended image.
+
+However, as both the simulation and experimental results show,
+distributing some of the angular coverage during the translation does
+help to improve the image quality in the overlap region. As we have
+mentioned, this would probably be the region of most interest if a
+technique like this were used in the clinic. Therefore, while the
+axial extremes of the extended volume are degraded, as can be seen in
+Figure ([[ref:fig:fov_ed]]) especially in the shoulders of the torso
+phantom, the streaking in the overlap region is significantly reduced
+as opposed to the double circle and CLC trajectories. Therefore, if
+using a half-fan configuration with such a trajectory, care must be
+take to determine which part of the tomographic image requires higher
+fidelity.
+
+# - couch or C-arms show recon w/ both and also show table break
+
+** Conclusion
+   :PROPERTIES:
+   :ID:       99a861bc-c072-4082-806f-9279fa7c3a3c
+   :END:
+We found that the use of our optimization-based, non-circular scanning
+trajectories could successfully reconstruct extended-axial-FOV
+reconstructions that are comparable to the current clinical image
+quality achieved with a circular scan and FDK. In addition to being
+able to maintain comparable image quality in the region where FDK
+performs the best, our framework was able to extend the axial-FOV
+coverage beyond the axial separation distances allowed to FDK by the
+fundamental limitations of its support. Our hypothesis that our
+optimization-based reconstruction framework could reconstruct from
+extended axial coverage non-circular trajectories was correct. We also
+found that the image quality from these reconstructions was at least
+as good as the current clinical standard. Though additional studies
+need to be conducted to perform quantitative image quality analysis in
+the overlap region, we do know this framework provides a feasible
+means addressing the limited axial FOV coverage that currently affects
+the clinical use of CBCT in IGRT.
 * Collision-avoiding trajectories            :col:
   :PROPERTIES:
   :ID:       99055e18-4b61-404e-9408-ebd5fd0a5d8d
@@ -4865,7 +4929,7 @@ return('figures/ed_comparison_iter_{0:03d}.png'.format(iter))
    :PROPERTIES:
    :ID:       5d03aa38-f620-4ad1-a60d-f02d5000ea97
    :END:
-*summarize experiment and results in first discussion paragraph*
+# *summarize experiment and results in first discussion paragraph*
 
 As mentioned earlier, the virtual isocenter trajectory is designed to
 increase the distance between the gantry head and the patient by
@@ -4927,8 +4991,5 @@ approach in collision-plagued situations.
   :PROPERTIES:
   :ID:       1bade25b-80d6-4650-b8a3-baf370fa657c
   :END:
-Though linac-mounted kV imaging system 
-
-Optimization-based reconstruction methods provide a 
 
 \makebibliography
