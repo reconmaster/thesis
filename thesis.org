@@ -477,7 +477,6 @@ of utilizing graphics processing units (GPUs) -- technology once
 solely in the purview of video games -- for scientific computation has
 made optimization-based methods temporally competitive with
 analytic-based methods cite:xu_accelerating_2005,sharp_gpu-based_2007.
-
 ** Background: Cone-beam computed tomography
    :PROPERTIES:
    :ID:       d136ffd1-6def-4c22-85ed-6049f04b8486
@@ -1231,7 +1230,7 @@ imaging model in Equation ([[ref:eq:opt_linmodel_patient]]) then becomes
   \mathbf{g}=\mathcal{H'}\mathbf{f_{\text{patient}}},
 \end{equation}
 where
-\begin{equation}
+l\begin{equation}
   \label{eq:sys_patient}
   \mathcal{H'}=\mathcal{H}\mathcal{T_{\text{IEC,patient}}}.
 \end{equation}
@@ -1368,67 +1367,85 @@ addMargins(0.5cm, 0.5cm);
    :ID:       58A6E225-522B-4620-BEDB-F81AD30070C3
    :ALT_TITLE: TrueBeam framework
    :END:
-*** TODO Varian coordinates
+*** TrueBeam linac with Developer Mode
+     :PROPERTIES:
+     :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
+     :END:
+To study these trajectories on a clinical, kV-imaging system, we
+implemented some of them on Varian's TrueBeam system. The TrueBeam
+Developer Mode provides control of the kV imaging system to allow for
+motion control that is unavailable in clinical modes. Developer Mode
+provides a scriptable control interface that allows control of the
+gantry rotation, the kV-imaging arms, as well as the position of the
+treatment couch. By combining motions with all of these components, it
+is possible to acquire kV projection data from a variety of different
+interesting motions. From the acquisition, each projection is returned
+with self-reported nominal values that can be used to build the
+reconstruction system matrix. Table ([[ref:tab:opt_varian_header]]) shows
+a subset of these header variables pertaining to the kV imaging
+system.
+
+The TrueBeam's kV imaging system is illustrated in Figure
+([[ref:fig:intro_linac]]) in addition to the gantry, couch, and robotic
+arms that can all be utilized to implement these trajectories. The
+kV-imaging system itself consists of a Varian kV x-ray source
+(GS-1542) and a 39.7 cm x 29.8 cm amorphous silicon flat-panel
+detector (PaxScan 4030CB) with a $2048 \times 1536$ pixel array that
+performs a $2 \times 2$ binning for a readout of $1024 \times 768$ square pixels
+of effective size 0.388 mm. The source and detector are mounted on
+robotic arms with the kV beam direction orthogonal to the MV treatment
+beam.
+
+#+ATTR_LATEX: :environment longtable :align l|l|l|l|l
+#+CAPTION: Subset of Varian's TrueBeam projection header variables pertaining to the kV-imaging system.
+#+NAME: tab:opt_varian_header
+|-------------+----------------+------------------+--------------------+----------------|
+|             | Couch          | Detector         | Gantry             | kV Source      |
+|-------------+----------------+------------------+--------------------+----------------|
+| Acquisition | CouchLat       | ImagerLat        | GantryAcceleration | Current        |
+|             | CouchLng       | ImagerLng        | StartAngle         | FrameRate      |
+|             | CouchRtn       | ImagerOrigin     | StopAngle          | KVFilter       |
+|             | CouchThickness | ImagerResX       |                    | PulseLength    |
+|             | CouchVrt       | ImagerResY       |                    | SAD            |
+|             | CouchWidth     | ImagerSizeX      |                    | SID            |
+|             |                | ImagerSizeY      |                    | Voltage        |
+|             |                | ScatterGrid      |                    |                |
+|-------------+----------------+------------------+--------------------+----------------|
+| Projection  | CouchLat       | ImagerDeltaLat   | GantryRtn          | SourceAngle    |
+|             | CouchLng       | ImagerDeltaLng   |                    | SourceDeltaLat |
+|             | CouchRtn       | ImagerDeltaPitch |                    | SourceDeltaLng |
+|             | CouchVrt       | ImagerDeltaRtn   |                    | SourceDeltaVrt |
+|             |                | ImagerDeltaVrt   |                    |                |
+|-------------+----------------+------------------+--------------------+----------------|
+***** note                                   :noexport:
+ Also, you might write a paragraph that describes how these parameters
+ come to you - that the acquired projections are stored in files using
+ Varian’s XIM or HND formats, which have extensive headers containing
+ dozens of parameters associated with the geometry, x-ray technique,
+ and other information concerning each specific image. maybe have a
+ table showing examples of a subset of the data from one projection -
+ all the couch, detector, source, gantry and x-ray parameters like kV,
+ mA, timing, exposure, etc? people not in this field probably have no
+ idea this stuff exists. it’s kind of like DICOM but specific to Varian
+ images. this could equally well go in the chapter where you describe
+ your geometry framework for building the system matrix, and you could
+ refer to it here.
+*** Varian coordinates
     :PROPERTIES:
     :ID:       9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1
     :END:
-In order to reconstruct from the different scanning trajectories
-implemented in Developer mode, the different coordinate systems the
-imaging and motion components of the treatment system must be unified. 
+Once the scanning trajectory has been completed, the view-by-view
+geometry reported in the projection headers shown in Table
+([[ref:tab:opt_varian_header]]) must then be transformed so that it
+describes the projection information in the desired image-space basis.
+In the case of IGRT, the image-basis of interest to physicians is that
+of the patient. As discussed, this requires calculating the correct
+transform $\mathcal{T}_{{IEC,patient}}$ so that the system matrix for
+reconstructing into the image space $\left(\mathcal{H'}\right)$ as
+described in Equation ([[ref:eq:opt_linmodel_patient]]) can be found.
 
-*eqns for rad -> IEC -> img*
-
-#+BEGIN_EXPORT latex
-\begin{figure}
-\centering
-\begin{subfigure}[b]{.2\textwidth}
-\includegraphics[width=\textwidth]{figures/opt/coords_rad.pdf}
-\caption{}
-\label{fig:opt_coords_rad}
-\end{subfigure}
-~ %add desired spacing between images, e. g. ~, \quad, \qquad,
-% \hfill etc.
-% (or a blank line to force the subfigure onto a new line)
-
-\begin{subfigure}[b]{.2\textwidth}
-\includegraphics[width=\textwidth]{figures/opt/coords_iec.pdf}
-\caption{}
-\label{fig:opt_coords_iec}
-\end{subfigure}
-~
-
-\begin{subfigure}[b]{.2\textwidth}
-\includegraphics[width=\textwidth]{figures/opt/coords_img.pdf}
-\caption{}
-\label{fig:opt_coords_var}
-\end{subfigure}
-
-\caption{Axes showing the three different coordinate systems employed
-  in controlling and reporting the motion in the TrueBeam kV-imaging
-  system an couch motion. The left coordinate system is the radiation
-  coordinate system describing the position of the kV source and
-  detector position at each projection view regardless of the gantry
-  rotation. The middle figure shows the IEC coordinate system axes in
-  which all trajectory calculations are made once the imaging
-  components are converted from the radiation coordinate system (a) to
-  the IEC room-coordinate system (b). Incidentally, the radiation
-  coordinate system is also used to describe the couch position in the
-  IEC coordinate system as the mapping of radiation coordinates for
-  the source and detector is the same as that of the couch at the
-  initial angle $\theta_{\text{gantry}}=0^{\circ}$. The final coordinate system
-  shown on the right represents the image reconstruction space. This
-  is effectively the patient coordinate system that incorporates all
-  the relative motion of the imaging source and detector as well as
-  the motion of the couch and gantry relative to the point of interest
-  in the patient.
-}
-
-\label{fig:opt_coords}
-\end{figure}
-#+END_EXPORT
-**** code                                    :noexport:
 #+LABEL: fig:opt_coords_rad
-#+BEGIN_SRC asymptote :file figures/opt/coords_rad.pdf :exports none
+#+BEGIN_SRC asymptote :file figures/opt/coords_rad.pdf :exports results
 settings.multisample=0;
 settings.outformat="pdf";
 settings.prc = false;
@@ -1498,11 +1515,22 @@ draw(src..det_cent-(0, vlen/2, ulen/2),blue+opacity(op));
 draw(src..det_cent-(0, -vlen/2, ulen/2),blue+opacity(op));
 #+END_SRC
 
+#+CAPTION: Radiation coordinate system which is the basis of the projection geometry reported in the projection headers. This coordinate system provides a description of the source position relative to the detector bins with the origin at the imaging isocenter of that view. Though this basis is agnostic of the gantry rotation, the red arrow points into the gantry for reference in images showing the other bases used in this transform.
+#+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_coords_rad
 [[file:figures/opt/coords_rad.pdf]]
 
+The first coordinate system shown in Figure ([[ref:fig:opt_coords_rad]])
+is the radiation coordinate system; a basis in which the projection
+headers describe the projective geometry of the source onto the
+detector at each view. In this convention, the detector pixels can be
+converted into the physical units to describe their location relative
+to the source at each projection. As the source and detector rotate
+together with the gantry, this basis ignores the gantry rotation angle
+$\left(\theta_{g}\right)$ at each view.
+
 #+LABEL: fig:opt_coords_iec
-#+BEGIN_SRC asymptote :file figures/opt/coords_iec.pdf :exports none
+#+BEGIN_SRC asymptote :file figures/opt/coords_iec.pdf :exports results
 settings.multisample=0;
 settings.prc = false;
 settings.render = 0;
@@ -1565,7 +1593,7 @@ draw(grot*src..grot*(det_cent-(0, -vlen/2, ulen/2)),blue+opacity(op));
 // show grot angle
 draw(grot*src..grot*det_cent, red+dashed+opacity(op), Arrow3);
 
-draw(Label("$\theta$",position=MidPoint,E),
+draw(Label("$\theta_g$",position=MidPoint,E),
      arc((0,0,0), (2*ax_scale/3,0,0), grot*(2*ax_scale/3,0,0)), red);
 
 draw(grot*detector, blue+opacity(op));
@@ -1579,15 +1607,92 @@ draw(Label("$z_{IEC}$",1),(0,0,0)--(0,0,ax_scale),Arrow3);
 draw(Label("gantry",1),(0,ax_scale+50,0)--(0,ax_scale+70,0),red+dashed,Arrow3);
 #+END_SRC
 
+#+CAPTION: the IEC coordinate system that is the global-basis for all the linac geometry. To transform the data in the radiation coordinate system into the IEC coordinate system, the gantry rotation angle is used to rotate each view in the radiation-coordinate basis into the global room coordinates. For a gantry angle of $\theta_{g}=0^{\circ}$, the radiation-coordinate system in Figure ([[ref:fig:opt_coords_rad]]) is the same as the IEC.
+#+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_coords_iec
 [[file:figures/opt/coords_iec.pdf]]
 
+However, in order to determine the relationship of each projection to
+the other views, this radiation coordinate system must be transformed
+into a global coordinate system describing the ensemble of projections
+relative to the image space. The global coordinate system describing
+the TrueBeam room geometry is the International Electrotechnical
+Commission (IEC) 61217 coordinate system shown in Figure
+([[ref:fig:opt_coords_iec]]). This coordinate system is designated by the
+IEC as the standard coordinate system for radiotherapy machines
+cite:international_electrotechnical_commission_radiotherapy_2011.
+
+For a gantry angle of $\theta_{g}=0^{\circ}$, the radiation-coordinate system
+shown in Figure ([[ref:fig:opt_coords_rad]]) has the same basis as the
+radiation coordinate system in Figure ([[ref:fig:opt_coords_rad]]). This
+can be used to place the view-by-view header information into the IEC
+basis ignoring the gantry rotation initially. Using the $x__{}{IEC}$,
+$x__{}{IEC}$, and $x__{}{IEC}$ shown in Figure ([[ref:fig:opt_coords_rad]]), the
+source and detector positions for that view in homogeneous coordinates
+are then
+\begin{equation}
+  \boldsymbol{r}_{\text{src,rad}} = \begin{bmatrix}
+    \text{SourceVrt} \\
+    \text{SourceLng} \\
+    \text{SourceLat} \\
+    1
+  \end{bmatrix},
+  \label{eq:opt_src_rad}
+\end{equation}
+and
+\begin{equation}
+  \boldsymbol{r}_{\text{det,rad}} = \begin{bmatrix}
+    \text{ImagerVrt} \\
+    \text{ImagerLng} \\
+    \text{ImagerLat} \\
+    1
+  \end{bmatrix},
+  \label{eq:opt_det_rad}
+\end{equation}
+respectively. 
+
+To then get these source and position vectors into the correct IEC
+position, they are transformed via a rotation around the longitudinal
+or $y_{\text{IEC}}$ axis by the gantry angle $\theta_{g}$ which is
+\begin{equation}
+  \mathcal{R}\left(\theta_{g}\right) = \begin{bmatrix}
+    \text{cos}\theta_{g} & 0 & \text{sin}}\theta_{g} & 0 \\
+  0 & 1  & 0  &  0 \\
+  \text{-sin}\theta_{g} & 0 & \text{cos}}\theta_{g} & 0 \\
+    0 & 0 & 0 & 0
+  \end{bmatrix}.
+  \label{eq:opt_rot_rad_iec}
+\end{equation}
+By then applying this transform to each projection view geometry in the
+radiation coordinate system, we then have
+\begin{equation}
+  \boldsymbol{r}_{\text{src,IEC}} = \mathcal{R}\left(\theta_{g}\right)
+  \boldsymbol{r}_{\text{src,rad}}
+  \label{eq:opt_det_iec}
+\end{equation}
+and
+\begin{equation}
+  \boldsymbol{r}_{\text{det,IEC}} = \mathcal{R}\left(\theta_{g}\right)
+  \boldsymbol{r}_{\text{det,rad}}
+  \label{eq:opt_det_iec}
+\end{equation}
+which are the view-by-view projection geometry in the IEC basis.
+
+At this point, the system matrix $\left(\mathcal{H}\right)$ will
+reconstruct into the global IEC room coordinates. In the event that
+this is a traditional scanning trajectory where the patient or object
+stays at the imaging isocenter, this geometry would be sufficient for
+performing a reconstruction. However, to then allow for trajectories
+where this fixed isocenter is no longer a requirement, we must perform
+one more transform the projection geometry to the basis of the
+patient.
+
 #+LABEL: fig:opt_coords_img
-#+BEGIN_SRC asymptote :file figures/opt/coords_img.pdf :exports none
+#+BEGIN_SRC asymptote :file figures/opt/coords_img.pdf :exports results
 settings.multisample=0;
 settings.prc = false;
 settings.render = 0;
-settings.outformat="pdf";
+settings."outformat=pdf";
 
 import graph3;
 import geometry;
@@ -1646,7 +1751,7 @@ draw(grot*src..grot*(det_cent-(0, -vlen/2, ulen/2)),blue+opacity(op));
 // show grot angle
 draw(grot*src..grot*det_cent, red+dashed+opacity(op), Arrow3);
 
-draw(Label("$\theta$",position=MidPoint,E),
+draw(Label("$\theta_g$",position=MidPoint,E),
      arc((0,0,0), (2*ax_scale/3,0,0), grot*(2*ax_scale/3,0,0)), red+opacity(op));
 
 draw(grot*detector, blue+opacity(op));
@@ -1662,78 +1767,58 @@ draw(Label("gantry",1),(0,ax_scale+50,0)--(0,ax_scale+70,0),red+dashed,Arrow3);
 // img coordinates
 transform3 pshift=shift(-40, -40, -20);
 
-draw(Label("$r_{img}$",position=EndPoint,NW),pshift*(0,0,0)--(0,0,0),red,Arrow3);
+draw(Label("$r_{img}$",position=EndPoint,NW),(0,0,0)--pshift*(0,0,0),red,Arrow3);
 
 draw(Label("$z_{img}$",position=EndPoint,N),pshift*(0,0,0)--pshift*(0,ax_scale,0),Arrow3);
 draw(Label("$x_{img}$",position=EndPoint,S),pshift*(0,0,0)--pshift*(ax_scale,0,0),Arrow3);
 draw(Label("$y_{img}$",position=EndPoint),pshift*(0,0,0)--pshift*(0,0,-ax_scale),Arrow3);
 #+END_SRC
 
+#+CAPTION:  The image or patient coordinate system that will be used as the basis for the reconstruction system matrix $\matchal{H}$ in Equation ([[ref:eq:opt_linmodel_patient]]). By using the view-by-view transform enabled by optimization-based methods, this can incorporates the relative motion of the imaging source and detector as well as the motion of the couch and gantry relative to the point of interest in the patient dentoted by $\boldsymbol{r}_{img}}$.
+#+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_coords_img
 [[file:figures/opt/coords_img.pdf]]
-*** TrueBeam linac with Developer Mode
-     :PROPERTIES:
-     :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
-     :END:
-To study these trajectories on a clinical, kV-imaging system, we
-implemented some of them on Varian's TrueBeam system. The TrueBeam
-Developer Mode provides control of the kV imaging system to allow for
-motion control that is unavailable in clinical modes. Developer Mode
-provides a scriptable control interface that allows control of the
-gantry rotation, the kV-imaging arms, as well as the position of the
-treatment couch. By combining motions with all of these components, it
-is possible to acquire kV projection data from a variety of different
-interesting motions. From the acquisition, each projection is returned
-with self-reported nominal values that can be used to build the
-reconstruction system matrix. Table ([[ref:tab:opt_varian_header]]) shows
-a subset of these header variables pertaining to the kV imaging
-system.
 
-The TrueBeam's kV imaging system is illustrated in Figure
-([[ref:fig:intro_linac]]) in addition to the gantry, couch, and robotic
-arms that can all be utilized to implement these trajectories. The
-kV-imaging system itself consists of a Varian kV x-ray source
-(GS-1542) and a 39.7 cm x 29.8 cm amorphous silicon flat-panel
-detector (PaxScan 4030CB) with a $2048 \times 1536$ pixel array that
-performs a $2 \times 2$ binning for a readout of $1024 \times 768$ square pixels
-of effective size 0.388 mm. The source and detector are mounted on
-robotic arms with the kV beam direction orthogonal to the MV treatment
-beam.
+To scan a patient with a trajectory where either the imaging object or
+the isocenter itself are changing relative to each other during a
+scan, it is then necessary to make an additional transform the
+projection geometry into the basis of desired image space. Again, for
+IGRT, this is the image space of the patient's treatment volume whose
+basis vectors are schematically depicted in Figure
+([[ref:fig:opt_coords_img]]).
 
-#+ATTR_LATEX: :environment longtable :align l|l|l|l|l
-#+CAPTION: Subset of Varian's TrueBeam projection header variables pertaining to the kV-imaging system.
-#+NAME: tab:opt_varian_header
-|-------------+----------------+------------------+--------------------+----------------|
-|             | Couch          | Detector         | Gantry             | kV Source      |
-|-------------+----------------+------------------+--------------------+----------------|
-| Acquisition | CouchLat       | ImagerLat        | GantryAcceleration | Current        |
-|             | CouchLng       | ImagerLng        | StartAngle         | FrameRate      |
-|             | CouchRtn       | ImagerOrigin     | StopAngle          | KVFilter       |
-|             | CouchThickness | ImagerResX       |                    | PulseLength    |
-|             | CouchVrt       | ImagerResY       |                    | SAD            |
-|             | CouchWidth     | ImagerSizeX      |                    | SID            |
-|             |                | ImagerSizeY      |                    | Voltage        |
-|             |                | ScatterGrid      |                    |                |
-|-------------+----------------+------------------+--------------------+----------------|
-| Projection  | CouchLat       | ImagerDeltaLat   | GantryRtn          | SourceAngle    |
-|             | CouchLng       | ImagerDeltaLng   |                    | SourceDeltaLat |
-|             | CouchRtn       | ImagerDeltaPitch |                    | SourceDeltaLng |
-|             | CouchVrt       | ImagerDeltaRtn   |                    | SourceDeltaVrt |
-|             |                | ImagerDeltaVrt   |                    |                |
-|-------------+----------------+------------------+--------------------+----------------|
-***** note                                   :noexport:
- Also, you might write a paragraph that describes how these parameters
- come to you - that the acquired projections are stored in files using
- Varian’s XIM or HND formats, which have extensive headers containing
- dozens of parameters associated with the geometry, x-ray technique,
- and other information concerning each specific image. maybe have a
- table showing examples of a subset of the data from one projection -
- all the couch, detector, source, gantry and x-ray parameters like kV,
- mA, timing, exposure, etc? people not in this field probably have no
- idea this stuff exists. it’s kind of like DICOM but specific to Varian
- images. this could equally well go in the chapter where you describe
- your geometry framework for building the system matrix, and you could
- refer to it here.
+As an example of this, Figure ([[ref:fig:opt_coords_img]]) illustrates one
+view where there is a translation vector ($\boldsymbol{r}_{img}$) denoting a
+transformation of the patient's imaging isocenter away from the
+mechanical isocenter of the imaging system. If this offset can be
+determined for each projection view, the detector data can be
+transformed into the basis of the patient's imaging volume. Though
+this transform need not be limited to translation, the form presented
+here would then involve a final transform of the form
+\begin{equation}
+  \mathcal{T}_{{img,rad}}\left(\theta_{g}\right) = \begin{bmatrix}
+    1 & 0 & 0 & -r_{x,IEC} \\
+    0 & 1 & 0 & -r_{y,IEC} \\
+    0 & 0 & 1 & -r_{z,IEC} \\
+    0 & 0 & 0 & 0
+  \end{bmatrix},
+  \label{eq:opt_rot_rad_iec}
+\end{equation}
+and the requisite transform of the system matrix would then be the
+necessary transfrom $\mathcal{T}_{\tex{IEC,patient}}$ needed to
+reconstruct from view-by-view shifts of the image object and the
+imaging system into the fixed coordinate system of the patient's image
+space. 
+
+As we will show in the following chapters, this framework provides a
+very robust way to handle a variety of non-circular trajectories that
+have such shifts between the imaging system and the object. In our
+work the TrueBeam system, these shifts could arise from motion of the
+imaging arms relative to the patient, motion of the patient table, or
+even simultaneous motion of both.
+
+**** code                                    :noexport:
+
 ** Metric Evaluation
    :PROPERTIES:
    :ID:       bbb809be-d901-4945-b045-bb886cf349bd
