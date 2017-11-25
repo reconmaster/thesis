@@ -1837,7 +1837,7 @@ basis vectors are schematically depicted in Figure
 ([[ref:fig:opt_coords_img]]).
 
 As an example of this, Figure ([[ref:fig:opt_coords_img]]) illustrates one
-view where there is a translation vector ($\boldsymbol{r}_{img}$) denoting a
+view where there is a translation vector ($\boldsymbol{r}_{\text{img}}$) denoting a
 transformation of the patient's imaging isocenter away from the
 mechanical isocenter of the imaging system. If this offset can be
 determined for each projection view, the detector data can be
@@ -1845,7 +1845,7 @@ transformed into the basis of the patient's imaging volume. Though
 this transform need not be limited to translation, the form presented
 here would then involve a final transform of the form
 \begin{equation}
-\mathcal{T}_{{\text{img,rad}}}\left(\theta_{g}\right) = \begin{bmatrix}
+\mathcal{T}_{{\text{img,IEC}}}\left(\theta_{g}\right) = \begin{bmatrix}
   1 & 0 & 0 & -r_{x,IEC} \\
   0 & 1 & 0 & -r_{y,IEC} \\
   0 & 0 & 1 & -r_{z,IEC} \\
@@ -1854,7 +1854,7 @@ here would then involve a final transform of the form
 \label{eq:opt_rot_rad_iec}
 \end{equation}
 and the requisite transform of the system matrix would then be the
-necessary transfrom $\mathcal{T}_{\tex{IEC,patient}}$ needed to
+necessary transfrom $\mathcal{T}_{\text{IEC,patient}}$ needed to
 reconstruct from view-by-view shifts of the image object and the
 imaging system into the fixed coordinate system of the patient's image
 space. 
