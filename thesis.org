@@ -327,9 +327,54 @@ magnetic resonance imaging (MRI) with high-energy treatment beams in
 image-guide radiation therapy (IGRT). A particularly popular method of
 delivering therapeutic radiation doses are linear accelerators
 (linacs) that deliver powerful megavoltage (MV) treatment beams to
-diseased tissue 
+diseased tissue.
 
-# *additional history leading to IGRT*
+Though the type of particle and energy spectra of therapeutic
+radiation will vary depending on both the type and progression of the
+disease, the desired effect of the prescribed dose is to ablate the
+diseased tissue by inducing cell death in the cancer cells. Much as
+with traditional surgical techniques, there is also a simultaneous
+need to spare the healthy tissue while removing the diseased tissue.
+In the pursuit of achieving this balance between killing diseased
+tissue and sparing healthy tissue with the delivered dose, a variety
+of radiation therapy modalities have been developed.
+
+The initial application of radiation for therapeutic purposes was
+initially limited to superficial lesions. As great care must be take
+to ensure the dose is delivered just to the target area, there must be
+a way to visualize the target of the delivered dose. In the early
+application of therapeutic radiation, physicians were limited to those
+pathologies that were externally visible. It was the Swedish
+neurosurgeon Lars Leksell who conceptualized using a high-energy
+photon beam to deliver a therapeutic dose deep inside the brain
+without the additional complications of invasive surgery
+cite:kushnirsky_history_2015.
+
+The half a century between the discovery of x-rays and the use of them
+to treat internal structures was the need for imaging technology that
+made visualizing these internal targets feasible. The development of
+CT technology discussed in [[id:1b7b31c8-4bd5-4402-b930-d81984ee5901][CT development history]] provided the
+requisite volumetric information that allowed physicians to locate
+these internal lesions in the patient. This was required in order for
+the physicians to accurately target the lesions using the high-energy
+beams proposed by Leksell. He realized by distributing small-field
+beams around the target, we could create a high-dose deposition at a
+desired internal target location which led to him and his colleagues
+producing the GammaKnife in 1968 which consisted of 179 cobalt-60
+sources distributed in a hemisphere around the patient's cranium for
+stereotactic radiosurgery (SRS) cite:kushnirsky_history_2015.
+
+The eventual acceptance of SRS in the United States in 1984 and the
+subsequent rise in popularity of the technique led to use of linear
+accelerators for delivering the therapeutic dose rather than the fixed
+cobalt-60 sources cite:kushnirsky_history_2015. Linacs were not only
+able to produce treatment beams that were comparable to those provided
+the cobalt-60 sources, but they had the additional benefits of being
+able to produces much higher energy spectra without the need to
+replace the radiation source as they decayed as cobalt-60 sources.
+However, despite the tomographic imaging used to plan the prescribed
+radiation dose, only radiographic projection imaging was used for
+setting up the patient at the treatment isocenter of these devices.
 
 The addition of a linac-mounted, kV-imaging, cone-beam computed
 tomography (CBCT) system to the gantry-mounted clinical linear
