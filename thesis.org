@@ -80,8 +80,8 @@ create an image of a slice in an object while either blurring or
 obscuring details from other planes in the object. The ability to peer
 inside an object and create a map of its contents is a powerful tool
 that is routinely used in myriad applications. Today, tomographic
-methods can be found being deployed in locations ranging from
-border-control checkpoints to local medical clinics.
+methods have been deployed in locations ranging from border-control
+checkpoints to local medical clinics.
 
 As the non-invasive nature of tomographic imaging had obvious benefits
 for the field of medicine, many significant advances in tomographic
@@ -90,7 +90,7 @@ tomographic imaging is x-ray computed tomography (CT) which uses
 projection images acquired from different locations around the object
 to compute the distribution of material densities inside the object.
 With the growth of tomographic imaging, additional technologies were
-developed to acquire images from a variety of waves from ultrasound to
+developed to acquire images using a variety of waves from ultrasound to
 injecting radioactive tracers which emit these waves from inside a
 patient as in single-photon computed tomography (SPECT) and positron
 emission tomography (PET).
@@ -147,12 +147,12 @@ achievement, the rasterized scanning of the pencil beam at multiple
 angles required approximately 4.5 minutes to acquire the projection
 information to reconstruct a single two-dimensional (2D) slice of the
 scanned object cite:hsieh_computed_2009. Long scan times are
-problematic as they increase the possibility of motion during scan
+problematic as they increase the possibility of motion during scanning
 which creates motion contamination artifacts in the reconstruction.
 The second generation of CT scanners significantly reduced this
 acquisition time to about 30 seconds by replacing the pencil beam of
-x-rays with a fan beam and a detector array with around 30 detector
-elements. This new design, shown in Figure
+x-rays with a fan beam and a detector array with approximately 30
+detector elements. This new design, shown in Figure
 ([[ref:fig:intro_hist_2nd_gen]]), still required the source and detector
 to acquire projections using a linear translation before rotating to a
 new angular position and repeating the process
@@ -171,10 +171,10 @@ generations were only successful in imaging parts of the patient that
 were relatively stationary. As such, these early scanners were
 initially only used with the cranium as it is relatively motionless
 relative to the required acquisition time. Unlike the cranium, other
-parts of patient anatomy such as the thorax and abdomen are greatly
-affected by cardiac and respiratory motion. The next generation of
-scanners were designed to reduce the acquisition time to under 20
-seconds in order to image a patient's abdomen in a single breath hold
+anatomical sites such as the thorax and abdomen are greatly affected
+by cardiac and respiratory motion. The next generation of scanners
+were designed to reduce the acquisition time to under 20 seconds in
+order to image a patient's abdomen in a single breath hold
 cite:buzug_thorston_m._milestones_2008.
 
 #+CAPTION: Third-generation CT scanner. This design kept the fan-beam x-ray source seen in the second generation of scanners, but the detector size was increased to illuminate the entire patient. This new design no longer required the source and detector to acquire a linear translation before rotating to a new scanning angle. Instead, this generation of scanners simply acquire a single projection at each angle which significantly reduces the acquisition time.
@@ -225,7 +225,7 @@ backbone of clinical CT today cite:pan_why_2009.
 The fourth generation of CT scanners was developed to eliminate ring
 artifacts that can appear in the third-generation CT scanners. These
 ring artifacts can occur when there is a mismatch in projection data
-of opposing rays along the same line in the patient which can occur
+of opposing rays along the same line in the patient which can result
 from misalignment of the moving detector. With a stationary ring of
 detectors, these ring artifacts are eliminated. However, with the
 advent of multi-slice detector technology which will be discussed in
@@ -243,7 +243,7 @@ computed-tomography (EBCT) scanners, was developed in the early 1980s
 for cardiac imaging. In order to acquire the projection data fast
 enough to ''freeze'' cardiac motion (20-50 ms for a full rotation), it
 would be impossible to design a mechanical system that could rotate
-that fast and withstand the centripetal force incurred with such high
+that quickly and withstand the centripetal force incurred at such high
 rotational velocity. Instead, this generation was designed to steer
 the electron beam onto the x-ray anode that was curved around the
 patient -- effectively placing the patient inside the x-ray tube. The
@@ -294,7 +294,7 @@ data acquired from a helical scan, and continue to be used in modern
 third generation CT scanners. As these multi-array detectors began to
 cover larger extents of the axial field of view (FOV), they eventually
 led to large flat-panel detector being used to acquire projection
-information. These flat-panel detector systems are now known as
+information. The flat-panel detector systems are now known as
 cone-beam CT (CBCT) systems to reflect the cone of x-ray illumination
 on these detectors as opposed to the fan-beam geometry of the earlier
 slice-by-slice scanners.
@@ -416,10 +416,10 @@ the opposite direction as the gantry lacks the ability to make
 multiple rotations in the same direction like a diagnostic CT system
 due to the complexity of the MV linac design.
 
-While there are many advantages in using linac-mounted CBCT imaging
-systems in IGRT, there are still technical limitations that negatively
-impact clinical utility, that could be alleviated by utilizing
-non-circular scanning trajectories with optimization-based
+While there are many advantages to using linac-mounted CBCT imaging
+systems for IGRT, there are still technical limitations that
+negatively impact clinical utility, that could be alleviated by
+utilizing non-circular scanning trajectories with optimization-based
 reconstruction. One issue is the limited axial FOV coverage provided
 by the current detectors and circular scanning trajectory. Another
 issue is the increased potential of patient collisions with the
@@ -446,14 +446,14 @@ to existing clinical needs.
 First, we will discuss the framework and considerations of using
 optimization-based reconstruction with different scanning trajectories
 in [[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][Optimization-based algorithms]]. Next, we will discuss the need for
-geometric calibration and discuss a method we developed to do this for
-these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]. We will then review the
-use of new trajectories to address the limited axial FOV issue in
-[[id:eaae199f-f899-4862-af50-720895a31c36][Axial field-of-view extension]] followed by using these trajectories to
-alleviate the issue of patient collisions in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
-trajectories]]. Finally, we will summarize this work and discuss
-possible clinical considerations with this methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and
-conclusions]].
+geometric calibration and discuss a method we developed to accomplish
+this for these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]. We will then
+review the use of new trajectories to address the limited axial FOV
+issue in [[id:eaae199f-f899-4862-af50-720895a31c36][Axial field-of-view extension]] followed by using these
+trajectories to alleviate the issue of patient collisions in
+[[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding trajectories]]. Finally, we will summarize this work
+and discuss possible clinical considerations with this methodology in
+[[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and conclusions]].
 
 The increased flexibility in choosing different scanning trajectories
 allowed by optimization-based reconstruction methods provided two
@@ -462,8 +462,8 @@ patient collisions. For these two problems, we found that the existing
 limitations could be resolved by using a different scanning
 configuration. In each case, we proposed a trajectory that would solve
 the existing problem, and then we evaluated how well the
-optimization-based reconstructions compared to the clinical images
-currently being used.
+optimization-based reconstructions compared to currently used clinical
+images.
 
 * General CBCT trajectory reconstruction framework with optimization-based algorithms :opt:
   :PROPERTIES:
@@ -479,23 +479,16 @@ requirements of the computational reconstruction algorithm used to
 assemble the image from the x-ray projections.
 
 There are two main classes of reconstruction algorithms.
-Analytic-based algorithms represent an approximate solution to the
-inverse imaging problem, i.e. calculating the object function from its
-projections. Optimization-based algorithms represent the forward
-imaging problem as a linear system, and attempt to iteratively invert
-this system to find an object function that is consistent with the
-observed projections.
-
-Optimization-based image reconstruction provides a robust framework
-for reconstructing from projections acquired with nonstandard
-trajectories designed to address specific CBCT limitations, such as
-those studied in this work. Unlike the analytic-based methods, such as
-FDK algorithm cite:feldkamp_practical_1984, optimization-based methods
-require no assumptions about the initial scanning trajectory. As such,
-there is greater flexibility in choosing a scanning trajectory for a
-given task for which an analytic inverse may not yet have been
-derived. In this work, we investigate some of the task-specific
-scanning trajectories enabled by optimization-based methods.
+Analytic-based algorithms, such as FDK cite:feldkamp_practical_1984,
+represent an approximate solution to the inverse imaging problem,
+i.e., calculating the object function from its projections.
+Optimization-based algorithms represent the forward imaging problem as
+a linear system, and attempt to iteratively invert this system to find
+an object function that is consistent with the observed projections.
+Image reconstruction with optimization-based methods provides a robust
+framework for reconstructing from projections acquired with
+nonstandard trajectories designed to address specific CBCT limitations
+as they require no assumptions about the initial scanning trajectory.
 
 The use of optimization-based methods for tomographic image
 reconstruction is a natural extension of linearizing the x-ray
@@ -510,14 +503,14 @@ cite:herman_art:_1973.
 Though the initial optimization-based image reconstruction with ART
 was successful in providing a solution to the inverse problem, the
 limited computational power available at the time proved to be an
-intractable limitation. Though number of unknown in the system of
-equations associated with this 2D reconstruction problem is trivial by
-today's standards, the lack of parallelization and other engineering
-limitations of transistors at the time were too onerous for the
-clinical workflow. This computational complexity was further increased
-when moving from two-dimension (2D), single-slice images to
+intractable limitation. Though the number of unknown variables in the
+system of equations associated with this 2D reconstruction problem is
+trivial by today's standards, the lack of parallelization and other
+engineering limitations of transistors at the time were too onerous
+for the clinical workflow. This computational complexity was further
+increased when moving from two-dimension (2D), single-slice images to
 three-dimensional (3D), volumetric image reconstruction which
-introduce a greater number of unknowns. However, a recent renaissance
+introduces a greater number of unknowns. However, a recent renaissance
 of utilizing graphics processing units (GPUs) -- technology once
 solely in the purview of video games -- for scientific computation has
 made optimization-based methods temporally competitive with
@@ -631,10 +624,12 @@ X-ray transform, reconstruction algorithms were formulated by finding
 an analytic-based inverse to the transform. However, for the inverse
 to be exact, it needed to meet strict requirements such as Tuy's
 condition which states that every plane through the object must
-intersect the source trajectory cite:tuy_inversion_1983. While some
-exceptions to this requirement were found, it demonstrates the strict
-requirements on the types of scanning trajectories for which an exact
-inverse could be found.
+intersect the source trajectory cite:tuy_inversion_1983. Though there
+are non-circular trajectories such as the infinite-line trajectory
+which satisfy Tuy's condition, the application of such trajectories
+for real scanning configurations are always approximations
+cite:sidky_volume_2005 which fail to satisfy the requisite geometry to
+provide an exact inverse.
 
 The circular scanning trajectory that is ubiquitous in the clinic for
 CBCT is one trajectory that fails to meet Tuy's condition. The most
@@ -702,11 +697,11 @@ that are amplified in the filtration process.
 Analytic-based reconstruction algorithms are problematic in that they
 require a fixed scanning trajectory to formulate the inverse. When
 approximations are made for the inverse, as in FDK, deviations from
-where these approximations are valid lead to inconsistencies in the
-model and subsequently artifacts in the reconstruction such as the
-one-angle artifacts shown in Figure ([[ref:fig:opt_defrise_fdk]]). In
-contrast, optimization-based reconstruction algorithms represent a
-more robust model of the image formation process
+these approximations lead to inconsistencies in the model and
+subsequently artifacts in the reconstruction such as the cone-angle
+artifacts shown in Figure ([[ref:fig:opt_defrise_fdk]]). In contrast,
+optimization-based reconstruction algorithms represent a more robust
+model of the image formation process
 cite:shepp_maximum_1982,han_optimization-based_2012,sidky_image_2008,sidky_accurate_2006,bian_evaluation_2010.
 As Figure ([[ref:fig:opt_defrise_mlem]]) shows, this can help reduce
 artifacts such as the cone-angle artifacts.
@@ -752,8 +747,8 @@ provide the same voxel sizes used by the clinical reconstruction
 software. However, these parameter choices are made only to provide
 comparisons to the current clinical image quality. This does not mean
 that these values are optimally selected, and for any clinically
-relevant evaluation, rigorous parameter optimization must be done for
-the clinical imaging task
+relevant evaluation, rigorous parameter optimization must be studied
+for the clinical imaging task
 cite:metz_basic_1978,xia_optimization-based_2016-2.
 
 Previous work has shown that optimization-basaed algorithms can
@@ -800,8 +795,8 @@ to increase the transaxial FOV (for a 1.5X magnification, this is an
 increase in FOV diameter from 26.7 cm to 44.0 cm on the TrueBeam
 system with a 13 cm offset), the axial coverage is still very limited
 (20 cm for the same TrueBeam geometry) cite:pearson_non-circular_2010.
-The reason why the limited FOV has not been addressed by increasing
-the detector size is partially due to the industry reliance on the
+The reason that the limited FOV has not been addressed by increasing
+the detector size is partially due to the industry's reliance on the
 approximate FDK algorithm cite:pan_why_2009. As shown in Figure
 ([[ref:fig:opt_defrise]]), as the cone angle increases, artifacts near the
 end of the axial FOV become more severe.
@@ -815,12 +810,11 @@ linac's trajectory (i.e., gantry clearance cannot be achieved). As the
 current FDK algorithm requires a trajectory with sufficient angular
 coverage, the patient must be moved to a position where the gantry can
 make an uninterrupted rotation around the patient. These workarounds
-can incur significant temporal costs, not only in re-positioning the
-patient on the treatment couch, but potentially re-evaluating the
-planning simulation CT to account for the new collision-avoiding
-setup. A robust scanning modality that could avoid these collision
-zones while providing sufficient tomographic information would
-alleviate these expensive re-positioning occurrences.
+can incur significant temporal costs in re-positioning the patient on
+the treatment couch for a new collision-avoiding setup. A robust
+scanning modality that could avoid these collision zones while
+providing sufficient tomographic information would alleviate these
+expensive re-positioning occurrences.
 
 In both of these examples, the default circular trajectory prescribed
 by FDK is inadequate for obtaining the desired tomographic
@@ -864,12 +858,11 @@ different axial positions and reconstruct each circle independently
 using FDK before stacking the two volumes together
 cite:forthmann_adaptive_2009. Unfortunately, the increased distortion
 from cone-angle artifacts at large cone angles limits the axial
-separation between these two circles. This restricted separation
-distance is approximately half of what would be expected based simply
-on the coverage expected from the geometry of the kV detector. In
-addition to the cone angle artifacts, the support allowed by
-analytic-based methods is restricted to the shaded regions
-illustrating this geometry support in Figure
+separation between these two circles illustrated in blue and red in
+Figure ([[ref:fig:opt_fov_schematic]]). In addition limitations incurred
+by the failure in the FDK approximation at larger cone angles, there
+is an additional limitation that the support allowed by analytic-based
+methods is restricted to the shaded regions of Figure
 ([[ref:fig:opt_fov_schematic]]).
 
 #+BEGIN_EXPORT latex
@@ -924,7 +917,7 @@ optimization-based framework allows for noncircular trajectories.
 Given that there needs to be a relative axial translation between the
 kV-imaging system and the patient, we investigated if there were any
 advantages to acquiring some projection views during the axial
-translation. Such trajectories that included an axial translation
+translation. Such trajectories that included an axial translational
 stage have been studied before and have the potential to further
 reduce the impact of cone-angle artifacts with both analtyic-based
 cite:zeng_cone-beam_1992,noo_stable_1996,johnson_feldkamp_1998,katsevich_image_2004
@@ -1561,7 +1554,7 @@ draw(src..det_cent-(0, vlen/2, ulen/2),blue+opacity(op));
 draw(src..det_cent-(0, -vlen/2, ulen/2),blue+opacity(op));
 #+END_SRC
 
-#+CAPTION: Radiation coordinate system which is the basis of the projection geometry reported in the projection headers. This coordinate system provides a description of the source position relative to the detector bins with the origin at the imaging isocenter of that view. Though this basis is agnostic of the gantry rotation, the red arrow points into the gantry for reference in images showing the other bases used in this transform.
+#+CAPTION: Radiation coordinate system which is the basis of the projection geometry reported in the projection headers. This coordinate system provides a description of the source position relative to the detector bins with the origin at the imaging isocenter of that view. Though this basis is agnostic of the gantry rotation, the red arrow points into the gantry (into the page here in the same direction as the longitudinal bases (lng)) for reference in images showing the other bases used in this transform.
 #+LABEL: fig:opt_coords_rad
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_coords_rad
@@ -1879,16 +1872,16 @@ currently face the clinic with its use motivated this investigation.
 As we present this as a potential solution to some of the limitations
 in the clinic, we must demonstrate that in bringing the benefits of
 these new trajectories, we are not adversely impacting the subsequent
-image quality. We must emphasize that image quality alone cannot
-determine ultimately determine the true value of any particular
-imaging modality or technique.
+image quality. We emphasize that image quality alone cannot ultimately
+determine the true value of any particular imaging modality or
+technique.
 
 It is imperative that for any translation of novel technology to a
 clinical setting to occur, rigorous clinical studies must be performed
 to determine the true impact any technology has on the real metric of
 performance which is the task-based utility. How that is defined is
 itself a challenging component in any field, but in medicine this must
-given consideration to the patient outcome. 
+be given consideration to the patient outcome.
 
 Image quality is itself one component of the myriad factors that must
 be considered when evaluating a clinical technique. As we discuss this
@@ -1933,8 +1926,8 @@ MLEM reconstruction of a standard circular scan.
 
 There are a number of ways to evaluate the spatial resolution from
 images of the Catphan phantom in a CT image. The CTP 528 module
-contains a circular array of bar patterns which we used to,
-subjectively, determine the highest frequency set which is resolvable.
+contains a circular array of bar patterns which we used to
+subjectively determine the highest frequency set which is resolvable.
 The same module also has two 0.28mm tungsten carbide beads simulating
 an impulse source from which a point spread and then modulation
 transfer function (MTF) can be determined. Furthermore, the MTF can be
@@ -2043,6 +2036,18 @@ to produce clinically-relevant reconstructions in the use-case we
 envisioned for these proposed trajectories, we also extracted CT
 numbers from ROIs in some of the soft-tissue organs corresponding to
 aorta, liver and spleen in the phantom's abdomen.
+** Conclusion
+As our framework was developed in the context of addressing current
+limitations of using CBCT for IGRT, we wanted to evaluate the image
+quality obtained from examples of real-data scans of such non-circular
+trajectories to address two existing clinical issues. To do this, we
+use our framework to build the necessary reconstruction geometry
+transforms for the TrueBeam system and selected image quality metrics
+from standard clinical phantoms for comparing reconstructions from
+this framework against current clinical image quality. In the next two
+chapters, we will look at two specific examples of two types of
+non-circular trajectories that address two existing limitations and
+compare the subsequent image quality to the current clinical standard.
 ** ideas                                     :noexport:
 Given that part of the robust nature of optimization-based algorithms
 is the ability to handle the poorly-conditioned nature of the inverse
