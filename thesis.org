@@ -3689,7 +3689,7 @@ the half-fan detector configuration scans. From the top row to the
 bottom, these images correspond to the double circle, the CLC, and the
 smooth trajectory.
 
-#+CAPTION: Sagittal slices of the dual-catphan MLEM reconstruction acquired with the double-circle, the CLC, and the smooth trajectories (in order from top to bottom). The left column corresponds to the full-fan detector configuration, and the right column corresponds to the half-fan detector configuration. The display window is [-160, 240] HU.
+#+CAPTION: Sagittal slices of the dual-Catphan MLEM reconstruction acquired with the double-circle, the CLC, and the smooth trajectories (in order from top to bottom). The left column corresponds to the full-fan detector configuration, and the right column corresponds to the half-fan detector configuration. The display window is [-160, 240] HU.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_dcatphans
 [[file:figures/fov/catphanFOV.pdf]]
@@ -3721,7 +3721,7 @@ configuration.
 \caption{}
 \label{fig:fov_sensROIhalf}
 \end{subfigure}
-\caption{Plots of the Catphan CTP 404 sensitometyr insert ROIs for the
+\caption{Plots of the Catphan CTP 404 sensitometry insert ROIs for the
   different classes of trajectories studied. Each bar in the plot is
   centered on the mean ROI value, and the height of the bar is the
   standard deviation of that ROI. The top plot (a) shows the ROI
@@ -3746,8 +3746,8 @@ half-fan detector configurations. Again, each bar is centered on the
 mean CT number, and the height corresponds to the standard deviation
 of the ROI.
 
-#+CAPTION: Comparison of the MLEM algorithm as a direct replacement of the current clinical method of axial-FOV extension by stacking two independently reconstructed circlulr scans together. These ROIs are measured from two independently reconstructed circular scans (both full and half fan) using MLEM and FDK. As in Figure ([[ref:fig:sensROIplot]]), the bars are centered on the mean CT number of the ROI, and the height corresponds to the standard deviation in that ROI.
-#+ATTR_LaTeX: :width \textwidth
+#+CAPTION: Comparison of the MLEM algorithm as a direct replacement of the current clinical method of axial-FOV extension by stacking two independently reconstructed circular scans together. These ROIs are measured from two independently reconstructed circular scans (both full and half fan) using MLEM and FDK. As in Figure ([[ref:fig:sensROIplot]]), the bars are centered on the mean CT number of the ROI, and the height corresponds to the standard deviation in that ROI.
+#+ATTR_LaTeX: :height \textheight
 #+LABEL: fig:fov_sensROI_full_half
 [[file:figures/fov/rois/sensROIplot_full_half_fdk.pdf]]
 
@@ -3763,17 +3763,19 @@ compared to the current clinical standard of stacked FDK, but also
 evaluate what impact our geometric calibration procedure described in
 [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]] has on spatial resolution as well.
 
-# #+CAPTION: Grid of the different spatial resolution metrics extracted from the MTF analysis of the dual-Catphan phantom scan. 
-# #+ATTR_LaTeX: :width \textwidth :options angle=90
-# #+LABEL: fig:fov_mtf_alg
-# [[file:figures/fov/mtf/alg_grid.pdf]]
+#+CAPTION: Grid of the different spatial resolution metrics extracted from the MTF analysis of the dual-Catphan phantom scan using the different trajectory classes. The green points are the full-fan detector configuration and the blue points are the half-fan detector configuration.
+#+ATTR_LaTeX: :width \textwidth 
+#+LABEL: fig:fov_mtf_alg
+[[file:figures/fov/mtf/alg_grid.pdf]]
 
-# The first collection of spatial resolution metrics we extracted from
-# the dual-Catphan reconstructions from the different classes of
-# trajectories is shown in Figure ([[ref:fig:fov_mtf_alg]]). This *make plot
-# fit*
-
-# ###################################
+The spatial resolution metrics we extracted from the dual-Catphan
+reconstructions from the different classes of trajectories are shown
+in Figure ([[ref:fig:fov_mtf_alg]]). This plot shows the different MTF
+values for the different algorithms with both the full and half-fan
+configuration. As the lack of spatial-shift invariance in CT makes
+using the MTF metric only a rough estimate of spatial resolution
+performance, there are a few reconstructions where the metric values
+are somewhat anomalous.
 
 #+CAPTION: Metrics of acrylic CNR for FDK and MLEM.
 #+ATTR_LaTeX: :width \textwidth
@@ -4171,6 +4173,19 @@ this study.
 |-------------------+------------------------------------------|
 **** figures                                 :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb]]
+*** TODO Generalized-trajectory framework    :noexport:
+    SCHEDULED: <2017-11-28 Tue>
+In applying the generalized-reconstruction framework discussed in
+[[id:58A6E225-522B-4620-BEDB-F81AD30070C3][Framework implementation with Varian TrueBeam kV-CBCT system]] to this
+specific non-circular trajectory use case of collision avoidance, care
+must be taken to correctly transform the coordinate system of the
+imaging geometry to correctly with the patient's treatment. In the
+case of utilizing the virtual isocenter to prevent potential patient
+collisions with the linac treatment head, it was necessary to
+implement these calculations in order to acquire projection
+information that was equivalent to that of the standard clinical
+scanning configuration.
+
 *** Reconstruction
     :PROPERTIES:
     :ID:       d0eac288-37d6-4cef-97c8-7896dcc67733
@@ -4209,8 +4224,8 @@ scan at 1.5X magnification.
 **** figs                                    :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb")][truebeam/161213_virtiso_circ_half_dynmag_catphan_isocal/iteration_plots.ipynb]]
 *** analysis                                 :noexport:
- - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"161213_virtiso_circ_half_dynmag_catphan_isocal/collision_avoidance.ipynb")][collisions figures]]
- - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170126_virtiso_circ_half_dynmag_ed/ed_images.ipynb")][ed analysis]]
+- [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"161213_virtiso_circ_half_dynmag_catphan_isocal/collision_avoidance.ipynb")][collisions figures]]
+- [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"170126_virtiso_circ_half_dynmag_ed/ed_images.ipynb")][ed analysis]]
 ** Results
    :PROPERTIES:
    :ID:       28832b04-7d26-4ef8-83f2-08db94493ab9
