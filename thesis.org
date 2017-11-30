@@ -2258,11 +2258,12 @@ tolerance than that of our original phantom.
     :END:
 We designed a calibration procedure specifically for the non-standard
 scanning trajectories we implemented on the TrueBeam system with
-Developer Mode. Using the methods described in the section [[id:58A6E225-522B-4620-BEDB-F81AD30070C3][/Framework implementation with Varian TrueBeam kV-CBCT system/]], we used the
+Developer Mode. Using the methods described in the section [[id:58A6E225-522B-4620-BEDB-F81AD30070C3][/Framework
+implementation with Varian TrueBeam kV-CBCT system/]], we used the
 view-by-view header information from the TrueBeam system to initialize
 our calibration procedure. Starting with this initial estimate with
 which we calculated our reconstruction system matrix $\mathcal{H}$,
-the additional information extracted from our calibration was use to
+the additional information extracted from our calibration was used to
 improve the estimate of both the system matrix and subsequently the
 estimated image from the reconstruction.
 
@@ -2702,7 +2703,7 @@ image reconstruction.
 For a new trajectory, this phantom is first scanned to identify any
 potential corrections to the parameters reported in the TrueBeam data
 headers. Though we find the self-reported position from the
-acquisition metadata to be very good, there are still some scanning
+acquisition metadata to be very accurate, there are still some scanning
 configurations for which the additional refinement from our geometric
 calibration is critical for obtaining the best quality reconstruction.
 This is particularly true for scanning trajectories where the object
