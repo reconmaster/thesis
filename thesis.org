@@ -3722,7 +3722,7 @@ smooth trajectory.
 #+LABEL: fig:fov_dcatphans
 [[file:figures/fov/catphanFOV.pdf]]
 
-We first looked at the quantitative Hounsfield units (HU) from the
+We first investigated the quantitative Hounsfield units (HU) from the
 different sensitometry modules. Figure ([[ref:fig:sensROIplot]]) shows the
 mean ROI value for each of the Catphan sensitometry modules for the
 stacked FDK and the stacked MLEM reconstructions as well as the
@@ -3778,7 +3778,7 @@ of the ROI.
 #+LABEL: fig:fov_sensROI_full_half
 [[file:figures/fov/rois/sensROIplot_full_half_fdk.pdf]]
 
-We then looked at the impact the different scanning configurations and
+We then studied the impact the different scanning configurations and
 algorithms had on the spatial resolution of the reconstruction. Though
 the MTF is a problematic metric of spatial resolution in CT due to its
 violation of linear shift invariance, it can provide a useful
@@ -4203,8 +4203,8 @@ this study.
 |-------------------+------------------------------------------|
 **** figures                                 :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb]]
-*** TODO Generalized-trajectory framework    :noexport:
-    SCHEDULED: <2017-11-28 Tue>
+*** TODO [#A] Generalized-trajectory framework :noexport:
+    DEADLINE: <2017-12-01 Fri>
 In applying the generalized-reconstruction framework discussed in
 [[id:58A6E225-522B-4620-BEDB-F81AD30070C3][Framework implementation with Varian TrueBeam kV-CBCT system]] to this
 specific non-circular trajectory use case of collision avoidance, care
@@ -5101,12 +5101,12 @@ We describe our generalized framework for reconstructing from
 generalized scanning trajectories using optimization-based
 reconstruction methods in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Chapter 2]]. Though we limited ourselves to
 MLEM to solve our reconstruction problem, we by no means imply that
-this framework is beholden to this algorithm. Not only can other
+this framework is dependent on this algorithm. Not only can other
 optimization-based algorithms be plugged into this framework, more
 sophisticated optimization techniques may be better suited to this
 optimization problem. However, regardless of the optimization-based
 algorithm employed in this paradigm, it is always critical that the
-user to ensure that the parameters of the algorithm are carefully
+user ensure that the parameters of the algorithm are carefully
 selected for the desired task.
 
 In addition to developing this framework, we also developed a general
@@ -5117,7 +5117,7 @@ corrections for the non-circular trajectory classes we studied in the
 subsequent chapters. Though optimization-based algorithms are very
 robust, the view-by-view agnosticism we utilize for our trajectory
 framework is only beneficial if the geometry describing each of the
-views in the system matrix if correct. As with all inverse problems,
+views in the system matrix is correct. As with all inverse problems,
 the answer provided by the inverse is only useful if you have solved
 the right problem.
 
@@ -5134,7 +5134,7 @@ to selecting what type of non-circular trajectory, if any, would be
 suited for intended application.
 
 The first clinical limitation we studied in [[id:eaae199f-f899-4862-af50-720895a31c36][Chapter 4]] is the problem
-of the limited-axial FOV provided by linac-mounted CBCT systems. Since
+of the limited axial FOV provided by linac-mounted CBCT systems. Since
 the axial coverage provided by the CBCT detector is limited by
 engineering constraints, we hypothesized that non-circular
 trajectories would be able to extend the axial FOV while maintaining
@@ -5142,38 +5142,38 @@ image quality that is comparable to current clinical methods. In
 addition to studying the double circle trajectory that is comparable
 to the current clinical practice of stacking the independently
 reconstructed FDK volumes of two circles together, we also studied the
-CLC and smooth trajectory classes that include acquiring projections
-as the CBCT imaging system translates between the two planes of the
-circular components of the scan. We found that not only does our
-framework with MLEM perform as well as FDK in the portion of the
-reconstructed volume where FDK satisfies Tuy's condition, but that it
-is also able to improve the image quality in the region between the
-planes of the source's circular orbit. Additionally, our framework
-demonstrated that it is possible to extend the axial spacing between
-the planes of the two circles into distances that exceed the support
-of two stacked FDK volumes.
+circle-line-circle and smooth trajectory classes that include
+acquiring projections as the CBCT imaging system translates between
+the two planes of the circular components of the scan. We found that
+not only does our framework with MLEM perform as well as FDK in the
+portion of the reconstructed volume where FDK satisfies Tuy's
+condition, but that it is also able to improve the image quality in
+the region between the planes of the source's circular orbit.
+Additionally, our framework demonstrated that it is possible to extend
+the axial spacing between the planes of the two circles into distances
+that exceed the support of two stacked FDK volumes.
 
 The second clinical problem in using linac-mounted CBCT for IGRT that
-investigated in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Chapter 5]] is that of potential patient collisions with
-the linac when attempting to acquire a CBCT. For some of the treatment
-positions used for breast, lung, and head and neck cancer patients,
-the orientation of the patient on the treatment table puts them at
-risk of being hit by the linac as it rotates around the patient. In
-this study, we looked at different non-circular trajectories that
-could alleviate the different types of collisions that potentially
-faced by these patients. One such trajectory would increase the radius
-of the kV-imaging detector in a potential collision zone to create a
-dynamic magnification trajectory. To avoid potential collisions with
-the linac treatment head, we looked at a virtual isocenter trajectory
-that moved the patient couch while the gantry rotated to maintain a
-fixed distance between the patient and treatment head to ensure no
-collision would take place. Finally, we created a trajectory that
-combined the virtual isocenter trajectory with the dynamic
-magnification in order to create a trajectory that could alleviate
-collisions with both the kV-detector and the treatment head. For each
-of these different configurations, we showed we could obtain
-reconstructions with image quality comparable to the standard clinical
-circular trajectory.
+we investigated in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Chapter 5]] is that of potential patient collisions
+with the linac when attempting to acquire a CBCT. For some of the
+treatment positions used for breast, lung, and head and neck cancer
+patients, the orientation of the patient on the treatment table puts
+them at risk of being hit by the linac as it rotates around the
+patient. In this study, we investigated different non-circular
+trajectories that could alleviate the different types of collisions
+potentially faced by these patients. One such trajectory would
+increase the radius of the kV-imaging detector in a potential
+collision zone to create a dynamic magnification trajectory. To avoid
+potential collisions with the linac treatment head, we studied a
+virtual isocenter trajectory that moved the patient couch while the
+gantry rotated to maintain a safe distance between the patient and
+treatment head to ensure no collision would take place. Finally, we
+created a trajectory that combined the virtual isocenter trajectory
+with the dynamic magnification in order to create a trajectory that
+could alleviate collisions with both the kV-detector and the treatment
+head. For each of these different configurations, we showed we could
+obtain reconstructions with image quality comparable to the standard
+clinical circular trajectory.
 
 In conclusion, we found that our non-circular scanning trajectory
 framework using optimization-based reconstruction methods have the
