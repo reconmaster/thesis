@@ -286,7 +286,7 @@ of opposing rays along the same line in the patient which can result
 from misalignment of the moving detector. With a stationary ring of
 detectors, these ring artifacts are eliminated. However, with the
 advent of multi-slice detector technology which will be discussed in
-/[[id:/f84fb81e-a07d-4945-9653-fd1544703733][Cone-beam CT and new scanning trajectories/]], the engineering and cost
+[[id:f84fb81e-a07d-4945-9653-fd1544703733][/Cone-beam CT and new scanning trajectories/]], the engineering and cost
 requirements has led to fourth-generation scanners being phased out
 cite:hsieh_computed_2009.
 
@@ -323,14 +323,14 @@ geometry which is the focus of this work.
    :PROPERTIES:
    :ID:       f84fb81e-a07d-4945-9653-fd1544703733
    :END:
-For all the CT scanners discussed in the previous section [[id:1b7b31c8-4bd5-4402-b930-d81984ee5901][CT
-development history]], the only scanning trajectory utilized for CT was
+For all the CT scanners discussed in the previous section [[id:1b7b31c8-4bd5-4402-b930-d81984ee5901][/CT
+development history/]], the only scanning trajectory utilized for CT was
 the circular rotation of the source and detector around the patient.
 This limitation was due to both the hardware geometry and the
 reconstruction algorithms that were initially focused on acquiring and
 reconstructing 2D-planar slices of the object being imaged.
 Unfortunately, this slice-by-slice acquisition and reconstruction
-framework was somewhat limiting in acquiring volumetric CT images. 
+framework was somewhat limiting in acquiring volumetric CT images.
 
 The use of new scanning trajectories to increase the volumetric
 imaging capabilities of CT began with the development of the spiral or
@@ -365,7 +365,7 @@ which is not provided by the circular trajectory routinely employed by
 third generation scanners. It was the development of a modified FBP
 algorithm by Feldkamp, Davis and Kress or FDK
 cite:feldkamp_practical_1984 (which we will discuss further in
-/[[id:/04DD4E55-A20B-4A27-BBDD-BB493DD82674][Analytic-based reconstruction/]]) that made it possible to obtain a
+[[id:04DD4E55-A20B-4A27-BBDD-BB493DD82674][/Analytic-based reconstruction/]]) that made it possible to obtain a
 useful reconstruction from a circular scanning trajectory on a CBCT
 system.
 
@@ -502,9 +502,9 @@ to existing clinical needs.
 
 First, we will discuss the framework and considerations of using
 optimization-based reconstruction with different scanning trajectories
-in [[id:/06ec01f2-e128-4baf-9ec7-4569a3aaa886][/Optimization-based algorithms/]]. Next, we will discuss the need for
+in [[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][/Optimization-based algorithms/]]. Next, we will discuss the need for
 geometric calibration and discuss a method we developed to accomplish
-this for these trajectories in /[[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]/. We will then
+this for these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Geometric calibration/]]. We will then
 review the use of new trajectories to address the limited axial FOV
 issue in [[id:eaae199f-f899-4862-af50-720895a31c36][/Axial field-of-view extension/]] followed by using these
 trajectories to alleviate the issue of patient collisions in
@@ -552,7 +552,7 @@ reconstruction is a natural extension of linearizing the x-ray
 transform imaging model of a tomographic scan. Approaching the image
 reconstruction problem as a linearized imaging model has existed since
 the first CT system built by Cormack and Hounsfield. As discussed in
-the /[[id:852796c3-9a3b-49da-bc08-1299e93e0768][Introduction/]], they utilized the algebraic reconstruction technique
+the [[id:852796c3-9a3b-49da-bc08-1299e93e0768][/Introduction/]], they utilized the algebraic reconstruction technique
 (ART) to solve a system of equations created by the summation of the
 rays through the image pixel grid at each projection angle
 cite:herman_art:_1973.
@@ -2223,7 +2223,7 @@ methods for image reconstruction.
 Before attempting to determine any geometric errors in our scanning
 acquisition, we first modified the calculation of our system matrix to
 incorporate the geometry information provided by the TrueBeam system
-as discussed in /[[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates/]]. In doing this, we took advantage
+as discussed in [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][/Varian coordinates/]]. In doing this, we took advantage
 of all the inherent geometry information that is provided with the
 current clinical system. This information then provided an initial
 estimate of the scanning geometry which we could then refine with the
@@ -2858,8 +2858,8 @@ We reconstructed the Catphan scans from these two trajectories with
 and without the calibrations offsets. An isotropic image grid of 0.473
 mm was used for each reconstruction with application of the half-fan
 weighting cite:bian_optimization-based_2013. For all reconstructions,
-200 iterations of MLEM were used, as described in the /[[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized
-trajectory framework]]/ section.
+200 iterations of MLEM were used, as described in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][/Generalized
+trajectory framework/]] section.
 *** figures                                  :noexport:
 **** four detector schematic
 #+LABEL: fig:geo_schematic
@@ -3375,7 +3375,7 @@ resultant limited axial FOV.
 In order to obtain additional axial tomographic information from a
 patient beyond what is covered by the detector, there must be a
 relative shift along that axis between the patient and the imaging
-system. As described to in the /[[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]]/
+system. As described to in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][/Generalized trajectory framework/]]
 section, either the patient or the imaging system can shift along this
 direction to obtain the desired projection information as long as the
 motion is correctly reflected in the system matrix $\mathcal{H}$. With
@@ -3393,7 +3393,7 @@ acquiring a circular trajectory scan, applying the axial shift, and
 then acquiring a second circle by rotating the gantry in the opposite
 direction.
 
-#+CAPTION: Source trajectories of the three classes of extended axial-FOV trajectories studied with a separation of 17 cm between the planes of the circular components of the scan. Moving in diametric opposition of the source is the CBCT detector which provides coverage 15 cm above and below the source trajectory in the axial direction (z) All of these trajectories are plotted in the image coordinate space described in the section [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates]]. On the left is the double circle trajectory that is equivalent to the double circle scan currently used in the clinic to obtain extended axial coverage. In the middle is the circle-line-circle trajectory that acquires additional projection information as the source and detector translate from the axial position of the first circle to that of the second. On the right is the smooth trajectory in which the translation component occurs during the rotation of the two circles.
+#+CAPTION: Source trajectories of the three classes of extended axial-FOV trajectories studied with a separation of 17 cm between the planes of the circular components of the scan. Moving in diametric opposition of the source is the CBCT detector which provides coverage 15 cm above and below the source trajectory in the axial direction (z) All of these trajectories are plotted in the image coordinate space described in the section [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][/Varian coordinates/]]. On the left is the double circle trajectory that is equivalent to the double circle scan currently used in the clinic to obtain extended axial coverage. In the middle is the circle-line-circle trajectory that acquires additional projection information as the source and detector translate from the axial position of the first circle to that of the second. On the right is the smooth trajectory in which the translation component occurs during the rotation of the two circles.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_3d_trajectories
 [[file:figures/fov/3d_trajectories.pdf]]
@@ -3646,9 +3646,9 @@ system's isocenter, it has a fixed mounting point on the treatment
 couch. In order to extract the calibration information for the
 different trajectories, we positioned the Isocal phantom on the
 treatment table at the location where we placed the double Catphans
-and the CIRS torso phantom. As described in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Geometric calibration]]/, we
-used the Isocal scans to provide calibration corrections for all three
-trajectories with both the full-fan and half-fan detector
+and the CIRS torso phantom. As described in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Geometric calibration/]],
+we used the Isocal scans to provide calibration corrections for all
+three trajectories with both the full-fan and half-fan detector
 configurations.
 
 The clinical reconstruction software uses a larger voxel size for
@@ -4348,7 +4348,7 @@ this study.
 *** TODO [#A] Generalized-trajectory framework :noexport:
     DEADLINE: <2017-12-01 Fri>
 In applying the generalized-reconstruction framework discussed in
-[[id:58A6E225-522B-4620-BEDB-F81AD30070C3][/Framework implementation with Varian TrueBeam kV-CBCT system]]/ to this
+[[id:58A6E225-522B-4620-BEDB-F81AD30070C3][/Framework implementation with Varian TrueBeam kV-CBCT system/]] to this
 specific non-circular trajectory use case of collision avoidance, care
 must be taken to correctly transform the coordinate system of the
 imaging geometry to correctly with the patient's treatment. In the
@@ -4364,7 +4364,7 @@ scanning configuration.
     :END:
 The addition of couch motion to the imaging trajectory does increase
 the degrees of freedom for which proper geometric calibration must be
-acquired. Using the methods described in the chapter /[[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric
+acquired. Using the methods described in the chapter [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Geometric
 calibration/]], we computed corrections to the nominal reported couch,
 source and detector positions for each of the tested trajectories.
 
@@ -5241,7 +5241,7 @@ reconstruction program's requirements.
 
 We describe our generalized framework for reconstructing from
 generalized scanning trajectories using optimization-based
-reconstruction methods in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Chapter 2]]/. Though we limited ourselves to
+reconstruction methods in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Chapter 2/]]. Though we limited ourselves to
 MLEM to solve our reconstruction problem, we by no means imply that
 this framework is dependent on this algorithm. Not only can other
 optimization-based algorithms be plugged into this framework, more
@@ -5275,7 +5275,7 @@ for the desired task, similar task-based considerations must be given
 to selecting what type of non-circular trajectory, if any, would be
 suited for intended application.
 
-The first clinical limitation we studied in /[[id:eaae199f-f899-4862-af50-720895a31c36][Chapter 4/]] is the problem
+The first clinical limitation we studied in [[id:eaae199f-f899-4862-af50-720895a31c36][/Chapter 4/]] is the problem
 of the limited axial FOV provided by LINAC-mounted CBCT systems. Since
 the axial coverage provided by the CBCT detector is limited by
 engineering constraints, we hypothesized that non-circular
@@ -5296,7 +5296,7 @@ the axial spacing between the planes of the two circles into distances
 that exceed the support of two stacked FDK volumes.
 
 The second clinical problem in using LINAC-mounted CBCT for IGRT that
-we investigated in /[[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Chapter 5/]] is that of potential patient collisions
+we investigated in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][/Chapter 5/]] is that of potential patient collisions
 with the LINAC when attempting to acquire a CBCT. For some of the
 treatment positions used for breast, lung, and head and neck cancer
 patients, the orientation of the patient on the treatment table puts
