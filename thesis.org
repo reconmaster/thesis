@@ -9,6 +9,9 @@
 #+LANGUAGE: en
 #+SELECT_TAGS: export
 #+EXCLUDE_TAGS: noexport
+#+LaTeX_HEADER: \usepackage[encapsulated]{CJK}
+#+LaTeX_HEADER: \usepackage{ucs}
+#+LaTeX_HEADER: \usepackage[utf8x]{inputenc}
 #+LATEX_CLASS:thesis
 #+STARTUP: hideblocks
 # +STARTUP: latexpreview
@@ -23,8 +26,26 @@
 \date{December, 2017}
 
 %% Use these commands to set a dedication and epigraph text
-\dedication{Dedication Text}
-\epigraph{Epigraph Text}
+% use one of bsmi(trad Chinese), gbsn(simp Chinese), min(Japanese), mj(Korean); see:
+% /usr/share/texmf-dist/tex/latex/cjk/texinput/UTF8/*.fd
+\newcommand{\jntext}[1]{\begin{CJK}{UTF8}{min}#1 \end{CJK}}
+
+\dedication{To all who have been directly or indirectly afflicted by
+  cancer -- especially my Dad}
+
+\epigraph{
+  \raggedright{
+  The Art of Peace is medicine for a sick world. We want to
+  cure the world of the sickness of violence, malcontent, and
+  discord—this is the Way of Harmony. There is evil and disorder in
+  the world because people have forgotten that all things emanate from
+  one source. Return to that source and leave behind all self-centered
+  thoughts, petty desires, and anger. Those who are possessed by
+  nothing possess everything.
+}
+
+  \raggedleft{\jntext{お先生} (Ueshiba Morihei Sensei)}
+}
 
 % If you don't want a title page comment out the next line and uncomment the line after it:
 \maketitle
@@ -1958,10 +1979,7 @@ standard quality assessment (QA) phantom for clinical CT devices that
 provides a series of sections with different objects for calculating
 image quality metrics. We used the CTP 404 sensitometry module shown
 in Figure ([[ref:fig:opt_ctp404]]) and the CTP 528 spatial resolution
-module shown in Figure ([[ref:fig:opt_ctp528]]). Using metrics that
-quantify these image qualities, we compared the different
-magnifications of both the circular and virtual isocenter scans to the
-MLEM reconstruction of a standard circular scan.
+module shown in Figure ([[ref:fig:opt_ctp528]]).
 
 There are a number of ways to evaluate the spatial resolution from
 images of the Catphan phantom in a CT image. The CTP 528 module
@@ -2178,8 +2196,6 @@ avoided cite:smekal_geometric_2004. However, as with
 optimization-based reconstruction, optimization-based calibration
 methods are more flexible in providing calibration offsets for the
 novel trajectories that we studied.
-
-# *lit review of calibration phantoms/methods*
 
 Using previous work for optimization-based geometric calibration
 cite:rougee_geometrical_1993,gullberg_estimation_1990,silver_determination_2000,
@@ -2830,12 +2846,15 @@ additional geometric corrections have on image quality.
 To evaluate the efficacy of our calibration procedure, we investigated
 its performance on calibrating both a standard, half-fan, circular
 trajectory where the couch is stationary as well as a virtual
-isocenter trajectory with the same object illumination where the couch
-moves during the acquisition. For each of these trajectories, we used
-the same Developer Mode script to scan both the Catphan phantom and
-the Isocal phantom. We subsequently used the sinogram from the Isocal
-scan to extract calibration offsets for that particular trajectory
-using the calibration method described above.
+isocenter trajectory. For purposes of discussion, a virtual isocenter
+is where the couch moves simultaneously with the gantry rotation from
+a fixed point that we call the virtual isocenter. We will return to
+the example of the virtual isocenter trajectory in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
+trajectories]]. For each of these trajectories, we used the same
+Developer Mode script to scan both the Catphan phantom and the Isocal
+phantom. We subsequently used the sinogram from the Isocal scan to
+extract calibration offsets for that particular trajectory using the
+calibration method described above.
 
 We reconstructed the Catphan scans from these two trajectories with
 and without the calibrations offsets. An isotropic image grid of 0.473
@@ -2845,7 +2864,7 @@ weighting cite:bian_optimization-based_2013. For all reconstructions,
 trajectory framework]] section.
 *** figures                                  :noexport:
 **** four detector schematic
-# +LABEL: fig:geo_schematic
+#+LABEL: fig:geo_schematic
 #+BEGIN_SRC asymptote :file figures/geo/schematic.pdf :exports results :tangle no
 settings.multisample=0;
 settings.outformat="pdf";
@@ -2963,16 +2982,49 @@ dot(proj270*isocal,red);
 
 #+CAPTION: Schematic representation of the scanning geometry
 #+ATTR_LaTeX: :width 0.75\textwidth
-# +RESULTS: fig:geo_schematic
+#+RESULTS: fig:geo_schematic
 ** Results
    :PROPERTIES:
    :ID:       bc50c80a-fbb7-41d3-a9d0-ebc552f59896
    :END:
-*** Experimental validation
-    :PROPERTIES:
-    :ID:       2c3c25d5-477a-4013-bf2a-5a74716b9c20
-    :END:
-Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the CTP 528 spatial
+# *** TODO Simulation                          :noexport:
+# *** Experimental validation
+    # :PROPERTIES:
+    # :ID:       2c3c25d5-477a-4013-bf2a-5a74716b9c20
+    # :END:
+After acquiring the circle and virtual isocenter trajectories of both
+the Catphan phantom and the Isocal phantom, we used our calibration
+procedure to find the geometric offsets for each view. Table
+([[ref:tab:geo_cal_offs]]) shows a subset of the offsets given by our
+method for a gantry angles at approximately $90^{\circ}$ intervals. For
+these calibrations, we only allowed the optimization program to vary
+the detector's lateral and longitudinal position as well as the
+source's longitudinal position. With the virtual isocenter trajectory
+that also introduces the couch motion, there is a larger amount of
+variation in the offset magnitude than in the circle trajectory that
+has a stationary treatment couch.
+
+#+ATTR_LATEX: :environment longtable :align l|c|c|c|c
+#+CAPTION: Table of selected calibration offsets at approximately $90^{\circ}$ increments of the gantry angle for the circle and virtual isocenter trajectories shown in these results. For these results, only the detector's lateral and longitudinal position as well as the source's longitudinal position in the radiation coordinate system were allowed to vary in this calibration example.
+#+NAME: tab:geo_cal_offs
+|-------------------+-------------------------------+-------------------+--------------------+------------------|
+| Trajectory        | Gantry angle $\left[^{\circ}\right]$ | Detector lat [mm] | Detector long [mm] | Source long [mm] |
+|-------------------+-------------------------------+-------------------+--------------------+------------------|
+| Circle            |                        -179.9 |              -0.4 |               -0.9 |              1.8 |
+|                   |                         -90.2 |               0.4 |               -0.8 |              1.5 |
+|                   |                          -0.2 |               0.5 |               -0.8 |              2.0 |
+|                   |                          90.2 |              -0.2 |               -1.0 |              2.2 |
+|                   |                         180.2 |              -0.4 |               -1.0 |              1.8 |
+|-------------------+-------------------------------+-------------------+--------------------+------------------|
+| Virtual isocenter |                        -180.1 |              -0.3 |               -0.6 |              2.5 |
+|                   |                         -90.0 |               1.6 |                0.1 |              0.7 |
+|                   |                           0.0 |               0.7 |               -0.7 |              1.5 |
+|                   |                          90.0 |               0.1 |               -1.5 |              3.0 |
+|                   |                         178.2 |              -0.2 |               -0.8 |              2.5 |
+|-------------------+-------------------------------+-------------------+--------------------+------------------|
+#+TBLFM: $2=$2;%.1f::$3=$3;%0.1f::$4=$4;%0.1f::$5=$5;%0.1f
+
+Figure ([[ref:fig:geo_cal_catphan_bar]]) shows the CTP 528 spatial
 resolution module slice from the reconstructions of both the circular
 scan (left column) and the virtual isocenter scan (right column). The
 top row shows the slice from the uncalibrated reconstruction using the
@@ -2982,9 +3034,7 @@ the treatment couch during the scan introduces additional geometric
 error over the standard circle scan which visually degrades spatial
 resolution.
 
-# *table of example corrections for order mag*
-
-The bottom row of Figure ([[ref:fig:geo_cal_catphan_sens]]) shows the same
+The bottom row of Figure ([[ref:fig:geo_cal_catphan_bar]]) shows the same
 slice from the corresponding trajectory with the geometric offsets
 from the calibration procedure incorporated into the system matrix
 $\mathcal{H}$. For the circular scan, using the calibration
@@ -2995,8 +3045,6 @@ calibration offsets in the reconstruction model, the spatial
 resolution of the virtual isocenter reconstruction becomes comparable
 to that of the circular scan.
 
-# *couch motion introduces additional uncertainty*
-
 Figure ([[ref:fig:geo_cal_cost]]) shows the $L_{2}_{}-\text{norm}$ of the
 distance between the simulated fiducial projections and the real
 fiducial projections acquired from the circle and virtual isocenter
@@ -3004,18 +3052,7 @@ scans of the isocal phantom. We can see that the calibration did
 effectively reduce this cost from the nominal geometry (blue) to the
 calibrated geometry (green). This cost also reflects the same trend we
 see in the spatial resolution of the images shown in Figure
-([[ref:fig:geo_cal_catphan_sens]]).
-
-Comparing the the $L_{2}_{}-\text{norm}$ of the uncalibrated scans in Figure
-([[ref:fig:geo_cal_cost]]), we see that there is far more disagreement
-between modeled and observed Isocal fiducial positions for the virtual
-isocenter scan than that of the circular scan, leading to more
-artifacts and loss of spatial resolution in the virtual isocenter
-reconstruction than in that of the circular scan. With the geometric
-calibrations applied, the cost for the virtual isocenter and circular
-trajectories is quite comparable, as is the spatial resolution.
-
-# *describe TB1 virtual isocenter couch backlash*
+([[ref:fig:geo_cal_catphan_bar]]).
 
 #+BEGIN_EXPORT latex
 \begin{figure}
@@ -3023,7 +3060,7 @@ trajectories is quite comparable, as is the spatial resolution.
   \begin{subfigure}[b]{0.65\textwidth}
     \includegraphics[width=\textwidth]{figures/geo/catphanCalComp}
     \caption{}
-    \label{fig:geo_cal_catphan_sens}
+    \label{fig:geo_cal_catphan_bar}
   \end{subfigure}
   ~ %add desired spacing between images, e. g. ~, \quad, \qquad,
   % \hfill etc.
@@ -3047,16 +3084,85 @@ trajectories is quite comparable, as is the spatial resolution.
   \label{fig:geo_cal_sens_cost}
 \end{figure}
 #+END_EXPORT
+
+Comparing the the $L_{2}_{}-\text{norm}$ of the uncalibrated scans in Figure
+([[ref:fig:geo_cal_cost]]), we see that there is far more disagreement
+between modeled and observed Isocal fiducial positions for the virtual
+isocenter scan than that of the circular scan, leading to more
+artifacts and loss of spatial resolution in the virtual isocenter
+reconstruction than in that of the circular scan. With the geometric
+calibrations applied, the cost for the virtual isocenter and circular
+trajectories is quite comparable, as is the spatial resolution.
 **** figures                                 :noexport:
 - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/calibration_images.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/calibration_images.ipynb]]
 - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
 **** notes                                   :noexport:
 - [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb")][170603_virtiso_circ_smth_catphan/dynmag/calibs/calib_analysis.ipynb]]
-** Discussion                                :noexport:
+** Discussion
    :PROPERTIES:
    :ID:       CAB89A8B-FC4B-4F9A-A52A-68E17ED2885C
    :END:
-*discuss physical limits as constraint possibility*
+From these results, especially with the virtual isocenter, we can see
+that there is an improvement in the spatial resolution by
+incorporating the calibration offsets obtained from the Isocal phantom
+and our calibration procedure. A general loss of spatial resolution is
+the typical consequence of attempting to reconstruct an object without
+using the correct geometry to construct the system matrix. As shown in
+Figure ([[ref:fig:geo_cal_catphan_bar]]), this loss of spatial resolution
+can be drastic as in the case of the virtual isocenter trajectory.
+
+It is important to understand that by introducing the motion of the
+couch in the virtual isocenter trajectory, there is the subsequent
+introduction of additional uncertainty associated with the geometry of
+the couch position. Both the visual appearance of the spatial
+resolution module in Figure ([[ref:fig:geo_cal_catphan_bar]]) as well as
+the cost function in Figure ([[ref:fig:geo_cal_sens_cost]]) prior to
+calibration reflect the additional uncertainty introduced by the couch
+motion. However, the ability to recover the bar phantom pattern and
+achieve a similar cost function after calibration as the circle
+trajectory demonstrate that this additional uncertainty can be
+accounted for with calibration.
+
+It is also interesting to note the sinusoidal appearance of the cost
+function as plotted against gantry angle in Figure
+([[ref:fig:geo_cal_sens_cost]]). The variation as a function of the
+gantry's orientation is most likely due to the variation in the torque
+applied to the gantry by gravity. Though this gravitational impact has
+been studied before cite:sharpe_stability_2005, it is interesting to
+see the additional uncertainty this effect has when also combining the
+simultaneous couch motion into the trajectory.
+
+One of the most challenging aspects of using an optimization-based
+calibration procedure such as ours is that different offset variables
+can couple with other parameters that geometrically impart the same
+effective offset relative to the image space coordinate system. An
+example of that would be a couch offset in one direction being
+equivalent to a detector offset in the opposite direction. While this
+ambiguity is exactly the same feature we utilize when implementing
+some of trajectories, i.e., an axial-FOV extension by either
+translating the couch or the imaging arms, it does complicate the
+calibration procedure.
+
+In this work, we addressed by only allowing some parameters to vary
+while keeping other variables we know do have uncertainty fixed. For
+example in Table ([[ref:tab:geo_cal_offs]]), we only use offsets for the
+source and detector for both the circle and virtual isocenter
+trajectories. In this case, though we know the couch introduces
+additional uncertainty, the calibration procedure is able to
+incorporate these offsets into the relative offsets of the source and
+detector. As we are ultimately interested in obtaining a proper
+reconstruction of the object in the image space, reduction in cost in
+the objective function subsequently manifests as an improvement in the
+projection geometry relative to the image space.
+
+In future calibration work, it would useful to address this ambiguity
+by constraining the optimization function in a way that would ensure
+much greater absolute accuracy of the calibration offsets. Though we
+did not do that here, this could be done to some degree by taking
+known tolerance of the LINAC components into account. For example,
+the tolerances of the couch position and the imaging arms could be
+used to provide the appropriate weighting for how much the different
+offset magnitudes are allowed to vary.
 
 ** Conclusion
    :PROPERTIES:
