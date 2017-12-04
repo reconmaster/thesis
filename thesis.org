@@ -34,7 +34,7 @@
   cancer -- especially my Dad}
 
 \epigraph{
-  \raggedright{
+  \raggedright{\it
   The Art of Peace is medicine for a sick world. We want to
   cure the world of the sickness of violence, malcontent, and
   discord—this is the Way of Harmony. There is evil and disorder in
@@ -62,15 +62,13 @@
 \listoftables
 
 \acknowledgments
+I would first like to express my deepest gratitude to the guidance provided by Drs. Charles Pelizzari and Xiaochuan Pan. Working with these exemplarly scientists in their labs has been one of the most rewarding experiences in my life. Their curioisty and dedication to the scietific method as well as their dedication to their students has given me a clear picture of the archetypical scientist and mentor. I am indebted to these two men for their efforts in guiding my scientific training.
 
-,*EXPAND* Funding was provided in part by Varian Medical Systems, the Lawrence
-H. Lanzl Fellowship (to A. D.), and NIH Grants R01 CA182264, R01
-EB018102, S10 RR021039 and P30 CA14599. We are grateful to Pascal
-Paysan and Dieter Seghers (also Varian) for providing and assisting
-with the iTools Reconstruction software. The contents of this work are
-solely the responsibility of the authors and do not necessarily
-represent the official view of any of the supporting organizations.
-The authors have no relevant conflicts of interest to disclose.
+I also would like to thank my committee members Drs. Hania Al-Hallaq and Emil Sidky for their stimulating feedback, discussions, and additional guidance in my research. Like Drs. Pan and Pelizzari, they have been extremely supportive of my research endeavors and instrumental in helping me devekop as a scientist. From the intial coursework at the start of my graduate education to the research presented in this work, my committee and adviers have provided me with a high standard of what it means to be a scientist through their example.
+
+Furthermore, I would like to thanks my fellow friends and lab mates Sean Rose and Drs. Buxin Chen, Zheng Zhang, Adrian S\'anchez, Xiao Han, Junguo Bian, Dan Xia, and Erik Pearson. Together, they have provided vast amounts of help, feedback, support, and friendship during my graduate work. I would also like to thank my classmate Dr. Meredith Sadinski as well as fellow students Drs. Dave Rigie, Johnathan Rosenfield, Gage Redler, Alex Cunliffe, Kevin Little, Zachary Grelewic, and Zacariah Labby who also provided engaging discussion and feedback throughout my studies. I also would like to extend my gratitude to the rest of the students in the Committee of Medical Physics for providing a wonderful learning environment.
+
+This work was made possible by in part by the Lawrence H. Lanzl Fellowship and NIH Grants R01 CA182264, R01EB018102, S10 RR021039 and P30 CA14599. Additional funding was provided by Varian Medial Systems with particular gratitude to Dr. Timo Berkhus for stimulating conversation and feedback as well as Pascal Paysan and Dieter Seghers for providing and assisting with the iTools Reconstruction software. The contents of this work are solely the responsibility of the author and do not necessarily represent the official view of any of the supporting organizations.
 
 \abstract
 % Enter Abstract here 350 word max
