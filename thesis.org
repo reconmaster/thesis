@@ -286,7 +286,7 @@ of opposing rays along the same line in the patient which can result
 from misalignment of the moving detector. With a stationary ring of
 detectors, these ring artifacts are eliminated. However, with the
 advent of multi-slice detector technology which will be discussed in
-[[id:f84fb81e-a07d-4945-9653-fd1544703733][Cone-beam CT and new scanning trajectories]], the engineering and cost
+/[[id:/f84fb81e-a07d-4945-9653-fd1544703733][Cone-beam CT and new scanning trajectories/]], the engineering and cost
 requirements has led to fourth-generation scanners being phased out
 cite:hsieh_computed_2009.
 
@@ -365,7 +365,7 @@ which is not provided by the circular trajectory routinely employed by
 third generation scanners. It was the development of a modified FBP
 algorithm by Feldkamp, Davis and Kress or FDK
 cite:feldkamp_practical_1984 (which we will discuss further in
-[[id:04DD4E55-A20B-4A27-BBDD-BB493DD82674][Analytic-based reconstruction]]) that made it possible to obtain a
+/[[id:/04DD4E55-A20B-4A27-BBDD-BB493DD82674][Analytic-based reconstruction/]]) that made it possible to obtain a
 useful reconstruction from a circular scanning trajectory on a CBCT
 system.
 
@@ -383,7 +383,7 @@ in radiation treatment devices that combine low-energy CT imaging or
 magnetic resonance imaging (MRI) with high-energy treatment beams in
 image-guide radiation therapy (IGRT). A particularly popular method of
 delivering therapeutic radiation doses are linear accelerators
-(linacs) that deliver powerful megavoltage (MV) treatment beams to
+(LINACs) that deliver powerful megavoltage (MV) treatment beams to
 diseased tissue.
 
 Though the type of particle and energy spectra of therapeutic
@@ -410,7 +410,7 @@ cite:kushnirsky_history_2015.
 The half a century between the discovery of x-rays and the use of them
 to treat internal structures was the need for imaging technology that
 made visualizing these internal targets feasible. The development of
-CT technology discussed in [[id:1b7b31c8-4bd5-4402-b930-d81984ee5901][CT development history]] provided the
+CT technology discussed in [[id:1b7b31c8-4bd5-4402-b930-d81984ee5901][/CT development history/]] provided the
 requisite volumetric information that allowed physicians to locate
 these internal lesions in the patient. This was required in order for
 the physicians to accurately target the lesions using the high-energy
@@ -424,7 +424,7 @@ stereotactic radiosurgery (SRS) cite:kushnirsky_history_2015.
 The eventual acceptance of SRS in the United States in 1984 and the
 subsequent rise in popularity of the technique led to use of linear
 accelerators for delivering the therapeutic dose rather than the fixed
-cobalt-60 sources cite:kushnirsky_history_2015. Linacs were not only
+cobalt-60 sources cite:kushnirsky_history_2015. LINACs were not only
 able to produce treatment beams that were comparable to those provided
 the cobalt-60 sources, but they had the additional benefits of being
 able to produces much higher energy spectra without the need to
@@ -433,7 +433,7 @@ However, despite the tomographic imaging used to plan the prescribed
 radiation dose, only radiographic projection imaging was used for
 setting up the patient at the treatment isocenter of these devices.
 
-The addition of a linac-mounted, kV-imaging, cone-beam computed
+The addition of a LINAC-mounted, kV-imaging, cone-beam computed
 tomography (CBCT) system to the gantry-mounted clinical linear
 accelerator
 cite:jaffray_flat-panel_2002,letourneau_cone-beam-ct_2005,rahman_linac:_2015
@@ -443,18 +443,18 @@ cite:xing_overview_2006,bissonnette_quality_2012,dawson_advances_2007.
 The tomographic information provided in the kV energy range improves
 soft-tissue contrast resolution over that provided by the MV
 electronic portal imaging device (EPID) alone
-cite:jaffray_radiographic_1999. The linac-mounted, kV-imaging, CBCT
+cite:jaffray_radiographic_1999. The LINAC-mounted, kV-imaging, CBCT
 system not only helps with patient setup and target verification, but
 it also allows the monitoring of the tumor response during treatment
 cite:oldham_cone-beam-ct_2005.
 
-#+CAPTION: Annotated image of a TrueBeam linac. See text for description of components.
+#+CAPTION: Annotated image of a TrueBeam LINAC. See text for description of components.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:intro_linac
 [[file:figures/intro/annotated_linac.png]]
 
 Figure ([[ref:fig:intro_linac]]) shows an annotated image of a Varian
-TrueBeam linac (Varian Medical Systems, Palo Alto, CA). On the patient
+TrueBeam LINAC (Varian Medical Systems, Palo Alto, CA). On the patient
 couch is the CIRS Torso Phantom (Computerized Imaging Reference
 Systems, Norfolk, VA) aligned at the mechanical isocenter using the
 laser guidance system. Above the torso phantom to the left is the MV
@@ -471,9 +471,9 @@ rotating gantry which can rotate $360^{\circ}$ around the mechanical
 isocenter for a single rotation. A subsequent rotation must occur in
 the opposite direction as the gantry lacks the ability to make
 multiple rotations in the same direction like a diagnostic CT system
-due to the complexity of the MV linac design.
+due to the complexity of the MV LINAC design.
 
-While there are many advantages to using linac-mounted CBCT imaging
+While there are many advantages to using LINAC-mounted CBCT imaging
 systems for IGRT, there are still technical limitations that
 negatively impact clinical utility, that could be alleviated by
 utilizing non-circular scanning trajectories with optimization-based
@@ -495,22 +495,22 @@ In this work, we will discuss an optimization-based,
 image-reconstruction framework that enables the use of new scanning
 trajectories. In particular, we will focus on how this approach was
 developed to address the two clinical shortcomings of limited axial
-FOV coverage and potential patient collisions with the linac gantry.
+FOV coverage and potential patient collisions with the LINAC gantry.
 By using these two examples, we will not only show the feasibility of
 using these non-circular trajectories, but also a potential solution
 to existing clinical needs.
 
 First, we will discuss the framework and considerations of using
 optimization-based reconstruction with different scanning trajectories
-in [[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][Optimization-based algorithms]]. Next, we will discuss the need for
+in [[id:/06ec01f2-e128-4baf-9ec7-4569a3aaa886][/Optimization-based algorithms/]]. Next, we will discuss the need for
 geometric calibration and discuss a method we developed to accomplish
-this for these trajectories in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]. We will then
+this for these trajectories in /[[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]]/. We will then
 review the use of new trajectories to address the limited axial FOV
-issue in [[id:eaae199f-f899-4862-af50-720895a31c36][Axial field-of-view extension]] followed by using these
+issue in [[id:eaae199f-f899-4862-af50-720895a31c36][/Axial field-of-view extension/]] followed by using these
 trajectories to alleviate the issue of patient collisions in
-[[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding trajectories]]. Finally, we will summarize this work
-and discuss possible clinical considerations with this methodology in
-[[id:1bade25b-80d6-4650-b8a3-baf370fa657c][Summary and conclusions]].
+[[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][/Collision-avoiding trajectories/]]. Finally, we will summarize this
+work and discuss possible clinical considerations with this
+methodology in [[id:1bade25b-80d6-4650-b8a3-baf370fa657c][/Summary and conclusions/]].
 
 The increased flexibility in choosing different scanning trajectories
 allowed by optimization-based reconstruction methods provided two
@@ -552,7 +552,7 @@ reconstruction is a natural extension of linearizing the x-ray
 transform imaging model of a tomographic scan. Approaching the image
 reconstruction problem as a linearized imaging model has existed since
 the first CT system built by Cormack and Hounsfield. As discussed in
-the [[id:852796c3-9a3b-49da-bc08-1299e93e0768][Introduction]], they utilized the algebraic reconstruction technique
+the /[[id:852796c3-9a3b-49da-bc08-1299e93e0768][Introduction/]], they utilized the algebraic reconstruction technique
 (ART) to solve a system of equations created by the summation of the
 rays through the image pixel grid at each projection angle
 cite:herman_art:_1973.
@@ -834,10 +834,10 @@ resulting tomographic reconstruction.
     :PROPERTIES:
     :ID:       6293da29-e448-4614-84b6-065af1cc6be9
     :END:
-In IGRT, linac-mounted CBCT imaging systems such as Varian's TrueBeam
+In IGRT, LINAC-mounted CBCT imaging systems such as Varian's TrueBeam
 kV-imaging system now routinely provide patient image information.
 These images are used to check the patient alignment before delivering
-the radiation treatment. The circular rotation of the linac gantry
+the radiation treatment. The circular rotation of the LINAC gantry
 defines the acquisition trajectory for the CBCT scan. While such a
 scanning trajectory provides sufficient information for an
 analytic-based reconstruction of the scan volume, there are a variety
@@ -859,11 +859,11 @@ approximate FDK algorithm cite:pan_why_2009. As shown in Figure
 end of the axial FOV become more severe.
 
 Another problem with the current circular imaging trajectory is the
-potential for linac collisions with the patient
+potential for LINAC collisions with the patient
 cite:hua_practical_2004,nioutsikou_patient-specific_2003. Cases arise
 when the patient is positioned in the treatment position, a CBCT image
 cannot be acquired due to part of the patient being in the path of the
-linac's trajectory (i.e., gantry clearance cannot be achieved). As the
+LINAC's trajectory (i.e., gantry clearance cannot be achieved). As the
 current FDK algorithm requires a trajectory with sufficient angular
 coverage, the patient must be moved to a position where the gantry can
 make an uninterrupted rotation around the patient. These workarounds
@@ -981,7 +981,7 @@ reduce the impact of cone-angle artifacts with both analtyic-based
 cite:zeng_cone-beam_1992,noo_stable_1996,johnson_feldkamp_1998,katsevich_image_2004
 and optimization-based methods cite:davis_we-g-brf-07:_2014.
 
-In the case of potential patient collisions with the linac gantry, a
+In the case of potential patient collisions with the LINAC gantry, a
 simple change in the scanning trajectory could be sufficient to
 prevent a collision. Much like the extended axial FOV case,
 optimization-based reconstruction is able to handle variations in the
@@ -1007,7 +1007,7 @@ change in the patient position does not prevent reconstruction with
 the optimization-based methods provided the patient motion is
 correctly incorporated into the system matrix $\mathcal{H}$. Moving
 the patient also provides a solution to avoid potential patient
-collisions that occur with the linac treatment head. The MV treatment
+collisions that occur with the LINAC treatment head. The MV treatment
 head on Varian's TrueBeam system is actually closer to the patient
 than the kV detector. Unlike the kV detector, it is not possible to
 change the position of the treatment head. In this case, moving the
@@ -1464,7 +1464,7 @@ addMargins(0.5cm, 0.5cm);
    :ID:       58A6E225-522B-4620-BEDB-F81AD30070C3
    :ALT_TITLE: TrueBeam framework
    :END:
-*** TrueBeam linac with Developer Mode
+*** TrueBeam LINAC with Developer Mode
      :PROPERTIES:
      :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
      :END:
@@ -1705,7 +1705,7 @@ draw(Label("$z_{IEC}$",1),(0,0,0)--(0,0,ax_scale),Arrow3);
 draw(Label("gantry",1),(0,ax_scale+50,0)--(0,ax_scale+70,0),red+dashed,Arrow3);
 #+END_SRC
 
-#+CAPTION: the IEC coordinate system that is the global-basis for all the linac geometry. To transform the data in the radiation coordinate system into the IEC coordinate system, the gantry rotation angle is used to rotate each view in the radiation-coordinate basis into the global room coordinates. For a gantry angle of $\theta_{g}=0^{\circ}$, the radiation-coordinate system in Figure ([[ref:fig:opt_coords_rad]]) is the same as the IEC.
+#+CAPTION: the IEC coordinate system that is the global-basis for all the LINAC geometry. To transform the data in the radiation coordinate system into the IEC coordinate system, the gantry rotation angle is used to rotate each view in the radiation-coordinate basis into the global room coordinates. For a gantry angle of $\theta_{g}=0^{\circ}$, the radiation-coordinate system in Figure ([[ref:fig:opt_coords_rad]]) is the same as the IEC.
 #+LABEL: fig:opt_coords_iec
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_coords_iec
@@ -2077,7 +2077,7 @@ of the water-like background for a total of four background ROIs.
   slices is visible. The anthropomorphic phantom is designed to
   provide soft-tissue organ structures with realistic electron
   densities. The image on the right shows the phantom setup on the
-  linac treatment couch.}
+  LINAC treatment couch.}
 \label{fig:opt_cirs}
 \end{figure}
 
@@ -2223,7 +2223,7 @@ methods for image reconstruction.
 Before attempting to determine any geometric errors in our scanning
 acquisition, we first modified the calculation of our system matrix to
 incorporate the geometry information provided by the TrueBeam system
-as discussed in [[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates]]. In doing this, we took advantage
+as discussed in /[[id:9e81dc1a-091f-4614-9d0f-5a5d4ee4f0d1][Varian coordinates/]]. In doing this, we took advantage
 of all the inherent geometry information that is provided with the
 current clinical system. This information then provided an initial
 estimate of the scanning geometry which we could then refine with the
@@ -2847,8 +2847,8 @@ trajectory where the couch is stationary as well as a virtual
 isocenter trajectory. For purposes of discussion, a virtual isocenter
 is where the couch moves simultaneously with the gantry rotation from
 a fixed point that we call the virtual isocenter. We will return to
-the example of the virtual isocenter trajectory in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Collision-avoiding
-trajectories]]. For each of these trajectories, we used the same
+the example of the virtual isocenter trajectory in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][/Collision-avoiding
+trajectories/]]. For each of these trajectories, we used the same
 Developer Mode script to scan both the Catphan phantom and the Isocal
 phantom. We subsequently used the sinogram from the Isocal scan to
 extract calibration offsets for that particular trajectory using the
@@ -2858,8 +2858,8 @@ We reconstructed the Catphan scans from these two trajectories with
 and without the calibrations offsets. An isotropic image grid of 0.473
 mm was used for each reconstruction with application of the half-fan
 weighting cite:bian_optimization-based_2013. For all reconstructions,
-200 iterations of MLEM were used, as described in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized
-trajectory framework]] section.
+200 iterations of MLEM were used, as described in the /[[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized
+trajectory framework]]/ section.
 *** figures                                  :noexport:
 **** four detector schematic
 #+LABEL: fig:geo_schematic
@@ -3198,7 +3198,7 @@ built-in calibration markers in the table are potential ways in which
 it would be possible to avoid acquiring calibration information for
 every scan of interest. As we used the TrueBeam kV-CBCT system for our
 data acquisition, Varian's Isocal phantom provided a convenient means
-of calibrating the imaging system as the linac use case already
+of calibrating the imaging system as the LINAC use case already
 demands accurate calibration for treatment accuracy in addition to
 image quality alone.
 
@@ -3262,10 +3262,10 @@ consistently improves image quality.
    :ID:       b815fcd4-92c6-4f72-9905-10acc22b580e
    :END:
 # What question (problem) was studied?
-A major limitation of linac-mounted CBCT kV-imaging systems is their
+A major limitation of LINAC-mounted CBCT kV-imaging systems is their
 axial coverage. This is primarily due to the detector size which is
 restricted by both cost and engineering concerns. Unlike modern
-diagnostic CT systems, the linac gantry is unable to perform more than
+diagnostic CT systems, the LINAC gantry is unable to perform more than
 a single rotation in a given direction. Without the ability to
 continuously rotate about the patient in the same direction, the
 helical scan solution to this limited-axial-FOV problem used by modern
@@ -3279,7 +3279,7 @@ to create the extended image. Though this stacked image does extend
 the axial coverage beyond that provided by a single circular scan,
 there are some limitations to this approach. We investigated if the
 non-circular trajectories with optimization-based methods described in
-[[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]] can provide a solution to these
+[[id:ad13bdd9-4298-4534-979d-a019d80311a5][/Generalized trajectory framework/]] can provide a solution to these
 shortcomings.
 
 The main problem with the current clinical approach is a limitation
@@ -3329,12 +3329,12 @@ agnostic to this additional information in the neighboring
 reconstruction volume.
 
 Taking advantage of the flexible reconstruction framework described in
-[[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][General CBCT trajectory reconstruction framework with
-optimization-based algorithms]], data from more than a single circular
+[[id:06ec01f2-e128-4baf-9ec7-4569a3aaa886][/General CBCT trajectory reconstruction framework with
+optimization-based algorithms/]], data from more than a single circular
 scan can be reconstructed. Provided that the correct geometry of the
 acquisition trajectory is well understood and properly calibrated
-(e.g. using a calibration method such as that discussed in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric
-calibration]]), the system matrix of the image formation process can be
+(e.g. using a calibration method such as that discussed in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Geometric
+calibration/]]), the system matrix of the image formation process can be
 calculated for arbitrary CBCT scanning configurations. Trajectories
 are not limited to the few cases of non-circular trajectories for
 which analytic inverse formulations exist such as the line
@@ -3345,14 +3345,14 @@ cite:kudo_derivation_1994.
 
 Using some of the trajectories enabled by optimization-based methods,
 we can address the problem of the limited axial coverage for
-linac-mounted CBCT kV-imaging systems. Rather than increasing the size
+LINAC-mounted CBCT kV-imaging systems. Rather than increasing the size
 of the detector, the source and detector motion can be extended in the
 axial direction, allowing projections to be obtained for axial
 positions beyond what is illuminated with current detector sizes and a
 circular scanning trajectory.
 
 In this chapter, we study a few different trajectories that could
-address the limited axial coverage provided by linac-mounted
+address the limited axial coverage provided by LINAC-mounted
 kV-imaging systems. For the case of the TrueBeam system, the axial
 coverage of the treatment FOV is 40 cm while the CBCT coverage from a
 single circle is only 20 cm. This limitation can be problematic for
@@ -3375,7 +3375,7 @@ resultant limited axial FOV.
 In order to obtain additional axial tomographic information from a
 patient beyond what is covered by the detector, there must be a
 relative shift along that axis between the patient and the imaging
-system. As described to in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]]
+system. As described to in the /[[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized trajectory framework]]/
 section, either the patient or the imaging system can shift along this
 direction to obtain the desired projection information as long as the
 motion is correctly reflected in the system matrix $\mathcal{H}$. With
@@ -3387,7 +3387,7 @@ The current clinical method of obtaining an extended axial image
 involves stacking the FDK reconstructions of two circular scans at
 different axial positions. For this reason, the first class of
 trajectories we studied was a dual-circle trajectory shown on the left
-in Figure ([[ref:fig:fov_3d_trajectories]]). As the linac is only able to
+in Figure ([[ref:fig:fov_3d_trajectories]]). As the LINAC is only able to
 make one complete rotation of the gantry, this is implemented by
 acquiring a circular trajectory scan, applying the axial shift, and
 then acquiring a second circle by rotating the gantry in the opposite
@@ -3508,11 +3508,11 @@ reconstructions from the simulated *CLC* and smooth trajectories.
     :ID:       0a6741b1-925a-4b69-97ff-7047ceac53d4
     :END:
 After identifying potential benefits of addressing the limited axial
-FOV using non-circular trajectories as described in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][Generalized
-trajectory framework]] section, we then evaluated how well this approach
+FOV using non-circular trajectories as described in the [[id:ad13bdd9-4298-4534-979d-a019d80311a5][/Generalized
+trajectory framework/]] section, we then evaluated how well this approach
 worked when implemented on our TrueBeam system using Developer mode as
-describe in the [[id:58A6E225-522B-4620-BEDB-F81AD30070C3][Framework implementation with Varian TrueBeam kV-CBCT
-system]] section. By using the Developer Mode XML control schema, we
+describe in the [[id:58A6E225-522B-4620-BEDB-F81AD30070C3][/Framework implementation with Varian TrueBeam kV-CBCT
+system/]] section. By using the Developer Mode XML control schema, we
 created acquisition scripts that implemented gantry rotations with a
 component of axial translation between the patient and the kV-imaging
 system. The trajectory plots shown in Figure
@@ -3596,7 +3596,7 @@ reconstruction.
 #+END_EXPORT
 
 After some preliminary studies, we found the nominal 1% low-contrast
-inserts were too challenging to consistently identify on the linac's
+inserts were too challenging to consistently identify on the LINAC's
 kV-imaging system. Thus, we decided to use two Catphan 504 phantoms to
 provide features for obtaining image quality metrics. As we needed to
 acquire image quality metrics over the extended axial coverage, we
@@ -3646,7 +3646,7 @@ system's isocenter, it has a fixed mounting point on the treatment
 couch. In order to extract the calibration information for the
 different trajectories, we positioned the Isocal phantom on the
 treatment table at the location where we placed the double Catphans
-and the CIRS torso phantom. As described in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric calibration]], we
+and the CIRS torso phantom. As described in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Geometric calibration]]/, we
 used the Isocal scans to provide calibration corrections for all three
 trajectories with both the full-fan and half-fan detector
 configurations.
@@ -3672,7 +3672,7 @@ did this because no scatter correction modeling was implemented in our
 MLEM reconstructions. Though we had initially attempted to extract the
 pre-processed projection data from iTools to use in our reconstruction
 chain, we discovered that some of the non-standard motions we
-implemented with the linac could not be accommodated in iTools as it
+implemented with the LINAC could not be accommodated in iTools as it
 did not conform to the typical circular trajectory anticipated by
 Varian's software.
 
@@ -4125,7 +4125,7 @@ the clinical use of CBCT in IGRT.
    :PROPERTIES:
    :ID:       b0e53ca9-9c57-46e5-a558-c878b2ee1bdd
    :END:
-Given the clinical benefits provided by the linac-mounted CBCT sytem,
+Given the clinical benefits provided by the LINAC-mounted CBCT sytem,
 it is detrimental when adequate tomographic information cannot be
 obtained from the kV-imaging CBCT system. One such situation is when a
 collision between the patient and the machine arises. While there has
@@ -4170,7 +4170,7 @@ acquire a complete circular scan in the treatment position.
     typical patient setup using a mannequin in a supine treatment
     position. As can be seen, collisions can occur both with the face
     of the MV treatment head (distance 41.7 cm from isocenter for this
-    linac) and with the kV detector (distance 45-70 cm from isocenter,
+    LINAC) and with the kV detector (distance 45-70 cm from isocenter,
     depending on magnification).}
   \label{fig:col_barbie_collision}
 \end{figure*}
@@ -4179,7 +4179,7 @@ acquire a complete circular scan in the treatment position.
 To avoid collisions with the LINAC head, it might be desirable to move
 the patient away from the gantry by translating the couch. To avoid
 collisions with the imaging panel, the patient might also be moved
-away from the panel. As many linac-mounted, kV-imaging panels have
+away from the panel. As many LINAC-mounted, kV-imaging panels have
 motion capabilities, another solution would be to move the imager away
 from the patient in the collision zone, which changes the imaging
 magnification for that portion of the scan. Given that the clearance
@@ -4203,13 +4203,13 @@ and couch translation to maintain a fixed distance (``virtual SAD'')
 between the MV source and a chosen center of rotation (``virtual
 isocenter'') in the patient as shown by the red circle in Figure
 ([[ref:fig:col_virtual_iso]]). At the beginning of the scan, the patient
-is moved away from the linac head along the MV beam direction. As the
+is moved away from the LINAC head along the MV beam direction. As the
 gantry rotates, the couch moves continuously to maintain the specified
 separation as shown in Figure ([[ref:fig:col_virtual_iso]]). The virtual
 SAD can be chosen large enough such that collisions as shown in Figure
 ([[ref:fig:col_barbie_mv]]) are avoided; at this point in the trajectory,
 the couch would have moved far enough to the left to avoid the
-collision. Note that it is only the distance to the linac head that is
+collision. Note that it is only the distance to the LINAC head that is
 increased in the virtual SAD technique; the distance from the kV
 source and detector to the patient and to each other are unchanged.
 
@@ -4245,10 +4245,10 @@ Finally, we study a trajectory that combines virtual isocenter and
 dynamic magnification trajectories to create a hybrid scanning
 acquisition that could alleviate collisions with both the MV-treatment
 head and the kV-CBCT detector. With such a trajectory, the potential
-collisions with both the linac head and the kV detector panel are
+collisions with both the LINAC head and the kV detector panel are
 resolved. We use such a trajectory as an example of a patient-specific
 scanning trajectory that could be implemented to resolve potential
-collisions with two components of the linac treatment system.
+collisions with two components of the LINAC treatment system.
 
 ** Methods and Materials
    :PROPERTIES:
@@ -4348,12 +4348,12 @@ this study.
 *** TODO [#A] Generalized-trajectory framework :noexport:
     DEADLINE: <2017-12-01 Fri>
 In applying the generalized-reconstruction framework discussed in
-[[id:58A6E225-522B-4620-BEDB-F81AD30070C3][Framework implementation with Varian TrueBeam kV-CBCT system]] to this
+[[id:58A6E225-522B-4620-BEDB-F81AD30070C3][/Framework implementation with Varian TrueBeam kV-CBCT system]]/ to this
 specific non-circular trajectory use case of collision avoidance, care
 must be taken to correctly transform the coordinate system of the
 imaging geometry to correctly with the patient's treatment. In the
 case of utilizing the virtual isocenter to prevent potential patient
-collisions with the linac treatment head, it was necessary to
+collisions with the LINAC treatment head, it was necessary to
 implement these calculations in order to acquire projection
 information that was equivalent to that of the standard clinical
 scanning configuration.
@@ -4364,8 +4364,8 @@ scanning configuration.
     :END:
 The addition of couch motion to the imaging trajectory does increase
 the degrees of freedom for which proper geometric calibration must be
-acquired. Using the methods described in the chapter [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric
-calibration]], we computed corrections to the nominal reported couch,
+acquired. Using the methods described in the chapter /[[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Geometric
+calibration/]], we computed corrections to the nominal reported couch,
 source and detector positions for each of the tested trajectories.
 
 We reconstructed all of these fixed magnification and dynamic
@@ -5192,7 +5192,7 @@ operation. Simultaneous motion of couch, gantry and imaging arms is
 not fully supported by the TrueBeam; however, the motions required for
 the virtual isocenter scan, which involve only coupled gantry rotation
 and couch translation, are feasible in Developer Mode. Although the
-linac can clearly execute the required motions and acquire the images,
+LINAC can clearly execute the required motions and acquire the images,
 virtual isocenter scanning is as yet not available as a clinical
 capability. In addition, these scans must be reconstructed using
 iterative optimization-based methods, rather than the current
@@ -5241,7 +5241,7 @@ reconstruction program's requirements.
 
 We describe our generalized framework for reconstructing from
 generalized scanning trajectories using optimization-based
-reconstruction methods in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Chapter 2]]. Though we limited ourselves to
+reconstruction methods in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Chapter 2]]/. Though we limited ourselves to
 MLEM to solve our reconstruction problem, we by no means imply that
 this framework is dependent on this algorithm. Not only can other
 optimization-based algorithms be plugged into this framework, more
@@ -5252,7 +5252,7 @@ user ensure that the parameters of the algorithm are carefully
 selected for the desired task.
 
 In addition to developing this framework, we also developed a general
-calibration procedure in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][Chapter 3]] that would accommodate view-by-view
+calibration procedure in [[id:652970b8-4916-4190-b83b-2d6ae117c8b3][/Chapter 3/]] that would accommodate view-by-view
 corrections to the different non-circular trajectories we studied. We
 then proceeded to use this calibration protocol to make calibration
 corrections for the non-circular trajectory classes we studied in the
@@ -5265,7 +5265,7 @@ the right problem.
 
 As our investigation into different non-circular trajectories was
 motivated by existing clinical limitations currently encountered in
-using linac-mounted CBCT for IGRT, we then found two clinical examples
+using LINAC-mounted CBCT for IGRT, we then found two clinical examples
 where the ability to use non-circular trajectories could provide a
 solution. By first selecting two particular tasks to test our
 framework, we were able to constrain our investigation of the
@@ -5275,8 +5275,8 @@ for the desired task, similar task-based considerations must be given
 to selecting what type of non-circular trajectory, if any, would be
 suited for intended application.
 
-The first clinical limitation we studied in [[id:eaae199f-f899-4862-af50-720895a31c36][Chapter 4]] is the problem
-of the limited axial FOV provided by linac-mounted CBCT systems. Since
+The first clinical limitation we studied in /[[id:eaae199f-f899-4862-af50-720895a31c36][Chapter 4/]] is the problem
+of the limited axial FOV provided by LINAC-mounted CBCT systems. Since
 the axial coverage provided by the CBCT detector is limited by
 engineering constraints, we hypothesized that non-circular
 trajectories would be able to extend the axial FOV while maintaining
@@ -5295,18 +5295,18 @@ Additionally, our framework demonstrated that it is possible to extend
 the axial spacing between the planes of the two circles into distances
 that exceed the support of two stacked FDK volumes.
 
-The second clinical problem in using linac-mounted CBCT for IGRT that
-we investigated in [[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Chapter 5]] is that of potential patient collisions
-with the linac when attempting to acquire a CBCT. For some of the
+The second clinical problem in using LINAC-mounted CBCT for IGRT that
+we investigated in /[[id:99055e18-4b61-404e-9408-ebd5fd0a5d8d][Chapter 5/]] is that of potential patient collisions
+with the LINAC when attempting to acquire a CBCT. For some of the
 treatment positions used for breast, lung, and head and neck cancer
 patients, the orientation of the patient on the treatment table puts
-them at risk of being hit by the linac as it rotates around the
+them at risk of being hit by the LINAC as it rotates around the
 patient. In this study, we investigated different non-circular
 trajectories that could alleviate the different types of collisions
 potentially faced by these patients. One such trajectory would
 increase the radius of the kV-imaging detector in a potential
 collision zone to create a dynamic magnification trajectory. To avoid
-potential collisions with the linac treatment head, we studied a
+potential collisions with the LINAC treatment head, we studied a
 virtual isocenter trajectory that moved the patient couch while the
 gantry rotated to maintain a safe distance between the patient and
 treatment head to ensure no collision would take place. Finally, we
@@ -5319,7 +5319,7 @@ clinical circular trajectory.
 
 In conclusion, we found that our non-circular scanning trajectory
 framework using optimization-based reconstruction methods have the
-potential to address limitation of linac-mounted CBCT for IGRT. We
+potential to address limitation of LINAC-mounted CBCT for IGRT. We
 selected specific non-circular trajectories that we knew had the
 potential to address real clinical limitations. In finding that the
 subsequent image quality was no worse than that achieved by the
