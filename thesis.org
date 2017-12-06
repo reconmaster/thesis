@@ -68,48 +68,11 @@ I also would like to thank my committee members Drs. Hania Al-Hallaq and Emil Si
 
 Furthermore, I would like to thanks my fellow friends and lab mates Sean Rose and Drs. Buxin Chen, Zheng Zhang, Adrian S\'anchez, Xiao Han, Junguo Bian, Dan Xia, and Erik Pearson. Together, they have provided vast amounts of help, feedback, support, and friendship during my graduate work. I would also like to thank my classmate Dr. Meredith Sadinski as well as fellow students Drs. Dave Rigie, Johnathan Rosenfield, Gage Redler, Alex Cunliffe, Kevin Little, Zachary Grelewic, and Zacariah Labby who also provided engaging discussion and feedback throughout my studies. I also would like to extend my gratitude to the rest of the students in the Committee of Medical Physics for providing a wonderful learning environment.
 
-This work was made possible by in part by the Lawrence H. Lanzl Fellowship and NIH Grants R01 CA182264, R01EB018102, S10 RR021039 and P30 CA14599. Additional funding was provided by Varian Medial Systems with particular gratitude to Dr. Timo Berkhus for stimulating conversation and feedback as well as Pascal Paysan and Dieter Seghers for providing and assisting with the iTools Reconstruction software. The contents of this work are solely the responsibility of the author and do not necessarily represent the official view of any of the supporting organizations.
+This work was made possible by in part by the Lawrence H. Lanzl Fellowship, the GPMP T32 training grant, and NIH Grants R01 CA182264, R01EB018102, S10 RR021039 and P30 CA14599. Additional funding was provided by Varian Medial Systems with particular gratitude to Dr. Timo Berkhus for stimulating conversation and feedback as well as Drs. Pascal Paysan and Dieter Seghers for providing and assisting with the iTools Reconstruction software. The contents of this work are solely the responsibility of the author and do not necessarily represent the official view of any of the supporting organizations.
 
 \abstract
 % Enter Abstract here 350 word max
-The use of cone-beam computed tomography (CBCT) in image-guided
-radiation therapy (IGRT) has helped linear accelerators (LINACs)
-become the most popular form of radiation therapy today. The ability
-to acquire tomographic information from the patient at the treatment
-position allows for setup and target verification as well as steeper
-dose gradients and higher dose fractions while simultaneously
-providing images that allow the oncologist to monitor the tumor's
-response to the therapy. The current kV-CBCT scanning configuration of
-this LINAC-mounted imaging system provides a circular trajectory of
-the source and detector around the patient as the LINAC gantry makes a
-single rotation around the patient. Though this provides the requisite
-trajectory for the analytic-base FDK reconstruction algorithm that is
-the workhorse of clinical reconstruction in IGRT today, there are some
-issues of this scanning geometry that can either limit or even prevent
-the use of this CBCT information in clinical practice. In this work,
-we develop a generalized non-circular scanning trajectory framework
-enabled by optimization-based reconstruction that allow for
-non-circular trajectories that directly address two issues of
-LINAC-mounted CBCT for IGRT. The first issue is overcoming the limited
-axial coverage provided by the current detector size and circular
-acquisition trajectory. This is problematic as the CBCT axial coverage
-is smaller than the potential treatment field size. As engineering
-costs restrict the axial coverage of the detector, we investigate
-potential non-circular trajectories that can extend the axial coverage
-with current LINAC-mounted CBCT detectors. The other existing
-limitation that could be resolved with non-circular scanning
-trajectories is that of potential patient collisions with the LINAC
-gantry. As some patient treatment positions can put the patient in a
-collision path with components of the LINAC gantry, the inability to
-acquire the full circular rotation can lead to forgoing the CBCT. This
-is another problem to which we provide example trajectories that could
-alleviate these collisions while still acquiring useful CBCT images.
-We found that in both of these examples, our non-circular imaging
-framework was able to reconstruct images that have comparable image
-quality to the current clinical method using a single circular scan
-while simultaneously providing potential solutions to the current
-clinical limitation of restricted axial coverage and potential patient
-collisions with the LINAC gantry.
+The use of cone-beam computed tomography (CBCT) in image-guided radiation therapy (IGRT) has helped linear accelerators (LINACs) become the most popular form of radiation therapy today. The ability to acquire tomographic information from the patient at the treatment position allows for setup and target verification as well as steeper dose gradients and higher dose fractions while simultaneously providing images that allow the oncologist to monitor the tumor's response to the therapy. The current kV-CBCT scanning configuration of this LINAC-mounted imaging system provides a circular trajectory of the source and detector around the patient as the LINAC gantry makes a single rotation around the patient. Though this provides the requisite trajectory for the analytic-base FDK reconstruction algorithm that is the workhorse of clinical reconstruction in IGRT today, there are some issues of this scanning geometry that can either limit or even prevent the use of this CBCT information in clinical practice. In this work, we develop a generalized non-circular scanning trajectory framework enabled by optimization-based reconstruction that allow for non-circular trajectories that directly address two issues of LINAC-mounted CBCT for IGRT. The first issue is overcoming the limited axial coverage provided by the current detector size and circular acquisition trajectory. This is problematic as the CBCT axial coverage is smaller than the potential treatment field size. As engineering costs restrict the axial coverage of the detector, we investigate potential non-circular trajectories that can extend the axial coverage with current LINAC-mounted CBCT detectors. The other existing limitation that could be resolved with non-circular scanning trajectories is that of potential patient collisions with the LINAC gantry. As some patient treatment positions can put the patient in a collision path with components of the LINAC gantry, the inability to acquire the full circular rotation can lead to forgoing the CBCT. This is another problem to which we provide example trajectories that could alleviate these collisions while still acquiring useful CBCT images. We found that in both of these examples, our non-circular imaging framework was able to reconstruct images that have comparable image quality to the current clinical method using a single circular scan while simultaneously providing potential solutions to the current clinical limitation of restricted axial coverage and potential patient collisions with the LINAC gantry.
 
 \mainmatter
 % Main body of text follows
