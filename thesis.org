@@ -3837,6 +3837,18 @@ the standard deviation of the ROI. The first plot in Figure
 and the bottom plot in Figure ([[ref:fig:fov_sensROIhalf]]) corresponds to
 the half-fan detector configuration.
 
+In both Figures ([[ref:fig:fov_sensROIfull]]) and
+([[ref:fig:fov_sensROIhalf]]), we can see there is a consistent
+reproducibility between the different scanning trajectories
+reconstructed with both the full-fan and half fan detector
+configurations. As the FDK reconstruction is from Varian's iTools
+software, it serves as a reference for the performance of current
+clinical reconstructions available from this LINAC-mounted CBCT
+imaging system. We used the Hounsfield values from the clinical
+reconstruction in the sensitometry module to determine a map from
+electron density to CT number that we then used to convert the MLEM
+reconstructions to Hounsfield units.
+
 #+BEGIN_EXPORT latex
 \begin{figure}
 \centering
@@ -3876,7 +3888,10 @@ Figure ([[ref:fig:fov_sensROI_full_half]]) shows the ROI CT numbers of
 both the FDK and MLEM reconstructions for both the full-fan and
 half-fan detector configurations. Again, each bar is centered on the
 mean CT number, and the height corresponds to the standard deviation
-of the ROI.
+of the ROI. Again, these plots server for comparison purposes between
+scans rather than illustrating the true CT number as even the clinical
+iTools reconstructions show a bias given as the CT number for water is
+not mapped to zero HU.
 
 #+CAPTION: Comparison of the MLEM algorithm as a direct replacement of the current clinical method of axial-FOV extension by stacking two independently reconstructed circular scans together. These ROIs are measured from two independently reconstructed circular scans (both full and half fan) using MLEM and FDK. As in Figure ([[ref:fig:sensROIplot]]), the bars are centered on the mean CT number of the ROI, and the height corresponds to the standard deviation in that ROI.
 #+ATTR_LaTeX: :width \textwidth
@@ -3894,7 +3909,7 @@ get an approximate characterization of how the different classes of
 trajectories reconstructed with our framework compare to the current
 clinical standard of stacked FDK.
 
-#+CAPTION: Grid of the different spatial resolution metrics extracted from the MTF analysis of the dual-Catphan phantom scan using the different trajectory classes. The green points are the full-fan detector configuration and the blue points are the half-fan detector configuration.
+#+CAPTION: Grid of the different spatial resolution metrics extracted from the MTF analysis of the dual-Catphan phantom scan using the different trajectory classes. The green points are the full-fan detector configuration and the blue points are the half-fan detector configuration. As CT lacks linear-shift invariance, these MTF metrics are shown only to illustrate the generally consistent spatial resolution beteween the different classes of trajectories reconstructed with MLEM and how this compares to the stacked FDK with both the standard and sharp kernels,
 #+ATTR_LaTeX: :width \textwidth 
 #+LABEL: fig:fov_mtf_alg
 [[file:figures/fov/mtf/alg_grid.pdf]]
@@ -3908,22 +3923,27 @@ using the MTF metric only a rough estimate of spatial resolution
 performance, there are a few reconstructions where the metric values
 are somewhat anomalous.
 
-#+CAPTION: Metrics of acrylic CNR for FDK and MLEM.
+#+CAPTION: Acrylic CNR for FDK and MLEM with full-fan and half-fan detector configurations.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_acrylic_cnr
 [[file:figures/fov/cnr/acrylic.pdf]]
 
 In addition to the spatial resolution metrics, we also used the CTP
-404 sensitometry module to calculate the CNR of the acrylic and
+404 sensitometry module to calculate the CNR of the acrylic, PMP, and
 polystyrene inserts. These are the inserts that provide the lowest
 contrast relative to the water-equivalent inserts as can be seen in
 the ROI measurements in Figure ([[ref:fig:sensROIplot]]). Figures
-([[ref:fig:fov_acrylic_cnr]]) and ([[ref:fig:fov_poly_cnr]]) show the
+([[ref:fig:fov_acrylic_cnr]]), (), and ([[ref:fig:fov_poly_cnr]]) show the
 calculated CNR plots for the different algorithms and trajectories for
 both the full-fan and half-fan detector configurations for two
 different contrast plugs, acrylic and polystyrene.
 
-#+CAPTION: Metrics of polystyrene CNR for FDK and MLEM.
+#+CAPTION: PMP CNR for FDK and MLEM with full-fan and half-fan detector configurations.
+#+ATTR_LaTeX: :width \textwidth
+#+LABEL: fig:fov_pmp_cnr
+[[file:figures/fov/cnr/pmp.pdf]]
+
+#+CAPTION: Polystyrene CNR for FDK and MLEM  with full-fan and half-fan detector configurations.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_poly_cnr
 [[file:figures/fov/cnr/poly.pdf]]
@@ -4017,9 +4037,27 @@ in the full-fan versus half-fan configuration. As Figure
 the different detector configuration do not agree with each other. The
 two detector configurations for MLEM however, not only are consistent
 with each other, but they also fall between the two extremes bracketed
-by the FDK results. The consistency of the MLEM results, and the fact
-that they fall between the FDK results suggests that MLEM is probably
-also closer to the real CT number.
+by the FDK results which ought to be the same number.
+
+The MTF results shown in Figure ([[ref:fig:fov_mtf_alg]]) also reflect a
+consistency among the different classes of scanning trajectories
+reconstructed with MLEM. Though the difficulty of MTF metrics in CT
+introduce some nonsensical outiers, we can see that the MLEM
+reconstructions perform as well as the standard FDK, and that the
+sharper kernel does produce better spatial resolution. This is best
+illustrated by the top row of Figure ([[ref:fig:fov_mtf_alg]]) that shows
+the bar pattern MTF results which are more robust to the violation of
+linear-shift invariance.
+
+Similarly, the CNR results shown in Figures ([[ref:fig:fov_acrylic_cnr]]),
+([[ref:fig:fov_pmp_cnr]]), and ([[ref:fig:fov_poly_cnr]]) demonstrate the same
+consistency for the MLEM reconstructions of the different trajectory
+classes. As expected, the increased spatial resolution of the sharp
+kernel in FDK is accompanied by a loss of contrast. Other than the
+very low-contrast acrylic CNR, the FDK results using the two kernels
+bracket the MLEM reconstruction results. Again, we only wish to
+illustrate that these new trajectories with optimization-based
+reconstruction can perform as well as the current clinical standard.
 
 Finally, it is important to point out that for the smooth trajectory,
 the half-fan configuration does not provide complete support when
