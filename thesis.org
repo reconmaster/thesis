@@ -1242,20 +1242,22 @@ Here, our reconstruction program is formulated as
 where $D_{KL}(\mathbf{f})$ is the Kullback-Leibler (KL) divergence
 between $\mathbf{g}$ and $\mathcal{H}\mathbf{f}$
 cite:kullback_information_1951,barrett_foundations_2003. The KL
-divergence, which is also known as relative entropy, is minimized with
-the MLEM algorithm
+divergence 
 \begin{equation}
-f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{W}_{ii}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}
+  D_{KL}=\sum\limits_{i=1}^{M}\left{g_{i} - \widetilde{g_{i}} + g_{i}\text{ln}\left(\frac{\widetilde{g_{i}}}{g_{i}}\right) \right}
+  \label{eq:opt_kl}
+\end{equation}
+where $\widetilde{g} = \mathcal{H}f$ or relative entropy, is minimized
+with the MLEM algorithm
+\begin{equation}
+f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}
   \label{eq:opt_mlem}
 \end{equation}
 where $f_{j}^{n}$ is $j-\text{th}$ voxel value at iteration $n$ and
 $\mathcal{H}_{ij}$ is the element of the system matrix at the
 $i-\text{th}$ row and $j-\text{th}$ column for $i=1,2,...,M$ and
 $j=1,2,...,N$. The initial image estimate for the reconstructions was
-$\mathbf{f}^{(0)}=1$. The $M\times M$ diagonal matrix $\mathcal{W}$ weights
-the corresponding data entries as is typically done for a standard
-half-fan detector configuration for a circular scan
-cite:bian_optimization-based_2013.
+$\mathbf{f}^{(0)}=1$.
 
 We define a scanning trajectory as the sequence of source and detector
 positions used to acquire each projection view. For all of the
@@ -1836,7 +1838,7 @@ draw(Label("$x_{img}$",position=EndPoint,S),pshift*(0,0,0)--pshift*(ax_scale,0,0
 draw(Label("$y_{img}$",position=EndPoint),pshift*(0,0,0)--pshift*(0,0,-ax_scale),Arrow3);
 #+END_SRC
 
-#+CAPTION:  The image or patient coordinate system that will be used as the basis for the reconstruction system matrix $\matchal{H}$ in Equation ([[ref:eq:opt_linmodel_patient]]). By using the view-by-view transform enabled by optimization-based methods, this can incorporates the relative motion of the imaging source and detector as well as the motion of the couch and gantry relative to the point of interest in the patient dentoted by $\boldsymbol{r}_{img}}$.
+#+CAPTION:  The image or patient coordinate system that will be used as the basis for the reconstruction system matrix $\mathcal{H}$ in Equation ([[ref:eq:opt_linmodel_patient]]). By using the view-by-view transform enabled by optimization-based methods, this can incorporates the relative motion of the imaging source and detector as well as the motion of the couch and gantry relative to the point of interest in the patient dentoted by $\boldsymbol{r}_{img}}$.
 #+LABEL: fig:opt_coords_img
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+RESULTS: fig:opt_coords_img
