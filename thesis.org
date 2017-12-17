@@ -18,7 +18,7 @@
 
 #+BEGIN_EXPORT latex
 %% Use these commands to set biographic information for the title page:
-\title{Enabling Novel IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
+\title{Enabling Non-Circular IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
 \author{Andrew Davis}
 \department{Committee on Medical Physics}
 \division{Biological Sciences}
@@ -3909,7 +3909,7 @@ get an approximate characterization of how the different classes of
 trajectories reconstructed with our framework compare to the current
 clinical standard of stacked FDK.
 
-#+CAPTION: Grid of the different spatial resolution metrics extracted from the MTF analysis of the dual-Catphan phantom scan using the different trajectory classes. The green points are the full-fan detector configuration and the blue points are the half-fan detector configuration. As CT lacks linear-shift invariance, these MTF metrics are shown only to illustrate the generally consistent spatial resolution beteween the different classes of trajectories reconstructed with MLEM and how this compares to the stacked FDK with both the standard and sharp kernels,
+#+CAPTION: Grid of the different normalized spatial resolution metrics extracted from the MTF analysis of the dual-Catphan phantom scan using the different trajectory classes. The green points are the full-fan detector configuration and the blue points are the half-fan detector configuration. As CT lacks linear-shift invariance, these MTF metrics are shown only to illustrate the generally consistent spatial resolution beteween the different classes of trajectories reconstructed with MLEM and how this compares to the stacked FDK with both the standard and sharp kernels,
 #+ATTR_LaTeX: :width \textwidth 
 #+LABEL: fig:fov_mtf_alg
 [[file:figures/fov/mtf/alg_grid.pdf]]
@@ -3957,7 +3957,7 @@ extended-axial-FOV trajectories using a half-fan detector
 configuration. Each column in the figure corresponds to one of the
 scanning trajectories.
 
-#+CAPTION: Sagittal, coronal, and transverse slices of the CIRS torso phantom reconstructions. Given the incrased size of this anthropomorphic phantom, only the half-fan configuration was used as the full-fan configuration would have incurred truncation artifacts. The display window is [-160, 240] HU.
+#+CAPTION: Sagittal, coronal, and transverse slices of the CIRS torso phantom reconstructions. Given the increased size of this anthropomorphic phantom, only the half-fan configuration was used as the full-fan configuration would have incurred truncation artifacts. The display window is [-160, 240] HU. The red arrows indicate the axial location of the two planes of the source's circular component of the different trajectories, and is applicable for the first two rows.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_ed
 [[file:figures/fov/edFOV.pdf]]
