@@ -552,16 +552,17 @@ finding an inverse to the X-ray transform
 \end{equation}
 where the data function $g$ is acquired by integrating along the ray
 from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
-the object function $f$. A fundamental problem with these
-reconstruction algorithms when practically reconstructing $f$ is the
-assumption of a continuous-to-continuous (CC) model. These
-analytic-based reconstruction algorithms impose dense sampling
-requirements for both the detector and number of views to approximate
-a continuous data function. Given that the data function from the
-digital detector and the numerical array for storing the reconstructed
-image are both discrete, a more natural approach to the inverse
-problem would be a discrete-to-discrete (DD) imaging model
-cite:barrett_foundations_2003.
+the object function $f$. 
+
+A fundamental problem with these reconstruction algorithms when
+practically reconstructing $f$ is the assumption of a
+continuous-to-continuous (CC) model. These analytic-based
+reconstruction algorithms impose dense sampling requirements for both
+the detector and number of views to approximate a continuous data
+function. Given that the data function from the digital detector and
+the numerical array for storing the reconstructed image are both
+discrete, a more natural approach to the inverse problem would be a
+discrete-to-discrete (DD) imaging model cite:barrett_foundations_2003.
 
 #+LABEL: fig:opt_analytic
 #+BEGIN_SRC asymptote :file figures/opt/analytic.pdf :exports results :tangle no
@@ -1240,15 +1241,15 @@ Here, our reconstruction program is formulated as
   \label{eq:opt_kl}
 \end{equation}
 where $D_{KL}(\mathbf{f})$ is the Kullback-Leibler (KL) divergence
-between $\mathbf{g}$ and $\mathcal{H}\mathbf{f}$
-cite:kullback_information_1951,barrett_foundations_2003. The KL
-divergence 
+between $\mathbf{g}$ and $\mathcal{H}\mathbf{f}$ which is calculated
+as
 \begin{equation}
   D_{KL}=\sum\limits_{i=1}^{M}\left{g_{i} - \widetilde{g_{i}} + g_{i}\text{ln}\left(\frac{\widetilde{g_{i}}}{g_{i}}\right) \right}
   \label{eq:opt_kl}
 \end{equation}
-where $\widetilde{g} = \mathcal{H}f$ or relative entropy, is minimized
-with the MLEM algorithm
+where $\widetilde{g} = \mathcal{H}f$
+cite:kullback_information_1951,barrett_foundations_2003. The KL
+divergence or relative entropy is minimized with the MLEM algorithm
 \begin{equation}
 f_j^{(n+1)}=\frac{f_j^{(n)}}{\sum\nolimits_{i=1}^{M}\mathcal{H}_{ij}}\sum\limits_{i=1}^{M}\mathcal{H}_{ij}\frac{g_i}{\sum\nolimits_{j=1}^{N}\mathcal{H}_{ij}f_j^{(n)}}
   \label{eq:opt_mlem}
@@ -5326,12 +5327,12 @@ potential to address limitation of LINAC-mounted CBCT for IGRT. We
 selected specific non-circular trajectories that we knew had the
 potential to address real clinical limitations. In finding that the
 subsequent image quality was no worse than that achieved by the
-existing clinical methods, we hopefully demonstrated that these
-non-circular scanning trajectories have the potential to address
-limitations of CBCT in IGRT. Though we did not explicitly study any
-other application here, we do not think this framework is limited to
-these two applications or even solely to the purview of radiotherapy.
-In selecting the two examples shown here, we have only wished to
+existing clinical methods, we demonstrated that these non-circular
+scanning trajectories have the potential to address limitations of
+CBCT in IGRT. Though we did not explicitly study any other application
+here, we do not think this framework is limited to these two
+applications or even solely to the purview of radiotherapy. In
+selecting the two examples shown here, we have only wished to
 demonstrate the potential utility enabled by non-circular trajectories
 with optimization-based reconstruction. As with all tomographic
 reconstruction problems, careful consideration must be given to the
