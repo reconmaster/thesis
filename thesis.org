@@ -1929,7 +1929,7 @@ cases provide scanning configurations for which clinical image quality
 phantoms do not exist, we tried to use phantoms with direct clinical
 relevance.
 
-#+CAPTION: Schematic from the Catphan manual of the the CTP 404 sensitometry module which features a variety of different electron density inserts which can be used for contrast and CT number analysis as well as beads and wires for extracting spatial resolution metrics.
+#+CAPTION: Schematic from the Catphan 504 manual of the the CTP 404 sensitometry module which features a variety of different electron density inserts which can be used for contrast and CT number analysis as well as beads and wires for extracting spatial resolution metrics.
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+LABEL: fig:opt_ctp404
 [[file:figures/opt/catphan_ctp404.png]]
@@ -1953,7 +1953,7 @@ calculated from the bar patterns themselves
 cite:droege_practical_1982, as well as any suitably high contrast edge
 in the image cite:rossmann_point_1969.
 
-#+CAPTION: Schematic from the Catphan manual of the CTP 528 module that provides a bar-pattern phantom for evaluating spatial resolution metrics.
+#+CAPTION: Schematic from the Catphan 504 manual of the CTP 528 module that provides a bar-pattern phantom for evaluating spatial resolution metrics.
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+LABEL: fig:opt_ctp528
 [[file:figures/opt/catphan_ctp528.png]]
@@ -3496,7 +3496,7 @@ trajectory requires no gantry rotation during the translation stage,
 we did acquire one CLC trajectory using translation of the robotic
 imaging arms for comparison.
 
-#+CAPTION: Catphan  sagittal view showing the axial extent of a single Catphan 504 phantom.
+#+CAPTION: Catphan  sagittal view showing the axial extent of a single Catphan 504 phantom from the Catphan 504 manual.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_catphan_sagittal
 [[file:figures/fov/catphan_incr_module_pos.png]]
@@ -3513,7 +3513,7 @@ characterizing low-contrast resolution as a function of axial position
 within a single scan. Figure ([[ref:fig:fov_catphan_sagittal]]) shows the
 limited coverage afforded by a single Catphan 504 phantom.
 
-#+CAPTION: Catphan CTP 515 low-contrast module schematic.
+#+CAPTION: Catphan CTP 515 low-contrast module schematic from the Catphan 504 manual.
 #+ATTR_LaTeX: :width 0.75\textwidth
 #+LABEL: fig:fov_catphan_ctp515
 [[file:figures/fov/ctp515.png]]
