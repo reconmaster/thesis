@@ -21,9 +21,9 @@
 \title{Enabling Non-Circular IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
 \author{Andrew Davis}
 \department{Committee on Medical Physics}
-\division{Biological Sciences}
-\degree{Ph. D.}
-\date{December, 2017}
+\division{Biological Sciences and The Pritzker School of Medicine}
+\degree{Doctor of Philosophy}
+\date{March 2018}
 
 %% Use these commands to set a dedication and epigraph text
 % use one of bsmi(trad Chinese), gbsn(simp Chinese), min(Japanese), mj(Korean); see:
@@ -1882,9 +1882,6 @@ have such shifts between the imaging system and the object. In our
 work the TrueBeam system, these shifts could arise from motion of the
 imaging arms relative to the patient, motion of the patient table, or
 even simultaneous motion of both.
-
-**** code                                    :noexport:
-
 ** Metric Evaluation
    :PROPERTIES:
    :ID:       bbb809be-d901-4945-b045-bb886cf349bd
@@ -4349,18 +4346,96 @@ this study.
 |-------------------+------------------------------------------|
 **** figures                                 :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb]]
-*** TODO [#A] Generalized-trajectory framework :noexport:
-    DEADLINE: <2017-12-01 Fri>
-In applying the generalized-reconstruction framework discussed in
+*** TODO [#A] Generalized-trajectory framework detector offset
+    DEADLINE: <2017-12-29 Fri>
+    :PROPERTIES:
+    :ID:       DFC48B5C-0859-406D-A958-A08279D1E6D5
+    :END:
+When applying the generalized-reconstruction framework discussed in
 [[id:58A6E225-522B-4620-BEDB-F81AD30070C3][/Framework implementation with Varian TrueBeam kV-CBCT system/]] to this
 specific non-circular trajectory use case of collision avoidance, care
 must be taken to correctly transform the coordinate system of the
-imaging geometry to correctly with the patient's treatment. In the
+imaging geometry to ensure the desired detector offset is used. In the
 case of utilizing the virtual isocenter to prevent potential patient
-collisions with the LINAC treatment head, it was necessary to
-implement these calculations in order to acquire projection
-information that was equivalent to that of the standard clinical
-scanning configuration.
+collisions with the LINAC treatment head using an offset detector, it
+we used the following implementation of the framework to calculate the
+detector offset for the virtual isocenter trajectory that would
+provide projection illumination of the patient on the offset detector
+as that of a given detector offset for the standard clinical scanning
+configuration.
+
+#+LABEL: fig:col_det_off
+#+BEGIN_SRC asymptote :file figures/col/det_off_geo.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+// settings.prc = false;
+// settings.render = 0;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+// view configuration
+size(10cm);
+// currentprojection=orthographic(-15,10,20,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// detector
+real dlat=0, dvrt=50;
+pair det=(dvrt,dlat);
+
+real ulen=40.0, vlen=30.0;
+
+path detector=(dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat);
+pair det_cent=(dvrt,0);
+
+// source
+real slat=0, svrt=-100;
+pair src=(svrt,slat);
+
+// rotate sys and draw
+real theta=30;
+
+draw(Label("$g\left(\mathbf{r}_{0}, \hat{\theta}\right)$",position=MidPoint),rotate(theta)*detector, black);
+draw(Label("$\mathbf{r}_0$",position=BeginPoint,black),rotate(theta)*src--rotate(theta)*det_cent, dashed+red,Arrow(TeXHead));
+
+// show the cone angle
+real f_loc = 1.3;
+real op_c = 0.5;
+draw(rotate(theta)*src--rotate(theta)*(dvrt,ulen/2+dlat), blue+opacity(op_c));
+draw(Label("$\gamma$", position=MidPoint),
+     arc(rotate(theta)*src,
+         r=dvrt*f_loc,
+         angle1=theta,
+         angle2=theta+degrees(atan(.5*ulen/(dvrt-svrt)))),
+     blue, arrow=Arrow(TeXHead));
+
+// label("\mathbf(r)_0", src)
+// draw(src--(dvrt, -ulen/2+dlat), dashed+black);
+// draw(src--(dvrt, ulen/2+dlat), dashed+black);
+
+addMargins(0.5cm, 0.5cm);
+
+// Draw axis
+real ax_scale=30;
+draw(Label("$x$",position=EndPoint),(-ax_scale,0)--(ax_scale,0),black,Arrow(TeXHead));
+draw(Label("$y$",position=EndPoint),(0,-ax_scale)--(0,ax_scale),black,Arrow(TeXHead));
+
+// show gantry angle
+draw(Label("$\theta$",position=MidPoint,E), arc((0, 0), r=2*ax_scale/3, angle1=0, angle2=theta), red, arrow=Arrow(TeXHead));
+
+// generic object
+real obj_scale=10;
+path obj=(-obj_scale,-obj_scale){dir(45)}..(obj_scale,0)..(obj_scale,obj_scale)..(0,obj_scale)..cycle;
+draw(Label("$f$",position=Relative(0.2)),obj,black);
+#+END_SRC
+
+#+CAPTION:  The projection of the virtual isocenter onto the detector.
+#+ATTR_LaTeX: :width 0.75\textwidth
+#+RESULTS: fig:col_det_off
+[[file:figures/col/det_off_geo.pdf]]
 
 *** Reconstruction
     :PROPERTIES:
