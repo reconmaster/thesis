@@ -3496,7 +3496,7 @@ trajectory requires no gantry rotation during the translation stage,
 we did acquire one CLC trajectory using translation of the robotic
 imaging arms for comparison.
 
-#+CAPTION: Catphan  sagittal view showing the axial extent of a single Catphan 504 phantom from the Catphan 504 manual.
+#+CAPTION: Catphan sagittal view showing the axial extent of a single Catphan 504 phantom from the Catphan 504 manual.
 #+ATTR_LaTeX: :width \textwidth
 #+LABEL: fig:fov_catphan_sagittal
 [[file:figures/fov/catphan_incr_module_pos.png]]
@@ -3813,14 +3813,24 @@ trajectory reconstructions.
     :PROPERTIES:
     :ID:       da41c36b-5e9a-4058-8b45-83b22e4f92d1
     :END:
-Figure ([[ref:fig:fov_catphan_sagittal]]) shows the central sagittal
-slices from the reconstructions of the dual-Catphan phantom scanned
-with each of the extended-axial-FOV trajectories in both the full-fan
-and half-fan detector configurations. The left column of the figure
-represents full-fan detector configuration scans, and the right column
-the half-fan detector configuration scans. From the top row to the
-bottom, these images correspond to the double circle, the CLC, and the
-smooth trajectory.
+Figure ([[ref:fig:fov_dcatphans_itools]]) shows the central sagittal slice
+from the stacked volume of the iTools FDK reconstruction of the
+dual-Catphan phantom scanned with a full-fan detector configuration.
+This is representative of the current clinical method of acquiring an
+extended axial FOV image though the axial spacing exceeds the axial
+support of FDK. Figure ([[ref:fig:fov_dcatphans]]) shows the central
+sagittal slices of MLEM reconstructions of the same dual-Catphan
+configuration with each of the extended-axial-FOV trajectories in both
+the full-fan and half-fan detector configurations. The left column of
+the figure represents full-fan detector configuration scans, and the
+right column the half-fan detector configuration scans. From the top
+row to the bottom, these images correspond to the double circle, the
+CLC, and the smooth trajectory.
+
+#+CAPTION: Sagittal slice of the stacked FDK volumes reconstructed independently with the iTools software. The two circular scans were acquired with a full-fan detector configuration. The display window is [-160, 240] HU.
+#+ATTR_LaTeX: :width 0.5\textwidth
+#+LABEL: fig:fov_dcatphans_itools
+[[file:figures/fov/catphans_combined_fdk_full.jpg]]
 
 #+CAPTION: Sagittal slices of the dual-Catphan MLEM reconstruction acquired with the double-circle, the CLC, and the smooth trajectories (in order from top to bottom). The left column corresponds to the full-fan detector configuration, and the right column corresponds to the half-fan detector configuration. The display window is [-160, 240] HU.
 #+ATTR_LaTeX: :width \textwidth
@@ -4419,9 +4429,9 @@ draw(Label("$\gamma$", position=MidPoint),
 addMargins(0.5cm, 0.5cm);
 
 // Draw axis
-real ax_scale=30;
-draw(Label("$x$",position=EndPoint),(-ax_scale,0)--(ax_scale,0),black,Arrow(TeXHead));
-draw(Label("$y$",position=EndPoint),(0,-ax_scale)--(0,ax_scale),black,Arrow(TeXHead));
+// real ax_scale=30;
+// draw(Label("$x$",position=EndPoint),(-ax_scale,0)--(ax_scale,0),black,Arrow(TeXHead));
+// draw(Label("$y$",position=EndPoint),(0,-ax_scale)--(0,ax_scale),black,Arrow(TeXHead));
 
 // show gantry angle
 draw(Label("$\theta$",position=MidPoint,E), arc((0, 0), r=2*ax_scale/3, angle1=0, angle2=theta), red, arrow=Arrow(TeXHead));
