@@ -21,7 +21,7 @@
 \title{Enabling Non-Circular IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
 \author{Andrew Davis}
 \department{Committee on Medical Physics}
-\division{Biological Sciences and The Pritzker School of Medicine}
+\division{Biological Sciences}
 \degree{Doctor of Philosophy}
 \date{March 2018}
 
@@ -551,8 +551,13 @@ finding an inverse to the X-ray transform
   g(\mathbf{r}_0,\hat{\theta})=\int_0^{\infty}f(\mathbf{r}_0+t\hat{\theta})dt,
 \end{equation}
 where the data function $g$ is acquired by integrating along the ray
-from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$ through
-the object function $f$. 
+from the source at $\mathbf{r}_0$ in the direction $\hat{\theta}$
+through the object function $f$. In x-ray CT, this object function
+represents the distribution of the linear attenuation coefficients of
+the various materials within the object's interior that provide
+exponential attenuation to the incident beam as it travels through the
+object as characterized by Beer's law
+cite:buzug_thorston_m._fundamentals_2008.
 
 A fundamental problem with these reconstruction algorithms when
 practically reconstructing $f$ is the assumption of a

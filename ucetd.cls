@@ -66,10 +66,11 @@
 			\vspace{0.8in}
 			A DISSERTATION SUBMITTED TO\\
 			THE FACULTY OF THE DIVISION OF THE \MakeUppercase{\@division}\\
-			IN CANDIDACY FOR THE DEGREE OF\\
+                        AND THE PRITZKER SCHOOL OF MEDICINE\\
+                        IN CANDIDACY FOR THE DEGREE OF\\
 			\MakeUppercase{\@degree}\\
 			\ \\
-			DEPARTMENT OF \MakeUppercase{\@department}\\
+			\MakeUppercase{\@department}\\
 			\vspace{0.8in}
 			BY\\
 			\MakeUppercase{\@author}\\
