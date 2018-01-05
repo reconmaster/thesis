@@ -1439,6 +1439,28 @@ addMargins(0.5cm, 0.5cm);
      :PROPERTIES:
      :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
      :END:
+#+ATTR_LATEX: :environment longtable :align l|l|l|l|l
+#+CAPTION: Subset of Varian's TrueBeam projection header variables pertaining to the kV-imaging system.
+#+NAME: tab:opt_varian_header
+|-------------+----------------+------------------+--------------------+----------------|
+|             | Couch          | Detector         | Gantry             | kV Source      |
+|-------------+----------------+------------------+--------------------+----------------|
+| Acquisition | CouchLat       | ImagerLat        | GantryAcceleration | Current        |
+|             | CouchLng       | ImagerLng        | StartAngle         | FrameRate      |
+|             | CouchRtn       | ImagerOrigin     | StopAngle          | KVFilter       |
+|             | CouchThickness | ImagerResX       |                    | PulseLength    |
+|             | CouchVrt       | ImagerResY       |                    | SAD            |
+|             | CouchWidth     | ImagerSizeX      |                    | SID            |
+|             |                | ImagerSizeY      |                    | Voltage        |
+|             |                | ScatterGrid      |                    |                |
+|-------------+----------------+------------------+--------------------+----------------|
+| Projection  | CouchLat       | ImagerDeltaLat   | GantryRtn          | SourceAngle    |
+|             | CouchLng       | ImagerDeltaLng   |                    | SourceDeltaLat |
+|             | CouchRtn       | ImagerDeltaPitch |                    | SourceDeltaLng |
+|             | CouchVrt       | ImagerDeltaRtn   |                    | SourceDeltaVrt |
+|             |                | ImagerDeltaVrt   |                    |                |
+|-------------+----------------+------------------+--------------------+----------------|
+
 To study these trajectories on a clinical, kV-imaging system, we
 implemented some of them on Varian's TrueBeam system. The TrueBeam
 Developer Mode provides control of the kV imaging system to allow for
@@ -1463,28 +1485,6 @@ performs a $2 \times 2$ binning for a readout of $1024 \times 768$ square pixels
 of effective size 0.388 mm. The source and detector are mounted on
 robotic arms with the kV beam direction orthogonal to the MV treatment
 beam.
-
-#+ATTR_LATEX: :environment longtable :align l|l|l|l|l
-#+CAPTION: Subset of Varian's TrueBeam projection header variables pertaining to the kV-imaging system.
-#+NAME: tab:opt_varian_header
-|-------------+----------------+------------------+--------------------+----------------|
-|             | Couch          | Detector         | Gantry             | kV Source      |
-|-------------+----------------+------------------+--------------------+----------------|
-| Acquisition | CouchLat       | ImagerLat        | GantryAcceleration | Current        |
-|             | CouchLng       | ImagerLng        | StartAngle         | FrameRate      |
-|             | CouchRtn       | ImagerOrigin     | StopAngle          | KVFilter       |
-|             | CouchThickness | ImagerResX       |                    | PulseLength    |
-|             | CouchVrt       | ImagerResY       |                    | SAD            |
-|             | CouchWidth     | ImagerSizeX      |                    | SID            |
-|             |                | ImagerSizeY      |                    | Voltage        |
-|             |                | ScatterGrid      |                    |                |
-|-------------+----------------+------------------+--------------------+----------------|
-| Projection  | CouchLat       | ImagerDeltaLat   | GantryRtn          | SourceAngle    |
-|             | CouchLng       | ImagerDeltaLng   |                    | SourceDeltaLat |
-|             | CouchRtn       | ImagerDeltaPitch |                    | SourceDeltaLng |
-|             | CouchVrt       | ImagerDeltaRtn   |                    | SourceDeltaVrt |
-|             |                | ImagerDeltaVrt   |                    |                |
-|-------------+----------------+------------------+--------------------+----------------|
 ***** note                                   :noexport:
  Also, you might write a paragraph that describes how these parameters
  come to you - that the acquired projections are stored in files using
@@ -2973,21 +2973,21 @@ has a stationary treatment couch.
 #+ATTR_LATEX: :environment longtable :align l|c|c|c|c
 #+CAPTION: Table of selected calibration offsets at approximately $90^{\circ}$ increments of the gantry angle for the circle and virtual isocenter trajectories shown in these results. For these results, only the detector's lateral and longitudinal position as well as the source's longitudinal position in the radiation coordinate system were allowed to vary in this calibration example.
 #+NAME: tab:geo_cal_offs
-|-------------------+-------------------------------+-------------------+--------------------+------------------|
-| Trajectory        | Gantry angle $\left[^{\circ}\right]$ | Detector lat [mm] | Detector long [mm] | Source long [mm] |
-|-------------------+-------------------------------+-------------------+--------------------+------------------|
-| Circle            |                        -179.9 |              -0.4 |               -0.9 |              1.8 |
-|                   |                         -90.2 |               0.4 |               -0.8 |              1.5 |
-|                   |                          -0.2 |               0.5 |               -0.8 |              2.0 |
-|                   |                          90.2 |              -0.2 |               -1.0 |              2.2 |
-|                   |                         180.2 |              -0.4 |               -1.0 |              1.8 |
-|-------------------+-------------------------------+-------------------+--------------------+------------------|
-| Virtual isocenter |                        -180.1 |              -0.3 |               -0.6 |              2.5 |
-|                   |                         -90.0 |               1.6 |                0.1 |              0.7 |
-|                   |                           0.0 |               0.7 |               -0.7 |              1.5 |
-|                   |                          90.0 |               0.1 |               -1.5 |              3.0 |
-|                   |                         178.2 |              -0.2 |               -0.8 |              2.5 |
-|-------------------+-------------------------------+-------------------+--------------------+------------------|
+|-------------------+--------------------------------------+--------------+---------------+---------------|
+| Trajectory        | Gantry angle $\left[^{\circ}\right]$ | Det lat [mm] | Det long [mm] | Src long [mm] |
+|-------------------+--------------------------------------+--------------+---------------+---------------|
+| Circle            |                               -179.9 |         -0.4 |          -0.9 |           1.8 |
+|                   |                                -90.2 |          0.4 |          -0.8 |           1.5 |
+|                   |                                 -0.2 |          0.5 |          -0.8 |           2.0 |
+|                   |                                 90.2 |         -0.2 |          -1.0 |           2.2 |
+|                   |                                180.2 |         -0.4 |          -1.0 |           1.8 |
+|-------------------+--------------------------------------+--------------+---------------+---------------|
+| Virtual isocenter |                               -180.1 |         -0.3 |          -0.6 |           2.5 |
+|                   |                                -90.0 |          1.6 |           0.1 |           0.7 |
+|                   |                                  0.0 |          0.7 |          -0.7 |           1.5 |
+|                   |                                 90.0 |          0.1 |          -1.5 |           3.0 |
+|                   |                                178.2 |         -0.2 |          -0.8 |           2.5 |
+|-------------------+--------------------------------------+--------------+---------------+---------------|
 #+TBLFM: $2=$2;%.1f::$3=$3;%0.1f::$4=$4;%0.1f::$5=$5;%0.1f
 
 Figure ([[ref:fig:geo_cal_catphan_bar]]) shows the CTP 528 spatial
@@ -3814,7 +3814,7 @@ trajectory reconstructions.
 **** notebooks                               :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"take/metrics.ipynb")][take/metrics.ipynb]]
 
-*** Experimental Data
+*** Experimental data
     :PROPERTIES:
     :ID:       da41c36b-5e9a-4058-8b45-83b22e4f92d1
     :END:
@@ -3948,10 +3948,11 @@ In addition to the spatial resolution metrics, we also used the CTP
 polystyrene inserts. These are the inserts that provide the lowest
 contrast relative to the water-equivalent inserts as can be seen in
 the ROI measurements in Figure ([[ref:fig:sensROIplot]]). Figures
-([[ref:fig:fov_acrylic_cnr]]), (), and ([[ref:fig:fov_poly_cnr]]) show the
-calculated CNR plots for the different algorithms and trajectories for
-both the full-fan and half-fan detector configurations for two
-different contrast plugs, acrylic and polystyrene.
+([[ref:fig:fov_acrylic_cnr]]), ([[ref:fig:fov_pmp_cnr]]), and
+([[ref:fig:fov_poly_cnr]]) show the calculated CNR plots for the different
+algorithms and trajectories for both the full-fan and half-fan
+detector configurations for three different contrast plugs of acrylic,
+polymethylpentane (PMP), and polystyrene.
 
 #+CAPTION: PMP CNR for FDK and MLEM with full-fan and half-fan detector configurations.
 #+ATTR_LaTeX: :width \textwidth
@@ -4361,26 +4362,24 @@ this study.
 |-------------------+------------------------------------------|
 **** figures                                 :noexport:
 ***** [[ipynb:(:url-or-port%20"https://remus.uchicago.edu:9999"%20:name%20"truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb")][truebeam/170603_virtiso_circ_smth_catphan/dynmag/em/dlatlonslon/collision_avoidance.ipynb]]
-*** TODO [#A] Generalized-trajectory framework detector offset
-    DEADLINE: <2017-12-29 Fri>
+*** Generalized-trajectory framework detector offset
     :PROPERTIES:
     :ID:       DFC48B5C-0859-406D-A958-A08279D1E6D5
     :END:
 When applying the generalized-reconstruction framework discussed in
 [[id:58A6E225-522B-4620-BEDB-F81AD30070C3][/Framework implementation with Varian TrueBeam kV-CBCT system/]] to this
-specific non-circular trajectory use case of collision avoidance, care
+specific non-circular trajectory case of collision avoidance, care
 must be taken to correctly transform the coordinate system of the
 imaging geometry to ensure the desired detector offset is used. In the
 case of utilizing the virtual isocenter to prevent potential patient
-collisions with the LINAC treatment head using an offset detector, it
-we used the following implementation of the framework to calculate the
+collisions with the LINAC treatment head using an offset detector, we
+used the following formulation of the framework to calculate the
 detector offset for the virtual isocenter trajectory that would
-provide projection illumination of the patient on the offset detector
-as that of a given detector offset for the standard clinical scanning
-configuration.
+provide equivalent projective illumination of the patient onto the
+detector as that of a standard circular scanning configuration.
 
-#+LABEL: fig:col_det_off
-#+BEGIN_SRC asymptote :file figures/col/det_off_geo.pdf :exports results
+#+LABEL: fig:col_visoDet
+#+BEGIN_SRC asymptote :file figures/col/detGeo.pdf :exports results
 settings.multisample=0;
 settings.outformat="pdf";
 // settings.prc = false;
@@ -4411,46 +4410,292 @@ real slat=0, svrt=-100;
 pair src=(svrt,slat);
 
 // rotate sys and draw
-real theta=30;
+real theta=0;
 
-draw(Label("$g\left(\mathbf{r}_{0}, \hat{\theta}\right)$",position=MidPoint),rotate(theta)*detector, black);
-draw(Label("$\mathbf{r}_0$",position=BeginPoint,black),rotate(theta)*src--rotate(theta)*det_cent, dashed+red,Arrow(TeXHead));
+draw(rotate(theta)*detector, black);
+draw(rotate(theta)*src--rotate(theta)*det_cent, dashed+red, Arrow(TeXHead));
 
-// show the cone angle
-real f_loc = 1.3;
-real op_c = 0.5;
-draw(rotate(theta)*src--rotate(theta)*(dvrt,ulen/2+dlat), blue+opacity(op_c));
-draw(Label("$\gamma$", position=MidPoint),
-     arc(rotate(theta)*src,
-         r=dvrt*f_loc,
-         angle1=theta,
-         angle2=theta+degrees(atan(.5*ulen/(dvrt-svrt)))),
-     blue, arrow=Arrow(TeXHead));
+// Virtual isocenter
+real mag = 1.5;
+real R_v = 10;
 
-// label("\mathbf(r)_0", src)
-// draw(src--(dvrt, -ulen/2+dlat), dashed+black);
-// draw(src--(dvrt, ulen/2+dlat), dashed+black);
+// ray through virt iso
+path virt_iso = rotate(theta)*src--rotate(theta)*(dvrt,R_v*mag);
+real op_c = 0.75;
+draw(virt_iso, blue+opacity(op_c), Arrow(TeXHead));
 
-addMargins(0.5cm, 0.5cm);
+// Labels
+real lab_offset=7;
+draw(Label("$R_v$",position=MidPoint),(0,0)--(0,R_v),arrow=Arrows());
+draw(Label("$m R_v$",position=MidPoint),(dvrt+lab_offset,0)--(dvrt+lab_offset,mag*R_v),bar=Bars,arrow=Arrows());
 
-// Draw axis
-// real ax_scale=30;
-// draw(Label("$x$",position=EndPoint),(-ax_scale,0)--(ax_scale,0),black,Arrow(TeXHead));
-// draw(Label("$y$",position=EndPoint),(0,-ax_scale)--(0,ax_scale),black,Arrow(TeXHead));
-
-// show gantry angle
-draw(Label("$\theta$",position=MidPoint,E), arc((0, 0), r=2*ax_scale/3, angle1=0, angle2=theta), red, arrow=Arrow(TeXHead));
+draw(Label("$w$",position=MidPoint,align=NW),(dvrt-lab_offset,-ulen/2)--(dvrt-lab_offset,ulen/2),bar=Bars,arrow=Arrows());
 
 // generic object
-real obj_scale=10;
+real obj_scale=20;
 path obj=(-obj_scale,-obj_scale){dir(45)}..(obj_scale,0)..(obj_scale,obj_scale)..(0,obj_scale)..cycle;
-draw(Label("$f$",position=Relative(0.2)),obj,black);
+draw(obj,black);
+
+// Margin
+addMargins(0.5cm, 0.5cm);
 #+END_SRC
 
-#+CAPTION:  The projection of the virtual isocenter onto the detector.
+#+CAPTION:  Schematic showing the offset between projecting the virtual isocenter (blue) and the mechanical isocenter (red) onto the detector. By implementing a virtual isocenter offset of $R_{v}$, the projection of this new virtual isocenter onto the detector of width $w$ is a function of the magnification $\left(m \right)$ and is indicated by the blue arrow. The projection of the mechanical isocenter onto the detector is represented by the red arrow.
+#+LABEL: fig:col_visoDet
 #+ATTR_LaTeX: :width 0.75\textwidth
-#+RESULTS: fig:col_det_off
-[[file:figures/col/det_off_geo.pdf]]
+#+RESULTS: fig:col_visoDet
+[[file:figures/col/detGeo.pdf]]
+
+As shown in Figure ([[ref:fig:col_visoDet]]), using a virtual isocenter
+at a distance $R_{v}$ from the mechanical isocenter results in the
+virtual isocenter projecting to a different location on the detector.
+The red arrow in the image indicates the projection of the mechanical
+isocenter onto the detector whereas the blue arrow indicates the
+projective location of the virtual isocenter onto the detector. If
+using a detector of width $w$ with a full-fan configuration relative
+to the mechanical isocenter, this is effectively a half-fan
+configuration with a lateral offset of $mR_{v}$ in the virtual
+isocenter image space for a magnification $m$.
+
+#+LABEL: fig:col_cequiv
+#+BEGIN_SRC asymptote :file figures/col/visoCequiv.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+// settings.prc = false;
+// settings.render = 0;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+// view configuration
+size(10cm);
+// currentprojection=orthographic(-15,10,20,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// Virtual isocenter
+real mag = 1.5;
+real R_v = 10;
+
+// detector
+real dlat=0, dvrt=50;
+pair det=(dvrt,dlat);
+
+real ulen=40.0, vlen=30.0;
+
+path detector=(dvrt,-ulen/2+dlat-R_v*mag)--(dvrt,ulen/2+dlat-R_v*mag);
+pair det_cent=(dvrt,0);
+
+// source
+real slat=0, svrt=-100;
+pair src=(svrt,slat);
+
+// rotate sys and draw
+real theta=0;
+
+draw(rotate(theta)*detector, black);
+draw(rotate(theta)*src--rotate(theta)*det_cent, dashed+red, Arrow(TeXHead));
+
+// ray through virt iso
+// path virt_iso = rotate(theta)*src--rotate(theta)*(dvrt,R_v*mag);
+// real op_c = 0.75;
+// draw(virt_iso, blue+opacity(op_c), Arrow(TeXHead));
+
+// Labels
+real lab_offset=7;
+// draw(Label("$R_v$",position=MidPoint),(0,0)--(0,R_v),arrow=Arrows());
+draw(Label("$-m R_v$",position=MidPoint,align=E),(dvrt+lab_offset,0)--(dvrt+lab_offset,-mag*R_v),bar=Bars,arrow=Arrows());
+
+// draw(Label("$w$",position=MidPoint,align=NW),(dvrt-lab_offset,-ulen/2)--(dvrt-lab_offset,ulen/2),bar=Bars,arrow=Arrows());
+
+// generic object
+real obj_scale=20;
+path obj=(-obj_scale,-obj_scale){dir(45)}..(obj_scale,0)..(obj_scale,obj_scale)..(0,obj_scale)..cycle;
+draw(obj,black);
+
+// Margin
+addMargins(0.5cm, 0.5cm);
+#+END_SRC
+
+#+CAPTION:  If using the effective lateral detector offset for the virtual isocenter configuration shown in Figure ([[ref:fig:col_visoDet]]), a lateral detector offset of $-mR_{v}$ would be necessary to achieve the same illumination geometry for a circular canning trajectory around the mechanical isocenter.
+#+LABEL: fig:col_cequiv
+#+ATTR_LaTeX: :width 0.75\textwidth
+#+RESULTS: fig:col_cequiv
+[[file:figures/col/visoCequiv.pdf]]
+
+If the lateral offset $mR_{v}$ in the virtual-isocenter image space is
+the desired offset, then the lateral detector offset for the circular
+scan must be changed in the opposite lateral direction to achieve
+equivalent illumination of the object on the detector. Figure
+([[ref:fig:col_cequiv]]) shows such an example of the lateral offset
+needed for achieving the equivalent illumination of the object on the
+detector as the virtual isocenter configuration shown in Figure
+([[ref:fig:col_visoDet]]).
+
+#+LABEL: fig:col_cdelta
+#+BEGIN_SRC asymptote :file figures/col/circDelta.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+// settings.prc = false;
+// settings.render = 0;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+// view configuration
+size(10cm);
+// currentprojection=orthographic(-15,10,20,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// Virtual isocenter
+real mag = 1.5;
+real R_v = 10;
+
+// detector
+real dlat=13, dvrt=50;
+pair det=(dvrt,dlat);
+
+real ulen=40.0, vlen=30.0;
+
+path detector=(dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat);
+pair det_cent=(dvrt,0);
+
+// source
+real slat=0, svrt=-100;
+pair src=(svrt,slat);
+
+// rotate sys and draw
+real theta=0;
+
+draw(rotate(theta)*detector, black);
+draw(rotate(theta)*src--rotate(theta)*det_cent, dashed+red, Arrow(TeXHead));
+
+// ray through virt iso
+// path virt_iso = rotate(theta)*src--rotate(theta)*(dvrt,R_v*mag);
+// real op_c = 0.75;
+// draw(virt_iso, blue+opacity(op_c), Arrow(TeXHead));
+
+// Labels
+real lab_offset=7;
+// draw(Label("$R_v$",position=MidPoint),(0,0)--(0,R_v),arrow=Arrows());
+draw(Label("$\Delta$",position=MidPoint,align=W),(dvrt-lab_offset,0)--(dvrt-lab_offset,dlat),bar=Bars,arrow=Arrows());
+
+draw(Label("$\frac{w}{2}+\Delta$",position=MidPoint,align=E),(dvrt+lab_offset,0)--(dvrt+lab_offset,ulen/2+dlat),bar=Bars,arrow=Arrows());
+
+// generic object
+real obj_scale=20;
+path obj=(-obj_scale,-obj_scale){dir(45)}..(obj_scale,0)..(obj_scale,obj_scale)..(0,obj_scale)..cycle;
+draw(obj,black);
+
+// Margin
+addMargins(0.5cm, 0.5cm);
+#+END_SRC
+
+#+CAPTION:  For a typical half-fan detector configuration for a circular scan, a lateral offset of $\Delta$ is chosen.
+#+LABEL: fig:col_cdelta
+#+ATTR_LaTeX: :width 0.75\textwidth
+#+RESULTS: fig:col_cdelta
+[[file:figures/col/circDelta.pdf]]
+
+However, it is also possible to calculate the virtual-isocenter
+lateral offset $\left( \delta\right)$ to achieve the same illumination
+geometry as a half-fan detector configuration for a circular scanning
+trajectory with a lateral offset $\left(\Delta\right)$. As the
+circular scanning trajectory with a half-fan detector configuration
+is used clinically, as shown in Figure ([[ref:fig:col_cdelta]]), this is
+also the approach we used. For each virtual isocenter scan a given
+magnification, we calculated the lateral offset to achieve similar
+projective illumination on the detector.
+
+#+LABEL: fig:col_vdelta
+#+BEGIN_SRC asymptote :file figures/col/visoDelta.pdf :exports results
+settings.multisample=0;
+settings.outformat="pdf";
+// settings.prc = false;
+// settings.render = 0;
+
+import graph3;
+import geometry;
+import solids;
+import three;
+
+// view configuration
+size(10cm);
+// currentprojection=orthographic(-15,10,20,up=Y);
+// currentprojection=perspective(-15,5,13,up=Y);
+// currentlight=White;
+
+// Virtual isocenter
+real mag = 1.5;
+real R_v = 10;
+
+// detector
+real Delta=13;
+real delta=mag*R_v-Delta;
+
+real dlat=-delta, dvrt=50;
+pair det=(dvrt,dlat);
+
+real ulen=40.0, vlen=30.0;
+
+path detector=(dvrt,-ulen/2+dlat)--(dvrt,ulen/2+dlat);
+pair det_cent=(dvrt,0);
+
+// source
+real slat=0, svrt=-100;
+pair src=(svrt,slat);
+
+// rotate sys and draw
+real theta=0;
+
+draw(rotate(theta)*detector, black);
+draw(rotate(theta)*src--rotate(theta)*det_cent, dashed+red, Arrow(TeXHead));
+
+// ray through virt iso
+path virt_iso = rotate(theta)*src--rotate(theta)*(dvrt,R_v*mag);
+real op_c = 0.75;
+draw(virt_iso, blue+opacity(op_c), Arrow(TeXHead));
+
+// Labels
+real lab_offset=7;
+// draw(Label("$R_v$",position=MidPoint),(0,0)--(0,R_v),arrow=Arrows());
+draw(Label("$m R_v$",position=MidPoint),(dvrt+lab_offset,0)--(dvrt+lab_offset,mag*R_v),bar=Bars,arrow=Arrows());
+draw(Label("$\delta$",position=MidPoint,align=NW),(dvrt-lab_offset,0)--(dvrt-lab_offset,delta),bar=Bars);
+
+draw(Label("$\frac{w}{2}+\Delta$",position=MidPoint,align=E),(dvrt+5*lab_offset,mag*R_v)--(dvrt+5*lab_offset,-ulen/2+dlat),bar=Bars,arrow=Arrows());
+
+// generic object
+real obj_scale=20;
+path obj=(-obj_scale,-obj_scale){dir(45)}..(obj_scale,0)..(obj_scale,obj_scale)..(0,obj_scale)..cycle;
+draw(obj,black);
+
+// Margin
+addMargins(0.5cm, 0.5cm);
+#+END_SRC
+
+#+CAPTION:  To achieve the equivalent detector support for the circular trajectory lateral offset $\left(\Delta\right)$ in Figure ([[ref:fig:col_cdelta]]), a lateral offset of $\delta$ must be used.
+#+LABEL: fig:col_vdelta
+#+ATTR_LaTeX: :width 0.75\textwidth
+#+RESULTS: fig:col_vdelta
+[[file:figures/col/visoDelta.pdf]]
+
+Once the desired lateral offset $\left(\Delta\right)$ was chosen for
+the half-fan detector configuration, we then calculated the
+virtual-isocenter offset as
+\begin{equation}
+  \delta=mR_{v}-\Delta.
+  \label{eq:col_visoDelta}
+\end{equation}
+By then utilizing this offset, we could replicate the projection of
+the virtual isocenter onto the detector as using the offset
+$\left(\Delta\right$) in Figure([[ref:fig:col_cdelta]]). With this choice
+of lateral offset, the virtual isocenter is then projected onto the
+detector as illustrated in Figure ([[ref:fig:col_vdelta]]).
 
 *** Reconstruction
     :PROPERTIES:
