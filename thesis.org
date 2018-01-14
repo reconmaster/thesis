@@ -19,7 +19,7 @@
 #+BEGIN_EXPORT latex
 %% Use these commands to set biographic information for the title page:
 \title{Enabling Non-Circular IGRT Imaging Trajectories with Optimization-Based Reconstruction Algorithms}
-\author{Andrew Davis}
+\author{Andrew Michael Davis}
 \department{Committee on Medical Physics}
 \division{Biological Sciences}
 \degree{Doctor of Philosophy}
@@ -1433,7 +1433,6 @@ addMargins(0.5cm, 0.5cm);
 ** Framework implementation with Varian TrueBeam kV-CBCT system
    :PROPERTIES:
    :ID:       58A6E225-522B-4620-BEDB-F81AD30070C3
-   :ALT_TITLE: TrueBeam framework
    :END:
 *** TrueBeam LINAC with Developer Mode
      :PROPERTIES:
