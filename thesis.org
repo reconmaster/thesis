@@ -1436,7 +1436,6 @@ addMargins(0.5cm, 0.5cm);
    :END:
 *** TrueBeam LINAC with Developer Mode
      :PROPERTIES:
-     :ID:       3b90dfa6-e2de-4bdf-886a-31238cfa1cec
      :END:
 #+ATTR_LATEX: :environment longtable :align l|l|l|l|l
 #+CAPTION: Subset of Varian's TrueBeam projection header variables pertaining to the kV-imaging system.
@@ -3337,7 +3336,6 @@ resultant limited axial FOV.
    :END:
 *** Trajectories
     :PROPERTIES:
-    :ID:       b16942be-e3d8-4fb2-a872-aa68fe6bd4fd
     :END:
 In order to obtain additional axial tomographic information from a
 patient beyond what is covered by the detector, there must be a
@@ -3700,7 +3698,6 @@ in the imaging trajectory.
 
 ***** Trajectories
       :PROPERTIES:
-      :ID:       4787aeca-bdf3-4b8b-bfda-6c7248cb01d4
       :END:
 #+NAME: tab:disk_trajects
   | Trajectory | Axial gap [cm] | Detector configuration | Air scan  | lognorm | Notes                      |
